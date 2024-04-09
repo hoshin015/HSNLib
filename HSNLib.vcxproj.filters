@@ -1,0 +1,663 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="ソース ファイル">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="ヘッダー ファイル">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="リソース ファイル">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="HSNLib">
+      <UniqueIdentifier>{0e593af1-d0a7-49cb-b352-7b066e190265}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HSNLib\Graphics">
+      <UniqueIdentifier>{e83f7f88-9afc-4c1c-b6e3-b182bf8ef8b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HSNLib\Misc">
+      <UniqueIdentifier>{61c2a66f-6026-4327-8c3f-2282ea33ac85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HSNLib\ImGui">
+      <UniqueIdentifier>{043d27e8-4084-46d1-9b00-18cb1071ade2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HSNLib\ImGui\Include">
+      <UniqueIdentifier>{dfd2c87c-0374-40fb-bf02-eaf03174eadf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HSNLib\2D">
+      <UniqueIdentifier>{4fa73d85-0a97-4906-b015-3dd435678867}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダーファイル">
+      <UniqueIdentifier>{2038c7ac-d674-4263-9908-800fa4c3fbf5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HSNLib\Text">
+      <UniqueIdentifier>{e6197c73-c549-4502-a30c-67d7157b29eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HSNLib\Input">
+      <UniqueIdentifier>{56925361-b0b6-4a07-974b-1918d941bce6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HSNLib\3D">
+      <UniqueIdentifier>{aba23948-3025-4b57-8331-958ce0e51259}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HSNLib\Effekseer">
+      <UniqueIdentifier>{48ba55f6-8e61-427f-b64d-fd19131db3de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HSNLib\Audio">
+      <UniqueIdentifier>{0ce5ed7c-a0a5-4627-9445-11c20f275995}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Library\Graphics\Graphics.cpp">
+      <Filter>HSNLib\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\ImGui\ImGuiManager.cpp">
+      <Filter>HSNLib\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\ImGui\Include\imgui.cpp">
+      <Filter>HSNLib\ImGui\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\ImGui\Include\imgui_demo.cpp">
+      <Filter>HSNLib\ImGui\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\ImGui\Include\imgui_draw.cpp">
+      <Filter>HSNLib\ImGui\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\ImGui\Include\imgui_impl_dx11.cpp">
+      <Filter>HSNLib\ImGui\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\ImGui\Include\imgui_impl_win32.cpp">
+      <Filter>HSNLib\ImGui\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\ImGui\Include\imgui_tables.cpp">
+      <Filter>HSNLib\ImGui\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\ImGui\Include\imgui_widgets.cpp">
+      <Filter>HSNLib\ImGui\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\AdapterReader.cpp">
+      <Filter>HSNLib\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\ErrorLogger.cpp">
+      <Filter>HSNLib\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Framework.cpp">
+      <Filter>HSNLib</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\WinMain.cpp">
+      <Filter>HSNLib</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneGame.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\2D\Primitive2D.cpp">
+      <Filter>HSNLib\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Graphics\Shader.cpp">
+      <Filter>HSNLib\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\2D\Sprite.cpp">
+      <Filter>HSNLib\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Text\Text.cpp">
+      <Filter>HSNLib\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Input\InputManager.cpp">
+      <Filter>HSNLib\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\2D\GraphicsSpriteBatch.cpp">
+      <Filter>HSNLib\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\3D\GeometricPrimitive.cpp">
+      <Filter>HSNLib\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\3D\SkinnedMesh.cpp">
+      <Filter>HSNLib\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Graphics\Texture.cpp">
+      <Filter>HSNLib\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\3D\SpherePrimitive.cpp">
+      <Filter>HSNLib\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\3D\CylinderPrimitive.cpp">
+      <Filter>HSNLib\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\3D\Camera.cpp">
+      <Filter>HSNLib\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Character.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemySlime.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Collision.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\ImGui\Include\GraphEditor.cpp">
+      <Filter>HSNLib\ImGui\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\ImGui\Include\ImCurveEdit.cpp">
+      <Filter>HSNLib\ImGui\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\ImGui\Include\ImGradient.cpp">
+      <Filter>HSNLib\ImGui\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\ImGui\Include\ImGuizmo.cpp">
+      <Filter>HSNLib\ImGui\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\ImGui\Include\ImSequencer.cpp">
+      <Filter>HSNLib\ImGui\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="Projectile.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="ProjectileManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="ProjectileStraight.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="ProjectileHoming.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Effekseer\Effect.cpp">
+      <Filter>HSNLib\Effekseer</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Effekseer\EffectManager.cpp">
+      <Filter>HSNLib\Effekseer</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneTitle.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneLoading.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="StageMain.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneAnimation.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Audio\AudioManager.cpp">
+      <Filter>HSNLib\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\3D\DebugPrimitive.cpp">
+      <Filter>HSNLib\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyDragon.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\3D\Sprite3D.cpp">
+      <Filter>HSNLib\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Text\FontTexture.cpp">
+      <Filter>HSNLib\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Text\DispString.cpp">
+      <Filter>HSNLib\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="DamageTextManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="DamageText.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\3D\ResourceManager.cpp">
+      <Filter>HSNLib\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneContextBase.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\3D\LineRenderer.cpp">
+      <Filter>HSNLib\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyContextBaseSlime.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="StageManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="StageContext.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="StageBox.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\2D\UVScrollSprite.cpp">
+      <Filter>HSNLib\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>HSNLib\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="LightManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Graphics\FrameBuffer.cpp">
+      <Filter>HSNLib\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Graphics\FullScreenQuad.cpp">
+      <Filter>HSNLib\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\2D\GaussianBlurSprite.cpp">
+      <Filter>HSNLib\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\3D\SkyMap.cpp">
+      <Filter>HSNLib\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\2D\MaskSprite.cpp">
+      <Filter>HSNLib\2D</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Library\Graphics\Graphics.h">
+      <Filter>HSNLib\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\ImGui\ConsoleData.h">
+      <Filter>HSNLib\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\ImGui\ImGuiManager.h">
+      <Filter>HSNLib\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\ImGui\Include\imconfig.h">
+      <Filter>HSNLib\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\ImGui\Include\imgui.h">
+      <Filter>HSNLib\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\ImGui\Include\imgui_impl_dx11.h">
+      <Filter>HSNLib\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\ImGui\Include\imgui_impl_win32.h">
+      <Filter>HSNLib\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\ImGui\Include\imgui_internal.h">
+      <Filter>HSNLib\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\ImGui\Include\imstb_rectpack.h">
+      <Filter>HSNLib\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\ImGui\Include\imstb_textedit.h">
+      <Filter>HSNLib\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\ImGui\Include\imstb_truetype.h">
+      <Filter>HSNLib\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\AdapterReader.h">
+      <Filter>HSNLib\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\ErrorLogger.h">
+      <Filter>HSNLib\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Timer.h">
+      <Filter>HSNLib\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Framework.h">
+      <Filter>HSNLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneGame.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\2D\Primitive2D.h">
+      <Filter>HSNLib\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\2D\Sprite.h">
+      <Filter>HSNLib\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Text\Text.h">
+      <Filter>HSNLib\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Input\InputManager.h">
+      <Filter>HSNLib\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\2D\GraphicsSpriteBatch.h">
+      <Filter>HSNLib\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\3D\GeometricPrimitive.h">
+      <Filter>HSNLib\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\3D\SkinnedMesh.h">
+      <Filter>HSNLib\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Graphics\Shader.h">
+      <Filter>HSNLib\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Graphics\Texture.h">
+      <Filter>HSNLib\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\3D\SpherePrimitive.h">
+      <Filter>HSNLib\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\3D\CylinderPrimitive.h">
+      <Filter>HSNLib\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\3D\Camera.h">
+      <Filter>HSNLib\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Character.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemySlime.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\ImGui\Include\GraphEditor.h">
+      <Filter>HSNLib\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\ImGui\Include\ImCurveEdit.h">
+      <Filter>HSNLib\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\ImGui\Include\ImGradient.h">
+      <Filter>HSNLib\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\ImGui\Include\ImGuizmo.h">
+      <Filter>HSNLib\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\ImGui\Include\ImSequencer.h">
+      <Filter>HSNLib\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\ImGui\Include\ImZoomSlider.h">
+      <Filter>HSNLib\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Projectile.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="ProjectileManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="ProjectileStraight.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="ProjectileHoming.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Effekseer\Effect.h">
+      <Filter>HSNLib\Effekseer</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Effekseer\EffectManager.h">
+      <Filter>HSNLib\Effekseer</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\MemoryLeak.h">
+      <Filter>HSNLib\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneTitle.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneLoading.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="StageMain.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneAnimation.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Audio\AudioManager.h">
+      <Filter>HSNLib\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\3D\DebugPrimitive.h">
+      <Filter>HSNLib\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyDragon.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\3D\Sprite3D.h">
+      <Filter>HSNLib\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Text\FontTexture.h">
+      <Filter>HSNLib\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Text\DispString.h">
+      <Filter>HSNLib\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Text\FontEnum.h">
+      <Filter>HSNLib\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="DamageTextManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DamageText.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\3D\ResourceManager.h">
+      <Filter>HSNLib\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneContextBase.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\3D\LineRenderer.h">
+      <Filter>HSNLib\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyContextBaseSlime.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Stage.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="StageManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="StageContext.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="StageBox.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\2D\UVScrollSprite.h">
+      <Filter>HSNLib\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>HSNLib\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="LightManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Graphics\FrameBuffer.h">
+      <Filter>HSNLib\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Graphics\FullScreenQuad.h">
+      <Filter>HSNLib\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\2D\GaussianBlurSprite.h">
+      <Filter>HSNLib\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\3D\SkyMap.h">
+      <Filter>HSNLib\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\2D\MaskSprite.h">
+      <Filter>HSNLib\2D</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Library\Icon\Icon.rc">
+      <Filter>リソース ファイル</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Library\Shader\Primitive2D_PS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\Primitive2D_VS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\Sprite_VS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\Sprite_PS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\GeometricPrimitive_VS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\GeometricPrimitive_PS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\SkinnedMesh_PS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\SkinnedMesh_VS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\Sprite3D_VS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\Sprite3D_PS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\FontTexture_VS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\FontTexture_PS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\Line_VS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\Line_PS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\UVScroll_PS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\UVScroll_VS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\FullScreenQuad_VS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\FullScreenQuad_PS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\GaussianBlur_PS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\SkinnedMeshPBR_VS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\SkinnedMeshPBR_PS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\SkyMap_VS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\SkyMap_PS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\Mask_VS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\Mask_PS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\LuminanceExtraction_PS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\Blur_PS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\ColorFilter_PS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\GaussianBlurX_VS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\GaussianBlurY_VS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\ShadowMapCaster_VS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\BloomFinalPass_PS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Library\Shader\Primitive2D.hlsli">
+      <Filter>シェーダーファイル</Filter>
+    </None>
+    <None Include="Library\Shader\Sprite.hlsli">
+      <Filter>シェーダーファイル</Filter>
+    </None>
+    <None Include="Library\Shader\GeometricPrimitive.hlsli">
+      <Filter>シェーダーファイル</Filter>
+    </None>
+    <None Include="Library\Shader\SkinnedMesh.hlsli">
+      <Filter>シェーダーファイル</Filter>
+    </None>
+    <None Include="Library\Shader\Sprite3D.hlsli">
+      <Filter>シェーダーファイル</Filter>
+    </None>
+    <None Include="Library\Shader\FontTexture.hlsli">
+      <Filter>シェーダーファイル</Filter>
+    </None>
+    <None Include="Library\Shader\Line.hlsli">
+      <Filter>シェーダーファイル</Filter>
+    </None>
+    <None Include="Library\Shader\UVScroll.hlsli">
+      <Filter>シェーダーファイル</Filter>
+    </None>
+    <None Include="Library\Shader\Light.hlsli">
+      <Filter>シェーダーファイル</Filter>
+    </None>
+    <None Include="Library\Shader\FullScreenQuad.hlsli">
+      <Filter>シェーダーファイル</Filter>
+    </None>
+    <None Include="Library\Shader\GaussianBlur.hlsli">
+      <Filter>シェーダーファイル</Filter>
+    </None>
+    <None Include="Library\Shader\SkinnedMeshPBR.hlsli">
+      <Filter>シェーダーファイル</Filter>
+    </None>
+    <None Include="Library\Shader\SkyMap.hlsli">
+      <Filter>シェーダーファイル</Filter>
+    </None>
+    <None Include="Library\Shader\Mask.hlsli">
+      <Filter>シェーダーファイル</Filter>
+    </None>
+    <None Include="Library\Shader\FilterFunctions.hlsli">
+      <Filter>シェーダーファイル</Filter>
+    </None>
+    <None Include="Library\Shader\ShadowmapCaster.hlsli">
+      <Filter>シェーダーファイル</Filter>
+    </None>
+  </ItemGroup>
+</Project>

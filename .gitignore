@@ -1,0 +1,6 @@
+Data/
+x64/
+
+Include/
+.vs/
+HSNLib.vcxproj.user
