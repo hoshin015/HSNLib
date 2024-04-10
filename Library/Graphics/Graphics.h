@@ -192,11 +192,12 @@ public:
 
 	struct ShadowMapData
 	{
-		DirectX::XMFLOAT4X4 lightViewProjection;	// ライトビュープロジェクション行列
-		DirectX::XMFLOAT3 shadowColor;				// 影の色
-		float shadowBias;							// 深度比較用のオフセット値
+		DirectX::XMFLOAT4X4 lightViewProjection;				// ライトビュープロジェクション行列
+		DirectX::XMFLOAT3 shadowColor = { 0.2f,0.2f,0.2f };		// 影の色
+		float shadowBias;										// 深度比較用のオフセット値
 	};
 	ID3D11ShaderResourceView* shadowMap;		// シャドウマップテクスチャ
+	float shadowDrawRect = 50.0f;
 	ShadowMapData shadowMapData;
 
 	// 定数バッファ用構造体

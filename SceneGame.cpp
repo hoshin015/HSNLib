@@ -173,14 +173,11 @@ void SceneGame::Render()
 				DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
 
 			// シャドウマップに描画したい範囲の射影行列を生成
-			float shadowDrawRect = 50.0f;
-			DirectX::XMMATRIX P = DirectX::XMMatrixOrthographicLH(shadowDrawRect, shadowDrawRect, 0.1f, 1000.0f);
+			DirectX::XMMATRIX P = DirectX::XMMatrixOrthographicLH(gfx.shadowDrawRect, gfx.shadowDrawRect, 0.1f, 1000.0f);
 			XMMATRIX viewProjection = V * P;
 			DirectX::XMStoreFloat4x4(&gfx.shadowMapData.lightViewProjection, viewProjection);	// ビュー　プロジェクション　変換行列をまとめる
 		}
 
-		gfx.shadowMapData.shadowColor = { 0.2f, 0.2f, 0.2f };
-		gfx.shadowMapData.shadowBias = 0.0001f;
 
 		gfx.deviceContext->UpdateSubresource(gfx.constantBuffers[5].Get(), 0, 0, &gfx.shadowMapData, 0, 0);
 		gfx.deviceContext->VSSetConstantBuffers(3, 1, gfx.constantBuffers[5].GetAddressOf());
@@ -188,7 +185,7 @@ void SceneGame::Render()
 		gfx.deviceContext->VSSetShader(gfx.vertexShaders[static_cast<size_t>(VS_TYPE::ShadowMapCaster_VS)].Get(), nullptr, 0);
 		gfx.deviceContext->PSSetShader(nullptr, nullptr, 0);
 
-		//StageManager::Instance().Render();
+		StageManager::Instance().Render();
 
 		PlayerManager::Instance().Render();
 
@@ -495,6 +492,11 @@ void SceneGame::DrawDebugGUI()
 		ImGui::SliderFloat("brightness", &gfx->colorFilterConstant.brightness, 0.0f, 2.0f);
 
 		ImGui::DragFloat("gaussianPower", &gaussianPower, 0.1f, 0.1f, 16.0f);
+
+		ImGui::SliderFloat("DrawRect", &gfx->shadowDrawRect, 1.0f, 2048.0f);
+		ImGui::ColorEdit3("Color", &gfx->shadowMapData.shadowColor.x);
+		ImGui::SliderFloat("Bias", &gfx->shadowMapData.shadowBias, 0.0f, 0.1f);
+
 
 		ImGui::Image(gfx->shadowBuffer->shaderResourceView.Get(), { 256, 144 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });
 		ImGui::Image(gfx->bloomBuffer->shaderResourceViews[0].Get(), { 256, 144 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });

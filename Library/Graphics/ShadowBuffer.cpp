@@ -6,7 +6,7 @@
 ShadowBuffer::ShadowBuffer(uint32_t width, uint32_t height, bool useDepth)
 {
 	Graphics& gfx = Graphics::Instance();
-
+	
 	HRESULT hr = S_OK;
 
 	D3D11_TEXTURE2D_DESC texture2dDesc{};
