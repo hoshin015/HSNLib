@@ -171,6 +171,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Library\Graphics\BloomBuffer.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="DamageText.cpp" />
@@ -245,6 +246,7 @@
     <ClCompile Include="Library\2D\UVScrollSprite.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Library\Graphics\BloomBuffer.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="DamageText.h" />

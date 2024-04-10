@@ -4,6 +4,7 @@
 #include <DirectXMath.h>
 #include <mutex>
 #include "FrameBuffer.h"
+#include "BloomBuffer.h"
 #include "FullScreenQuad.h"
 
 enum class SAMPLER_STATE
@@ -210,6 +211,7 @@ public:
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerStates[static_cast<size_t>(SAMPLER_STATE::NUM)];
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffers[8];
+	std::unique_ptr<BloomBuffer> bloomBuffer;
 	std::unique_ptr<FrameBuffer> frameBuffers[8];
 	std::unique_ptr<FullScreenQuad> bitBlockTransfer;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> pixelShaders[8];

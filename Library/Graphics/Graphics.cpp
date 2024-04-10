@@ -423,6 +423,9 @@ void Graphics::Initialize(HWND hwnd, int windowWidth, int windowHeight)
 	hr = device->CreateBuffer(&bufferDesc, nullptr, constantBuffers[4].GetAddressOf());
 	_ASSERT_EXPR(SUCCEEDED(hr), hrTrace(hr));
 
+	// ----- BloomBuffer ‚Ìì¬
+	bloomBuffer = std::make_unique<BloomBuffer>(windowWidth, windowHeight);
+
 	// ----- FrameBuffer ‚Ìì¬ -----
 	frameBuffers[0] = std::make_unique<FrameBuffer>(windowWidth, windowHeight);		// ’Êí•`‰æ
 	frameBuffers[1] = std::make_unique<FrameBuffer>(windowWidth, windowHeight);		// ‚‹P“x’Šo

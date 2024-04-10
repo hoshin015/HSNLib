@@ -3,17 +3,19 @@
 #include <d3d11.h>
 #include <wrl.h>
 #include <cstdint>
-class FrameBuffer
+class BloomBuffer
 {
 public:
-	FrameBuffer(uint32_t width, uint32_t height, bool useDepth = false);
-	virtual ~FrameBuffer() = default;
+	BloomBuffer(uint32_t width, uint32_t height);
+	virtual ~BloomBuffer() = default;
 
-	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> allRTV;						// 全てを書きこむrtv
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> noLuminanceExtractRTV;		// 高輝度抽出の際に除外するrtv
+
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shaderResourceViews[2];
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shaderResourceViews[3];
+
 	D3D11_VIEWPORT viewport;
-	D3D11_VIEWPORT shadowViewport;
 
 	void Clear(float r = 0, float g = 0, float b = 0, float a = 1, float depth = 1);
 	void Activate();
@@ -29,5 +31,4 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> renderTargetTexture;
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
 };
-
 

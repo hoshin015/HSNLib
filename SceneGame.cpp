@@ -154,21 +154,10 @@ void SceneGame::Render()
 	Graphics& gfx = Graphics::Instance();
 
 
-	gfx.frameBuffers[0]->Clear();
+	gfx.bloomBuffer->Clear();
 
 
-
-#if 1
-	// シャドウマップ描画
-	{
-		gfx.frameBuffers[0]->ShadowActivate();
-
-
-		gfx.frameBuffers[0]->ShadowDeActivate();
-	}
-#endif 
-
-	gfx.frameBuffers[0]->Activate();
+	gfx.bloomBuffer->Activate();
 
 	skyMap->Render();
 
@@ -290,7 +279,7 @@ void SceneGame::Render()
 
 	
 
-	gfx.frameBuffers[0]->DeActivate();
+	gfx.bloomBuffer->DeActivate();
 
 	gfx.SetDepthStencil(DEPTHSTENCIL_STATE::ZT_OFF_ZW_OFF);
 
@@ -299,7 +288,7 @@ void SceneGame::Render()
 	gfx.deviceContext->UpdateSubresource(gfx.constantBuffers[4].Get(), 0, 0, &gfx.luminanceExtractionConstant, 0, 0);
 	gfx.deviceContext->PSSetConstantBuffers(0, 1, gfx.constantBuffers[4].GetAddressOf());
 	gfx.frameBuffers[1]->Activate();
-	gfx.bitBlockTransfer->blit(gfx.frameBuffers[0]->shaderResourceViews[0].GetAddressOf(), 0, 2, gfx.pixelShaders[static_cast<size_t>(PS_TYPE::LuminanceExtraction_PS)].Get());
+	gfx.bitBlockTransfer->blit(gfx.bloomBuffer->shaderResourceViews[0].GetAddressOf(), 0, 2, gfx.pixelShaders[static_cast<size_t>(PS_TYPE::LuminanceExtraction_PS)].Get());
 	gfx.frameBuffers[1]->DeActivate();
 	gfx.bitBlockTransfer->blit(gfx.frameBuffers[0]->shaderResourceViews[0].GetAddressOf(), 0, 1);
 
@@ -319,7 +308,7 @@ void SceneGame::Render()
 	// --- ブルーム加算 ---
 	ID3D11ShaderResourceView* shvs[2] =
 	{
-		gfx.frameBuffers[0]->shaderResourceViews[0].Get(),
+		gfx.bloomBuffer->shaderResourceViews[0].Get(),
 		gfx.frameBuffers[3]->shaderResourceViews[0].Get()
 	};
 	gfx.frameBuffers[4]->Activate();
@@ -458,10 +447,8 @@ void SceneGame::DrawDebugGUI()
 
 		ImGui::DragFloat("gaussianPower", &gaussianPower, 0.1f, 0.1f, 16.0f);
 
-		ImGui::Image(gfx->frameBuffers[0]->shaderResourceViews[0].Get(), { 256, 144 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });
-		ImGui::Image(gfx->frameBuffers[0]->shaderResourceViews[1].Get(), { 256, 144 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });
-		ImGui::Image(gfx->frameBuffers[0]->shaderResourceViews[2].Get(), { 256, 144 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });
-		ImGui::Image(gfx->frameBuffers[0]->shaderResourceViews[3].Get(), { 256, 144 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });
+		ImGui::Image(gfx->bloomBuffer->shaderResourceViews[0].Get(), { 256, 144 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });
+		ImGui::Image(gfx->bloomBuffer->shaderResourceViews[1].Get(), { 256, 144 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });
 		ImGui::Image(gfx->frameBuffers[1]->shaderResourceViews[0].Get(), { 256, 144 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });
 		ImGui::Image(gfx->frameBuffers[2]->shaderResourceViews[0].Get(), { 256, 144 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });
 		ImGui::Image(gfx->frameBuffers[3]->shaderResourceViews[0].Get(), { 256, 144 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });
