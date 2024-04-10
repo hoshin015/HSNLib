@@ -1,4 +1,5 @@
 #include "Light.hlsli"
+#include "ShadowmapFunctions.hlsli"
 
 struct VS_IN
 {
@@ -18,6 +19,7 @@ struct VS_OUT
     float4 worldTangent : TANGENT;
     float2 texcoord : TEXCOORD;
     float4 color : COLOR;
+    float3 shadowTexcoord : TEXCOORD1;
 };
 
 static const int MAX_BONES = 256;
@@ -46,3 +48,10 @@ cbuffer IS_BLOOM : register(b2)
     float objectType;
     float3 pad2;
 }
+
+cbuffer CbShadowmap : register(b3)
+{
+    row_major float4x4 lightViewProjection; // ライトビュープロジェクション行列
+    float3 shadowColor; // 影の色
+    float shadowBias; // 深度値比較時のオフセット
+};

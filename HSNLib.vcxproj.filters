@@ -671,5 +671,8 @@
     <None Include="Library\Shader\ShadowmapCaster.hlsli">
       <Filter>シェーダーファイル</Filter>
     </None>
+    <None Include="Library\Shader\ShadowmapFunctions.hlsli">
+      <Filter>シェーダーファイル</Filter>
+    </None>
   </ItemGroup>
 </Project>

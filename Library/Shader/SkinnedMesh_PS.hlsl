@@ -6,7 +6,9 @@
 #define ANISOTROPIC 2
 
 SamplerState sampler_states[3] : register(s0);
+SamplerState shadowSampler : register(s3);
 Texture2D texture_maps[4] : register(t0);
+Texture2D shadowMap : register(t4);
 
 #if 1
 struct PSOUT
@@ -60,6 +62,11 @@ float4 main(VS_OUT pin) : SV_TARGET
     float3 ToCamera = normalize(cameraPosition.xyz - pin.worldPosition.xyz); // 光が入射したサーフェースから視点に向かって伸びるベクトルを求めている
     float3 directionSpecular = CalcPhongSpecular(N, L, directionalLightData.color.rgb, ToCamera, 128.0f, Ks);
     
+    // 平行光源の影なので、平行光源に対して影を適応
+    float3 shadow = CalcShadowColor(shadowMap, shadowSampler, pin.shadowTexcoord, shadowColor, shadowBias);
+    directionDiffuse *= shadow;
+    directionSpecular *= shadow;
+
     // --- ポイントライト ---
     float3 pointDiffuse = (float3) 0;
     float3 pointSpecular = (float3) 0;

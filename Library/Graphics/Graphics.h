@@ -16,6 +16,7 @@ enum class SAMPLER_STATE
 	TEXT_LINEAR,
 	LINEAR_BORDER_BLACK,
 	LINEAR_BORDER_WHITE,
+	SHADOWMAP,
 
 	NUM,
 };
@@ -188,6 +189,15 @@ public:
 		DirectX::XMFLOAT2 lumiPad;
 	};
 	LuminanceExtractionConstant luminanceExtractionConstant;
+
+	struct ShadowMapData
+	{
+		DirectX::XMFLOAT4X4 lightViewProjection;	// ライトビュープロジェクション行列
+		DirectX::XMFLOAT3 shadowColor;				// 影の色
+		float shadowBias;							// 深度比較用のオフセット値
+	};
+	ID3D11ShaderResourceView* shadowMap;		// シャドウマップテクスチャ
+	ShadowMapData shadowMapData;
 
 	// 定数バッファ用構造体
 	struct SceneConstants

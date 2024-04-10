@@ -388,6 +388,17 @@ void Graphics::Initialize(HWND hwnd, int windowWidth, int windowHeight)
 	hr = device->CreateSamplerState(&samplerDesc, samplerStates[static_cast<size_t>(SAMPLER_STATE::LINEAR_BORDER_BLACK)].GetAddressOf());
 	_ASSERT_EXPR(SUCCEEDED(hr), hrTrace(hr));
 	// LINEAR_BORDER_WHITE
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+	samplerDesc.BorderColor[0] = FLT_MAX;
+	samplerDesc.BorderColor[1] = FLT_MAX;
+	samplerDesc.BorderColor[2] = FLT_MAX;
+	samplerDesc.BorderColor[3] = FLT_MAX;
+	hr = device->CreateSamplerState(&samplerDesc, samplerStates[static_cast<size_t>(SAMPLER_STATE::LINEAR_BORDER_WHITE)].GetAddressOf());
+	_ASSERT_EXPR(SUCCEEDED(hr), hrTrace(hr));
+	// SHADOWMAP
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
 	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
@@ -396,7 +407,7 @@ void Graphics::Initialize(HWND hwnd, int windowWidth, int windowHeight)
 	samplerDesc.BorderColor[1] = 1;
 	samplerDesc.BorderColor[2] = 1;
 	samplerDesc.BorderColor[3] = 1;
-	hr = device->CreateSamplerState(&samplerDesc, samplerStates[static_cast<size_t>(SAMPLER_STATE::LINEAR_BORDER_WHITE)].GetAddressOf());
+	hr = device->CreateSamplerState(&samplerDesc, samplerStates[static_cast<size_t>(SAMPLER_STATE::SHADOWMAP)].GetAddressOf());
 	_ASSERT_EXPR(SUCCEEDED(hr), hrTrace(hr));
 
 	// ----------------------------- ConstantBuffer �̍쐬 ------------------------------
@@ -421,6 +432,10 @@ void Graphics::Initialize(HWND hwnd, int windowWidth, int windowHeight)
 
 	bufferDesc.ByteWidth = sizeof(LuminanceExtractionConstant);
 	hr = device->CreateBuffer(&bufferDesc, nullptr, constantBuffers[4].GetAddressOf());
+	_ASSERT_EXPR(SUCCEEDED(hr), hrTrace(hr));
+	
+	bufferDesc.ByteWidth = sizeof(ShadowMapData);
+	hr = device->CreateBuffer(&bufferDesc, nullptr, constantBuffers[5].GetAddressOf());
 	_ASSERT_EXPR(SUCCEEDED(hr), hrTrace(hr));
 
 	// ----- BloomBuffer �̍쐬

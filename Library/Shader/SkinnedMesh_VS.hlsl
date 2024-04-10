@@ -30,6 +30,8 @@ VS_OUT main(VS_IN vin)
     
     vout.texcoord = vin.texcoord;
     vout.color = materialColor;
+    
+    vout.shadowTexcoord = CalcShadowTexcoord(blended_position.xyz, mul(world, lightViewProjection));
      
     return vout;
 }

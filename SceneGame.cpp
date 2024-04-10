@@ -158,7 +158,8 @@ void SceneGame::Render()
 	{
 		gfx.SetDepthStencil(DEPTHSTENCIL_STATE::ZT_ON_ZW_ON);
 
-		Graphics::SceneConstants data{};
+		gfx.shadowBuffer->Clear();
+		gfx.shadowBuffer->Activate();
 
 
 		// カメラパラメータ設定
@@ -172,26 +173,22 @@ void SceneGame::Render()
 				DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
 
 			// シャドウマップに描画したい範囲の射影行列を生成
-			float shadowDrawRect = 200.f;
+			float shadowDrawRect = 50.0f;
 			DirectX::XMMATRIX P = DirectX::XMMatrixOrthographicLH(shadowDrawRect, shadowDrawRect, 0.1f, 1000.0f);
 			XMMATRIX viewProjection = V * P;
-			DirectX::XMStoreFloat4x4(&data.viewProjection, viewProjection);	// ビュー　プロジェクション　変換行列をまとめる
+			DirectX::XMStoreFloat4x4(&gfx.shadowMapData.lightViewProjection, viewProjection);	// ビュー　プロジェクション　変換行列をまとめる
 		}
 
-		//LightManager::Instance().PushLightData(data);
+		gfx.shadowMapData.shadowColor = { 0.2f, 0.2f, 0.2f };
+		gfx.shadowMapData.shadowBias = 0.0001f;
 
-		data.cameraPosition = { Camera::Instance().GetEye().x, Camera::Instance().GetEye().y, Camera::Instance().GetEye().z, 0 };
-		gfx.deviceContext->UpdateSubresource(gfx.constantBuffer.Get(), 0, 0, &data, 0, 0);
-		gfx.deviceContext->VSSetConstantBuffers(1, 1, gfx.constantBuffer.GetAddressOf());
-		gfx.deviceContext->PSSetConstantBuffers(1, 1, gfx.constantBuffer.GetAddressOf());
-
-		gfx.shadowBuffer->Clear();
-		gfx.shadowBuffer->Activate();
+		gfx.deviceContext->UpdateSubresource(gfx.constantBuffers[5].Get(), 0, 0, &gfx.shadowMapData, 0, 0);
+		gfx.deviceContext->VSSetConstantBuffers(3, 1, gfx.constantBuffers[5].GetAddressOf());
 
 		gfx.deviceContext->VSSetShader(gfx.vertexShaders[static_cast<size_t>(VS_TYPE::ShadowMapCaster_VS)].Get(), nullptr, 0);
 		gfx.deviceContext->PSSetShader(nullptr, nullptr, 0);
 
-		StageManager::Instance().Render();
+		//StageManager::Instance().Render();
 
 		PlayerManager::Instance().Render();
 
@@ -251,8 +248,6 @@ void SceneGame::Render()
 		}
 	}
 
-
-
 	Graphics::SceneConstants data{};
 	XMMATRIX viewProjection = XMLoadFloat4x4(&Camera::Instance().GetView()) * XMLoadFloat4x4(&Camera::Instance().GetProjection());
 	DirectX::XMStoreFloat4x4(&data.viewProjection, viewProjection);	// ビュー　プロジェクション　変換行列をまとめる
@@ -263,6 +258,10 @@ void SceneGame::Render()
 	gfx.deviceContext->UpdateSubresource(gfx.constantBuffer.Get(), 0, 0, &data, 0, 0);
 	gfx.deviceContext->VSSetConstantBuffers(1, 1, gfx.constantBuffer.GetAddressOf());
 	gfx.deviceContext->PSSetConstantBuffers(1, 1, gfx.constantBuffer.GetAddressOf());
+
+	// shadowMap のバインド
+	gfx.deviceContext->PSSetShaderResources(4, 1, gfx.shadowBuffer->shaderResourceView.GetAddressOf());
+	gfx.deviceContext->PSSetSamplers(3, 1, gfx.samplerStates[static_cast<size_t>(SAMPLER_STATE::SHADOWMAP)].GetAddressOf());
 
 	gfx.deviceContext->VSSetShader(gfx.vertexShaders[static_cast<size_t>(VS_TYPE::SkinnedMesh_VS)].Get(), nullptr, 0);
 	gfx.deviceContext->PSSetShader(gfx.pixelShaders[static_cast<size_t>(PS_TYPE::SkinnedMesh_PS)].Get(), nullptr, 0);

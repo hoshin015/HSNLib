@@ -349,6 +349,7 @@
     <None Include="Library\Shader\SkyMap.hlsli" />
     <None Include="Library\Shader\Mask.hlsli" />
     <None Include="Library\Shader\ShadowmapCaster.hlsli" />
+    <None Include="Library\Shader\ShadowmapFunctions.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Library\Shader\BloomFinalPass_PS.hlsl">
