@@ -38,3 +38,40 @@ float3 CalcShadowColor(Texture2D tex, SamplerState samplerState, float3 shadowTe
 
     return lerp(shadowColor, 1, ahadow);
 }
+
+//--------------------------------------------
+//	PCFフィルター付きソフトシャドウマップ
+//--------------------------------------------
+// tex				: シャドウマップ
+// samplerState		: サンプラステート
+// shadowTexcoord	: シャドウマップ参照用情報
+// shadowBias		: 深度比較用のオフセット値
+// shadowColor		: 影の色
+// 返す値			: 影の色
+float3 CalcShadowColorPCFFilter(Texture2D tex, SamplerState samplerState, float3 shadowTexcoord, float3 shadowColor, float shadowBias)
+{
+	// テクセルサイズの計算
+    float2 texelSize;
+	{
+		// テクスチャの縦幅横幅を取得する
+        uint width, height;
+        tex.GetDimensions(width, height);
+
+		// 算出
+        texelSize = float2(1.0f / width, 1.0f / height);
+    }
+
+    float factor = 0;
+    static const int PCFKernelSize = 5; //	指定は奇数にすること
+    for (int x = -PCFKernelSize / 2; x <= PCFKernelSize / 2; ++x)
+    {
+        for (int y = -PCFKernelSize / 2; y <= PCFKernelSize / 2; ++y)
+        {
+			// シャドウマップから深度値取得
+            float depth = tex.Sample(samplerState, shadowTexcoord.xy + texelSize * float2(x, y)).r;
+            factor += step(shadowTexcoord.z - depth, shadowBias);
+        }
+    }
+	// 深度値を比較して影かどうかを判定する
+    return lerp(shadowColor, 1, factor / (PCFKernelSize * PCFKernelSize));
+}

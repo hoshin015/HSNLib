@@ -194,9 +194,7 @@ void SceneGame::Render()
 		gfx.shadowBuffer->DeActivate();
 	}
 
-
 	gfx.bloomBuffer->Clear();
-
 
 	gfx.bloomBuffer->Activate();
 
@@ -262,6 +260,10 @@ void SceneGame::Render()
 
 	gfx.deviceContext->VSSetShader(gfx.vertexShaders[static_cast<size_t>(VS_TYPE::SkinnedMesh_VS)].Get(), nullptr, 0);
 	gfx.deviceContext->PSSetShader(gfx.pixelShaders[static_cast<size_t>(PS_TYPE::SkinnedMesh_PS)].Get(), nullptr, 0);
+
+	gfx.deviceContext->UpdateSubresource(gfx.constantBuffers[5].Get(), 0, 0, &gfx.shadowMapData, 0, 0);
+	gfx.deviceContext->VSSetConstantBuffers(3, 1, gfx.constantBuffers[5].GetAddressOf());
+	gfx.deviceContext->PSSetConstantBuffers(3, 1, gfx.constantBuffers[5].GetAddressOf());
 
 	StageManager::Instance().Render();
 
