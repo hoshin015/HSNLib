@@ -239,6 +239,7 @@
     <ClCompile Include="SceneTitle.cpp" />
     <ClCompile Include="Library\3D\Sprite3D.cpp" />
     <ClCompile Include="Library\3D\SkyMap.cpp" />
+    <ClCompile Include="Library\Graphics\ShadowBuffer.cpp" />
     <ClCompile Include="StageBox.cpp" />
     <ClCompile Include="StageContext.cpp" />
     <ClCompile Include="StageMain.cpp" />
@@ -320,6 +321,7 @@
     <ClInclude Include="SceneTitle.h" />
     <ClInclude Include="Library\3D\Sprite3D.h" />
     <ClInclude Include="Library\3D\SkyMap.h" />
+    <ClInclude Include="Library\Graphics\ShadowBuffer.h" />
     <ClInclude Include="Stage.h" />
     <ClInclude Include="StageBox.h" />
     <ClInclude Include="StageContext.h" />

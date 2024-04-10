@@ -426,6 +426,9 @@ void Graphics::Initialize(HWND hwnd, int windowWidth, int windowHeight)
 	// ----- BloomBuffer ÇÃçÏê¨
 	bloomBuffer = std::make_unique<BloomBuffer>(windowWidth, windowHeight);
 
+	// ----- ShadowBuffer ÇÃçÏê¨ -----
+	shadowBuffer = std::make_unique<ShadowBuffer>();
+
 	// ----- FrameBuffer ÇÃçÏê¨ -----
 	frameBuffers[0] = std::make_unique<FrameBuffer>(windowWidth, windowHeight);		// í èÌï`âÊ
 	frameBuffers[1] = std::make_unique<FrameBuffer>(windowWidth, windowHeight);		// çÇãPìxíäèo
@@ -443,6 +446,7 @@ void Graphics::Initialize(HWND hwnd, int windowWidth, int windowHeight)
 	CreatePsFromCso("Data/Shader/ColorFilter_PS.cso", pixelShaders[static_cast<size_t>(PS_TYPE::ColorFilter_PS)].GetAddressOf());
 	CreatePsFromCso("Data/Shader/GaussianBlur_PS.cso", pixelShaders[static_cast<size_t>(PS_TYPE::GaussianBlur_PS)].GetAddressOf());
 	CreatePsFromCso("Data/Shader/BloomFinalPass_PS.cso", pixelShaders[static_cast<size_t>(PS_TYPE::BloomFinalPass_PS)].GetAddressOf());
+	CreatePsFromCso("Data/Shader/SkinnedMesh_PS.cso", pixelShaders[static_cast<size_t>(PS_TYPE::SkinnedMesh_PS)].GetAddressOf());
 
 	// ----- vertexShader ÇÃê∂ê¨ ---
 	D3D11_INPUT_ELEMENT_DESC inputElementDesc[]
@@ -454,9 +458,12 @@ void Graphics::Initialize(HWND hwnd, int windowWidth, int windowHeight)
 		{"WEIGHTS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT},
 		{"BONES", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT},
 	};
+
+
 	CreateVsFromCso("Data/Shader/GaussianBlurX_VS.cso", vertexShaders[static_cast<size_t>(VS_TYPE::GaussianBlurX_VS)].ReleaseAndGetAddressOf(), nullptr, nullptr, 0);
 	CreateVsFromCso("Data/Shader/GaussianBlurY_VS.cso", vertexShaders[static_cast<size_t>(VS_TYPE::GaussianBlurY_VS)].ReleaseAndGetAddressOf(), nullptr, nullptr, 0);
 	CreateVsFromCso("Data/Shader/ShadowMapCaster_VS.cso", vertexShaders[static_cast<size_t>(VS_TYPE::ShadowMapCaster_VS)].ReleaseAndGetAddressOf(), inputLayouts[0].ReleaseAndGetAddressOf(), inputElementDesc, ARRAYSIZE(inputElementDesc));
+	CreateVsFromCso("Data/Shader/SkinnedMesh_VS.cso", vertexShaders[static_cast<size_t>(VS_TYPE::SkinnedMesh_VS)].ReleaseAndGetAddressOf(), inputLayouts[1].ReleaseAndGetAddressOf(), inputElementDesc, ARRAYSIZE(inputElementDesc));
 
 	// -----	
 	colorFilterConstant.hueShift = 0;

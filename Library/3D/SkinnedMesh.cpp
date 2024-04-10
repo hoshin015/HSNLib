@@ -326,8 +326,8 @@ void SkinnedMesh::Render(const DirectX::XMFLOAT4X4& world, const DirectX::XMFLOA
 		gfx.deviceContext->IASetInputLayout(inputLayout.Get());
 
 		
-		gfx.deviceContext->VSSetShader(vertexShader.Get(), nullptr, 0);
-		gfx.deviceContext->PSSetShader(pixelShader.Get(), nullptr, 0);
+		//gfx.deviceContext->VSSetShader(vertexShader.Get(), nullptr, 0);
+		//gfx.deviceContext->PSSetShader(pixelShader.Get(), nullptr, 0);
 		
 		
 		Constants data;

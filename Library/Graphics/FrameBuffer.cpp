@@ -40,7 +40,7 @@ FrameBuffer::FrameBuffer(uint32_t width, uint32_t height, bool useDepth)
 	hr = gfx.device->CreateShaderResourceView(renderTargetBuffer.Get(), &shaderResourceViewDesc, shaderResourceViews[0].GetAddressOf());
 	_ASSERT_EXPR(SUCCEEDED(hr), hrTrace(hr));
 
-	//-------- DepthStencil [0] --------
+	//-------- DepthStencil --------
 	if (useDepth)
 	{
 		texture2dDesc.CPUAccessFlags = 0;
@@ -57,7 +57,7 @@ FrameBuffer::FrameBuffer(uint32_t width, uint32_t height, bool useDepth)
 		hr = gfx.device->CreateDepthStencilView(depthStencilBuffer.Get(), &depthStencilViewDesc, depthStencilView.GetAddressOf());
 		_ASSERT_EXPR(SUCCEEDED(hr), hrTrace(hr));
 
-		//-------- ShaderResourceView [2] --------
+		//-------- ShaderResourceView [1] --------
 		shaderResourceViewDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
 		shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		hr = gfx.device->CreateShaderResourceView(depthStencilBuffer.Get(), &shaderResourceViewDesc, shaderResourceViews[1].GetAddressOf());

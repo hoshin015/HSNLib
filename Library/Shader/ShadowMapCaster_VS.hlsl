@@ -9,5 +9,6 @@ float4 main(VS_IN vin) : SV_POSITION
     }
     vin.position = float4(blended_position.xyz, 1.0f);
     
+    return mul(vin.position, mul(world, viewProjection));
     return mul(vin.position, viewProjection);
 }

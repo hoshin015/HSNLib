@@ -270,6 +270,9 @@
     <ClCompile Include="Library\Graphics\BloomBuffer.cpp">
       <Filter>HSNLib\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Library\Graphics\ShadowBuffer.cpp">
+      <Filter>HSNLib\Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\Graphics\Graphics.h">
@@ -510,6 +513,9 @@
       <Filter>HSNLib\2D</Filter>
     </ClInclude>
     <ClInclude Include="Library\Graphics\BloomBuffer.h">
+      <Filter>HSNLib\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Graphics\ShadowBuffer.h">
       <Filter>HSNLib\Graphics</Filter>
     </ClInclude>
   </ItemGroup>

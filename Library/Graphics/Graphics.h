@@ -5,6 +5,7 @@
 #include <mutex>
 #include "FrameBuffer.h"
 #include "BloomBuffer.h"
+#include "ShadowBuffer.h"
 #include "FullScreenQuad.h"
 
 enum class SAMPLER_STATE
@@ -67,6 +68,8 @@ enum class PS_TYPE
 	GaussianBlur_PS,
 	BloomFinalPass_PS,
 
+	SkinnedMesh_PS,
+
 	NUM
 };
 
@@ -75,6 +78,8 @@ enum class VS_TYPE
 	GaussianBlurX_VS,
 	GaussianBlurY_VS,
 	ShadowMapCaster_VS,
+
+	SkinnedMesh_VS,
 
 	NUM
 };
@@ -211,8 +216,9 @@ public:
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerStates[static_cast<size_t>(SAMPLER_STATE::NUM)];
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffers[8];
-	std::unique_ptr<BloomBuffer> bloomBuffer;
 	std::unique_ptr<FrameBuffer> frameBuffers[8];
+	std::unique_ptr<BloomBuffer> bloomBuffer;
+	std::unique_ptr<ShadowBuffer> shadowBuffer;
 	std::unique_ptr<FullScreenQuad> bitBlockTransfer;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> pixelShaders[8];
 	Microsoft::WRL::ComPtr<ID3D11VertexShader> vertexShaders[8];

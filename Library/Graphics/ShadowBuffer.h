@@ -3,15 +3,18 @@
 #include <d3d11.h>
 #include <wrl.h>
 #include <cstdint>
-class FrameBuffer
+
+// シャドウマップのサイズ
+static const UINT SHADOWMAP_SIZE = 2048;
+
+class ShadowBuffer
 {
 public:
-	FrameBuffer(uint32_t width, uint32_t height, bool useDepth = false);
-	virtual ~FrameBuffer() = default;
+	ShadowBuffer(uint32_t width = SHADOWMAP_SIZE, uint32_t height = SHADOWMAP_SIZE, bool useDepth = false);
+	virtual ~ShadowBuffer() = default;
 
-	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shaderResourceViews[2];
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shaderResourceView;
 	D3D11_VIEWPORT viewport;
 
 	void Clear(float r = 0, float g = 0, float b = 0, float a = 1, float depth = 1);
@@ -28,5 +31,3 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> renderTargetTexture;
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
 };
-
-
