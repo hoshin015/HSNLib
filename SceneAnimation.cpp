@@ -14,6 +14,7 @@
 #include "Library/Effekseer/Effect.h"
 #include "Library/Effekseer/EffectManager.h"
 #include "Library/3D/LineRenderer.h"
+#include "LightManager.h"
 
 // 初期化
 void SceneAnimation::Initialize()
@@ -33,12 +34,20 @@ void SceneAnimation::Initialize()
 	// --- シークエンス変数初期設定 ---
 	mySequence.mFrameMin = 0;
 	mySequence.mFrameMax = 60;
+
+	// ライト
+	Light* directionLight = new Light(LightType::Directional);
+	directionLight->SetDirection(DirectX::XMFLOAT3(0.5, -1, -1));
+	directionLight->SetColor(DirectX::XMFLOAT4(1, 1, 1, 1));
+	LightManager::Instance().Register(directionLight);
 }
 
 // 終了化
 void SceneAnimation::Finalize()
 {
 	ModelClear();
+
+	LightManager::Instance().Clear();
 }
 
 // 更新
@@ -150,6 +159,75 @@ void SceneAnimation::Render()
 	// --- Graphics 取得 ---
 	Graphics& gfx = Graphics::Instance();
 
+	// shadowMap
+	{
+		gfx.SetDepthStencil(DEPTHSTENCIL_STATE::ZT_ON_ZW_ON);
+
+		gfx.shadowBuffer->Clear();
+		gfx.shadowBuffer->Activate();
+
+
+		// カメラパラメータ設定
+		{
+			// 平行光源からカメラ位置を作成し、そこから原点の位置を見るように視線行列を生成
+			DirectX::XMFLOAT3 dir = LightManager::Instance().GetLight(0)->GetDirection();
+			DirectX::XMVECTOR LightPosition = DirectX::XMLoadFloat3(&dir);
+			LightPosition = DirectX::XMVectorScale(LightPosition, -250.0f);
+			DirectX::XMMATRIX V = DirectX::XMMatrixLookAtLH(LightPosition,
+				DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f),
+				DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
+
+			// シャドウマップに描画したい範囲の射影行列を生成
+			DirectX::XMMATRIX P = DirectX::XMMatrixOrthographicLH(gfx.shadowDrawRect, gfx.shadowDrawRect, 0.1f, 1000.0f);
+			XMMATRIX viewProjection = V * P;
+			DirectX::XMStoreFloat4x4(&gfx.shadowMapData.lightViewProjection, viewProjection);	// ビュー　プロジェクション　変換行列をまとめる
+		}
+
+
+		gfx.deviceContext->UpdateSubresource(gfx.constantBuffers[5].Get(), 0, 0, &gfx.shadowMapData, 0, 0);
+		gfx.deviceContext->VSSetConstantBuffers(3, 1, gfx.constantBuffers[5].GetAddressOf());
+
+		gfx.deviceContext->VSSetShader(gfx.vertexShaders[static_cast<size_t>(VS_TYPE::ShadowMapCaster_VS)].Get(), nullptr, 0);
+		gfx.deviceContext->PSSetShader(nullptr, nullptr, 0);
+
+		// --- モデル描画 ---
+		if (model)
+		{
+			// rasterizer の設定
+			gfx.SetRasterizer(RASTERIZER_STATE::CLOCK_TRUE_SOLID);
+
+			// サイズの修正
+			const float scaleFactor = model->scaleFactors[model->fbxUnit];
+			DirectX::XMMATRIX C = DirectX::XMLoadFloat4x4(&model->coordinateSystemTransform[model->coordinateSystemIndex]) * DirectX::XMMatrixScaling(scaleFactor, scaleFactor, scaleFactor);
+
+			DirectX::XMMATRIX S = DirectX::XMMatrixScaling(modelScale, modelScale, modelScale);
+			DirectX::XMMATRIX R = DirectX::XMMatrixRotationRollPitchYaw(XMConvertToRadians(modelAngle.x), XMConvertToRadians(modelAngle.y), XMConvertToRadians(modelAngle.z));
+			DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(modelPosition.x, modelPosition.y, modelPosition.z);
+
+			DirectX::XMFLOAT4X4 world;
+			DirectX::XMStoreFloat4x4(&world, C * S * R * T);
+
+			gfx.deviceContext->VSSetShader(gfx.vertexShaders[static_cast<size_t>(VS_TYPE::SkinnedMesh_VS)].Get(), nullptr, 0);
+			gfx.deviceContext->PSSetShader(gfx.pixelShaders[static_cast<size_t>(PS_TYPE::SkinnedMesh_PS)].Get(), nullptr, 0);
+
+			// アニメーション処理
+			if (model->animationClips.size() > 0)
+			{
+				Animation& animation = model->animationClips.at(animationClipIndex);
+
+				Animation::KeyFrame& keyFrame = animation.sequence.at(currentFrameInt);
+
+				model->Render(world, { 1,1,1,modelAlpha }, &keyFrame);
+			}
+			else
+			{
+				model->Render(world, { 1,1,1,modelAlpha }, 0);
+			}
+		}
+
+		gfx.shadowBuffer->DeActivate();
+	}
+
 	skyMap->Render();
 
 	gfx.SetDepthStencil(DEPTHSTENCIL_STATE::ZT_ON_ZW_ON);
@@ -157,13 +235,24 @@ void SceneAnimation::Render()
 	Graphics::SceneConstants data{};
 	XMMATRIX viewProjection = XMLoadFloat4x4(&Camera::Instance().GetView()) * XMLoadFloat4x4(&Camera::Instance().GetProjection());
 	DirectX::XMStoreFloat4x4(&data.viewProjection, viewProjection);	// ビュー　プロジェクション　変換行列をまとめる
-	data.directionalLightData.direction = { lightDirection.x, lightDirection.y, lightDirection.z, 0 };
-	data.directionalLightData.color = lightColor;
-	data.ambientLightColor = ambientLightColor;
+
+	LightManager::Instance().PushLightData(data);
+
 	data.cameraPosition = { Camera::Instance().GetEye().x, Camera::Instance().GetEye().y, Camera::Instance().GetEye().z, 0 };
 	gfx.deviceContext->UpdateSubresource(gfx.constantBuffer.Get(), 0, 0, &data, 0, 0);
 	gfx.deviceContext->VSSetConstantBuffers(1, 1, gfx.constantBuffer.GetAddressOf());
 	gfx.deviceContext->PSSetConstantBuffers(1, 1, gfx.constantBuffer.GetAddressOf());
+
+	// shadowMap のバインド
+	gfx.deviceContext->PSSetShaderResources(4, 1, gfx.shadowBuffer->shaderResourceView.GetAddressOf());
+	gfx.deviceContext->PSSetSamplers(3, 1, gfx.samplerStates[static_cast<size_t>(SAMPLER_STATE::SHADOWMAP)].GetAddressOf());
+
+	gfx.deviceContext->VSSetShader(gfx.vertexShaders[static_cast<size_t>(VS_TYPE::SkinnedMesh_VS)].Get(), nullptr, 0);
+	gfx.deviceContext->PSSetShader(gfx.pixelShaders[static_cast<size_t>(PS_TYPE::SkinnedMesh_PS)].Get(), nullptr, 0);
+
+	gfx.deviceContext->UpdateSubresource(gfx.constantBuffers[5].Get(), 0, 0, &gfx.shadowMapData, 0, 0);
+	gfx.deviceContext->VSSetConstantBuffers(3, 1, gfx.constantBuffers[5].GetAddressOf());
+	gfx.deviceContext->PSSetConstantBuffers(3, 1, gfx.constantBuffers[5].GetAddressOf());
 
 	// --- モデル描画 ---
 	if (model)
@@ -181,6 +270,9 @@ void SceneAnimation::Render()
 
 		DirectX::XMFLOAT4X4 world;
 		DirectX::XMStoreFloat4x4(&world, C * S * R * T);
+
+		gfx.deviceContext->VSSetShader(gfx.vertexShaders[static_cast<size_t>(VS_TYPE::SkinnedMesh_VS)].Get(), nullptr, 0);
+		gfx.deviceContext->PSSetShader(gfx.pixelShaders[static_cast<size_t>(PS_TYPE::SkinnedMesh_PS)].Get(), nullptr, 0);
 
 		// アニメーション処理
 		if (model->animationClips.size() > 0)

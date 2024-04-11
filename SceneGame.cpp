@@ -75,7 +75,7 @@ void SceneGame::Initialize()
 
 	// ƒ‰ƒCƒg
 	Light* directionLight = new Light(LightType::Directional);
-	directionLight->SetDirection(DirectX::XMFLOAT3(0, -1, -1));
+	directionLight->SetDirection(DirectX::XMFLOAT3(0.5, -1, -1));
 	directionLight->SetColor(DirectX::XMFLOAT4(1, 1, 1, 1));
 	LightManager::Instance().Register(directionLight);
 
@@ -120,6 +120,8 @@ void SceneGame::Finalize()
 	DamageTextManager::Instance().Clear();
 
 	StageManager::Instance().Clear();
+
+	LightManager::Instance().Clear();
 
 	delete gauge;
 }
@@ -500,7 +502,7 @@ void SceneGame::DrawDebugGUI()
 		ImGui::SliderFloat("Bias", &gfx->shadowMapData.shadowBias, 0.0f, 0.1f);
 
 
-		ImGui::Image(gfx->shadowBuffer->shaderResourceView.Get(), { 256, 144 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });
+		ImGui::Image(gfx->shadowBuffer->shaderResourceView.Get(), { 256, 256 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });
 		ImGui::Image(gfx->bloomBuffer->shaderResourceViews[0].Get(), { 256, 144 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });
 		ImGui::Image(gfx->bloomBuffer->shaderResourceViews[1].Get(), { 256, 144 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });
 		ImGui::Image(gfx->frameBuffers[1]->shaderResourceViews[0].Get(), { 256, 144 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });

@@ -196,8 +196,8 @@ public:
 		DirectX::XMFLOAT3 shadowColor = { 0.2f,0.2f,0.2f };		// 影の色
 		float shadowBias = 0.0001f;								// 深度比較用のオフセット値
 	};
-	ID3D11ShaderResourceView* shadowMap;		// シャドウマップテクスチャ
-	float shadowDrawRect = 50.0f;
+	ID3D11ShaderResourceView* shadowMap;						// シャドウマップテクスチャ
+	float shadowDrawRect = 200.0f;
 	ShadowMapData shadowMapData;
 
 	// 定数バッファ用構造体

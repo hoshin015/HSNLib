@@ -5,7 +5,7 @@
 #include <cstdint>
 
 // シャドウマップのサイズ
-static const UINT SHADOWMAP_SIZE = 2048;
+static const UINT SHADOWMAP_SIZE = 2048*2;
 
 class ShadowBuffer
 {
