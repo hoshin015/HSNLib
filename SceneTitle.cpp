@@ -9,7 +9,7 @@
 
 void SceneTitle::Initialize()
 {
-	sprite = new Sprite(L"Data/Texture/Title.png");
+	//sprite = new Sprite(L"Data/Texture/Title.png");
 	uvSprite = std::make_unique<UVScrollSprite>(L"Data/Texture/Title.png");
 	maskSprite = std::make_unique<MaskSprite>(L"Data/Texture/Title.png", L"Data/Texture/dissolve.png");
 	maskSprite->maskConstant.edgeColor = { 1,0,0,1 };
@@ -18,7 +18,7 @@ void SceneTitle::Initialize()
 
 void SceneTitle::Finalize()
 {
-	delete sprite;
+	//delete sprite;
 }
 
 void SceneTitle::Update()
@@ -37,7 +37,7 @@ void SceneTitle::Update()
 
 void SceneTitle::Render()
 {
-	sprite->Render(800, 450, 1280, 720, 1, 1, 1, 1, 0);
+	//sprite->Render(800, 450, 1280, 720, 1, 1, 1, 1, 0);
 	uvSprite->Render(uvScrollValue, 0, 0, 640, 360, 1, 1, 1, 1, 0);
 
 	maskSprite->maskConstant.dissolveThreshold -= Timer::Instance().DeltaTime();
@@ -51,6 +51,8 @@ void SceneTitle::Render()
 	DispString::Instance().Draw(L"あいうえお", { 800, 450 }, 32, TEXT_ALIGN::LOWER_RIGHT,{ 1, 0, 0, 1 });
 
 	Text::Instance().drawText(FONTNO::meirio, FONTSIZE::SIZE22, "テスト", { 100,200 });
+
+	//easingSprite->Render(0, 360, 640, 360, 1, 1, 1, 1, 0);
 
 	// --- デバッグ描画 ---
 	DrawDebugGUI();

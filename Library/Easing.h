@@ -1,106 +1,83 @@
 #pragma once 
+#define PI 3.1415926545
 
 enum EasingKind
 {
-	EaseInSine,
-	EaseOutSine,
-	EaseInOutSine,
-	EaseInQuad,
-	EaseOutQuad,
-	EaseInOutQuad,
-	EaseInCubic,
-	EaseOutCubic,
-	EaseInOutCubic,
-	EaseInQuart,
-	EaseOutQuart,
-	EaseInOutQuart,
-	EaseInQuint,
-	EaseOutQuint,
-	EaseInOutQuint,
-	EaseInExpo,
-	EaseOutExpo,
-	EaseInOutExpo,
-	EaseInCirc,
-	EaseOutCirc,
-	EaseInOutCirc,
-	EaseInBack,
-	EaseOutBack,
-	EaseInOutBack,
-	EaseInElastic,
-	EaseOutElastic,
-	EaseInOutElastic,
-	EaseInBounce,
-	EaseOutBounce,
-	EaseInOutBounce,
-	EaseEnd,
+	easeInSine,
+	easeOutSine,
+	easeInOutSine,
+	easeInQuad,
+	easeOutQuad,
+	easeInOutQuad,
+	easeInCubic,
+	easeOutCubic,
+	easeInOutCubic,
+	easeInQuart,
+	easeOutQuart,
+	easeInOutQuart,
+	easeInQuint,
+	easeOutQuint,
+	easeInOutQuint,
+	easeInExpo,
+	easeOutExpo,
+	easeInOutExpo,
+	easeInCirc,
+	easeOutCirc,
+	easeInOutCirc,
+	easeInBack,
+	easeOutBack,
+	easeInOutBack,
+	easeInElastic,
+	easeOutElastic,
+	easeInOutElastic,
+	easeInBounce,
+	easeOutBounce,
+	easeInOutBounce,
+	easeEnd,
 };
 
-float Easing(float time, float totalTime, EasingKind kind);
-
-typedef float(*EasingFunction)(float);
-
-EasingFunction easingFunctions[EaseEnd] =
+enum EasingOption
 {
-	&EaseInSine,
-	&EaseOutSine,
-	&EaseInOutSine,
-	&EaseInQuad,
-	&EaseOutQuad,
-	&EaseInOutQuad,
-	&EaseInCubic,
-	&EaseInOutCubic,
-	&EaseInQuart,
-	&EaseOutQuart,
-	&EaseInOutQuart,
-	&EaseInQuint,
-	&EaseOutQuint,
-	&EaseInOutQuint,
-	&EaseInExpo,
-	&EaseOutExpo,
-	&EaseInOutExpo,
-	&EaseInCirc,
-	&EaseOutCirc,
-	&EaseInOutCirc,
-	&EaseInBack,
-	&EaseOutBack,
-	&EaseInOutBack,
-	&EaseInElastic,
-	&EaseOutElastic,
-	&EaseInOutElastic,
-	&EaseInBounce,
-	&EaseOutBounce,
-	&EaseInOutBounce,
+	easeIn,		// 0
+	easeOut,	// 1
 };
 
 
+float EaseInSine(float t, EasingOption option);
+float EaseOutSine(float t, EasingOption option);
+float EaseInOutSine(float t, EasingOption option);
+float EaseInQuad(float t, EasingOption option);
+float EaseOutQuad(float t, EasingOption option);
+float EaseInOutQuad(float t, EasingOption option);
+float EaseInCubic(float t, EasingOption option);
+float EaseOutCubic(float t, EasingOption option);
+float EaseInOutCubic(float t, EasingOption option);
+float EaseInQuart(float t, EasingOption option);
+float EaseOutQuart(float t, EasingOption option);
+float EaseInOutQuart(float t, EasingOption option);
+float EaseInQuint(float t, EasingOption option);
+float EaseOutQuint(float t, EasingOption option);
+float EaseInOutQuint(float t, EasingOption option);
+float EaseInExpo(float t, EasingOption option);
+float EaseOutExpo(float t, EasingOption option);
+float EaseInOutExpo(float t, EasingOption option);
+float EaseInCirc(float t, EasingOption option);
+float EaseOutCirc(float t, EasingOption option);
+float EaseInOutCirc(float t, EasingOption option);
+float EaseInBack(float t, EasingOption option);
+float EaseOutBack(float t, EasingOption option);
+float EaseInOutBack(float t, EasingOption option);
+float EaseInElastic(float t, EasingOption option);
+float EaseOutElastic(float t, EasingOption option);
+float EaseInOutElastic(float t, EasingOption option);
+float EaseInBounce(float t, EasingOption option);
+float EaseOutBounce(float t, EasingOption option);
+float EaseInOutBounce(float t, EasingOption option);
 
-float EaseInSine(float t);
-float EaseOutSine(float t);
-float EaseInOutSine(float t);
-float EaseInQuad(float t);
-float EaseOutQuad(float t);
-float EaseInOutQuad(float t);
-float EaseInCubic(float t);
-float EaseOutCubic(float t);
-float EaseInOutCubic(float t);
-float EaseInQuart(float t);
-float EaseOutQuart(float t);
-float EaseInOutQuart(float t);
-float EaseInQuint(float t);
-float EaseOutQuint(float t);
-float EaseInOutQuint(float t);
-float EaseInExpo(float t);
-float EaseOutExpo(float t);
-float EaseInOutExpo(float t);
-float EaseInCirc(float t);
-float EaseOutCirc(float t);
-float EaseInOutCirc(float t);
-float EaseInBack(float t);
-float EaseOutBack(float t);
-float EaseInOutBack(float t);
-float EaseInElastic(float t);
-float EaseOutElastic(float t);
-float EaseInOutElastic(float t);
-float EaseInBounce(float t);
-float EaseOutBounce(float t);
-float EaseInOutBounce(float t);
+float Easing(float time, float totalTime, EasingKind kind, EasingOption option);
+
+typedef float(*EasingFunction)(float, EasingOption);
+
+extern EasingFunction easingFunctions[easeEnd];
+
+

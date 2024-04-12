@@ -4,9 +4,11 @@
 #include "Library/Input/InputManager.h"
 #include "Library/ImGui/Include/imgui.h"
 #include "Library/Timer.h"
+#include "Library/Easing.h"
 
 void SceneTest::Initialize()
 {
+	sprite = std::make_unique<Sprite>(L"Data/Texture/Title.png");
 }
 
 void SceneTest::Finalize()
@@ -21,11 +23,16 @@ void SceneTest::Update()
 	{
 		SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
 	}
+
+	timer += Timer::Instance().DeltaTime();
+	if (timer > time) timer -= time;
+
+	nowPos = Easing(timer, time, easeOutBounce, easeIn) * (endPos - startPos) + startPos;
 }
 
 void SceneTest::Render()
 {
-	
+	sprite->Render(nowPos, 0, 640, 360, 1, 1, 1, 1, 0);
 
 	// --- デバッグ描画 ---
 	DrawDebugGUI();
