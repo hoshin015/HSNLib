@@ -81,6 +81,10 @@ void SceneTitle::DrawDebugGUI()
 				{
 					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneContextBase));
 				}
+				if (ImGui::MenuItem("Test"))
+				{
+					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTest));
+				}
 				ImGui::EndMenu();
 			}
 			ImGui::EndMenu();

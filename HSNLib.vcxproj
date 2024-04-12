@@ -236,6 +236,7 @@
     <ClCompile Include="Library\2D\GraphicsSpriteBatch.cpp" />
     <ClCompile Include="Library\3D\SkinnedMesh.cpp" />
     <ClCompile Include="Library\3D\SpherePrimitive.cpp" />
+    <ClCompile Include="SceneTest.cpp" />
     <ClCompile Include="SceneTitle.cpp" />
     <ClCompile Include="Library\3D\Sprite3D.cpp" />
     <ClCompile Include="Library\3D\SkyMap.cpp" />
@@ -318,6 +319,7 @@
     <ClInclude Include="Library\2D\GraphicsSpriteBatch.h" />
     <ClInclude Include="Library\3D\SkinnedMesh.h" />
     <ClInclude Include="Library\3D\SpherePrimitive.h" />
+    <ClInclude Include="SceneTest.h" />
     <ClInclude Include="SceneTitle.h" />
     <ClInclude Include="Library\3D\Sprite3D.h" />
     <ClInclude Include="Library\3D\SkyMap.h" />

@@ -5,6 +5,7 @@
 #include "SceneLoading.h"
 #include "SceneAnimation.h"
 #include "SceneContextBase.h"
+#include "SceneTest.h"
 #include "Library/MemoryLeak.h"
 
 // シーンマネージャー
