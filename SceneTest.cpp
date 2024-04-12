@@ -27,7 +27,7 @@ void SceneTest::Update()
 	timer += Timer::Instance().DeltaTime();
 	if (timer > time) timer -= time;
 
-	nowPos = Easing(timer, time, easeOutBounce, easeIn) * (endPos - startPos) + startPos;
+	nowPos = Easing(timer, time, easeBounce, easeOut) * (endPos - startPos) + startPos;
 }
 
 void SceneTest::Render()
