@@ -303,6 +303,7 @@ void Character::UpdateHorizontalMove()
 
 			// 壁の法線
 			DirectX::XMVECTOR Normal = DirectX::XMLoadFloat3(&hit.normal);
+			DirectX::XMVectorScale(Normal, 1.1f);
 
 			// 入射ベクトルを法線に射影
 			DirectX::XMVECTOR Dot = DirectX::XMVector3Dot(DirectX::XMVectorNegate(Vec), Normal);
@@ -322,99 +323,72 @@ void Character::UpdateHorizontalMove()
 			}
 			else
 			{
-				position.x = hit2.position.x;
-				position.z = hit2.position.z;
+				// 壁までのベクトル
+				DirectX::XMVECTOR Start2 = DirectX::XMLoadFloat3(&hit.position);
+				DirectX::XMVECTOR End2 = DirectX::XMLoadFloat3(&collectPosition);
+				DirectX::XMVECTOR Vec2 = DirectX::XMVectorSubtract(End2, Start2);
+
+				// 壁の法線
+				DirectX::XMVECTOR Normal2 = DirectX::XMLoadFloat3(&hit2.normal);
+				DirectX::XMVectorScale(Normal2, 1.1f);
+
+				// 入射ベクトルを法線に射影
+				DirectX::XMVECTOR Dot2 = DirectX::XMVector3Dot(DirectX::XMVectorNegate(Vec2), Normal2);
+
+				// 補正位置の計算
+				DirectX::XMVECTOR CollectPosition2 = DirectX::XMVectorMultiplyAdd(Normal2, Dot2, End2);
+				DirectX::XMFLOAT3 collectPosition2;
+				DirectX::XMStoreFloat3(&collectPosition2, CollectPosition2);
+
+				// 壁ずり方向へレイキャスト
+				HitResult hit3;
+				if (!StageManager::Instance().RayCast(hit2.position, collectPosition2, hit3))
+				{
+					// 壁ずり方向で壁にあたらなかったら補正位置に移動
+					position.x = collectPosition2.x;
+					position.z = collectPosition2.z;
+				}
+				else
+				{
+					// 壁までのベクトル
+					DirectX::XMVECTOR Start3 = DirectX::XMLoadFloat3(&hit2.position);
+					DirectX::XMVECTOR End3 = DirectX::XMLoadFloat3(&collectPosition2);
+					DirectX::XMVECTOR Vec3 = DirectX::XMVectorSubtract(End3, Start3);
+
+					// 壁の法線
+					DirectX::XMVECTOR Normal3 = DirectX::XMLoadFloat3(&hit3.normal);
+					DirectX::XMVectorScale(Normal3, 1.1f);
+
+					// 入射ベクトルを法線に射影
+					DirectX::XMVECTOR Dot3 = DirectX::XMVector3Dot(DirectX::XMVectorNegate(Vec3), Normal3);
+
+					// 補正位置の計算
+					DirectX::XMVECTOR CollectPosition3 = DirectX::XMVectorMultiplyAdd(Normal3, Dot3, End3);
+					DirectX::XMFLOAT3 collectPosition3;
+					DirectX::XMStoreFloat3(&collectPosition3, CollectPosition3);
+
+					// 壁ずり方向へレイキャスト
+					HitResult hit4;
+					if (!StageManager::Instance().RayCast(hit3.position, collectPosition3, hit4))
+					{
+						// 壁ずり方向で壁にあたらなかったら補正位置に移動
+						position.x = collectPosition3.x;
+						position.z = collectPosition3.z;
+					}
+					else
+					{
+						position.x = hit4.position.x;
+						position.z = hit4.position.z;
+					}
+				}
+
+				//position.x = hit2.position.x;
+				//position.z = hit2.position.z;
 			}
 		}
 		// 壁に衝突しなかった場合
 		else
 		{
-#if 0
-			// xを少しずらしてチェック
-			start = { position.x - mx, position.y + stepOffset, position.z };
-			end = { position.x + mx - mx, position.y + stepOffset, position.z + mz };
-			// レイキャストによる壁判定
-			HitResult hit;
-			if (Stage::Instance().RayCast(start, end, hit))
-			{
-				// 壁までのベクトル
-				DirectX::XMVECTOR Start = DirectX::XMLoadFloat3(&start);
-				DirectX::XMVECTOR End = DirectX::XMLoadFloat3(&end);
-				DirectX::XMVECTOR Vec = DirectX::XMVectorSubtract(End, Start);
-
-				// 壁の法線
-				DirectX::XMVECTOR Normal = DirectX::XMLoadFloat3(&hit.normal);
-
-				// 入射ベクトルを法線に射影
-				DirectX::XMVECTOR Dot = DirectX::XMVector3Dot(DirectX::XMVectorNegate(Vec), Normal);
-
-				// 補正位置の計算
-				DirectX::XMVECTOR CollectPosition = DirectX::XMVectorMultiplyAdd(Normal, Dot, End);
-				DirectX::XMFLOAT3 collectPosition;
-				DirectX::XMStoreFloat3(&collectPosition, CollectPosition);
-
-				// 壁ずり方向へレイキャスト
-				HitResult hit2;
-				if (!Stage::Instance().RayCast(hit.position, collectPosition, hit2))
-				{
-					// 壁ずり方向で壁にあたらなかったら補正位置に移動
-					position.x = collectPosition.x;
-					position.z = collectPosition.z;
-				}
-				else
-				{
-					position.x = hit2.position.x;
-					position.z = hit2.position.z;
-				}
-			}
-			// 
-			else
-			{
-				// xを少しずらしてチェック
-				start = { position.x, position.y + stepOffset, position.z - mz };
-				end = { position.x + mx, position.y + stepOffset, position.z + mz - mz };
-				// レイキャストによる壁判定
-				HitResult hit;
-				if (Stage::Instance().RayCast(start, end, hit))
-				{
-					// 壁までのベクトル
-					DirectX::XMVECTOR Start = DirectX::XMLoadFloat3(&start);
-					DirectX::XMVECTOR End = DirectX::XMLoadFloat3(&end);
-					DirectX::XMVECTOR Vec = DirectX::XMVectorSubtract(End, Start);
-
-					// 壁の法線
-					DirectX::XMVECTOR Normal = DirectX::XMLoadFloat3(&hit.normal);
-
-					// 入射ベクトルを法線に射影
-					DirectX::XMVECTOR Dot = DirectX::XMVector3Dot(DirectX::XMVectorNegate(Vec), Normal);
-
-					// 補正位置の計算
-					DirectX::XMVECTOR CollectPosition = DirectX::XMVectorMultiplyAdd(Normal, Dot, End);
-					DirectX::XMFLOAT3 collectPosition;
-					DirectX::XMStoreFloat3(&collectPosition, CollectPosition);
-
-					// 壁ずり方向へレイキャスト
-					HitResult hit2;
-					if (!Stage::Instance().RayCast(hit.position, collectPosition, hit2))
-					{
-						// 壁ずり方向で壁にあたらなかったら補正位置に移動
-						position.x = collectPosition.x;
-						position.z = collectPosition.z;
-					}
-					else
-					{
-						position.x = hit2.position.x;
-						position.z = hit2.position.z;
-					}
-				}
-				else
-				{
-					// 移動
-					position.x += mx;
-					position.z += mz;
-				}
-			}
-#endif
 			// 移動
 			position.x += mx;
 			position.z += mz;
