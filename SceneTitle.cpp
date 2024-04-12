@@ -52,9 +52,6 @@ void SceneTitle::Render()
 
 	Text::Instance().drawText(FONTNO::meirio, FONTSIZE::SIZE22, "テスト", { 100,200 });
 
-
-
-
 	// --- デバッグ描画 ---
 	DrawDebugGUI();
 }
