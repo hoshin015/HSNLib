@@ -7,9 +7,15 @@
 #include "StageManager.h"
 #include "StageContext.h"
 #include "LightManager.h"
+#include "SpinningTopEnemyManager.h"
+#include "StEnemy01.h"
 
 void SceneSpinningTop::Initialize()
 {
+	StEnemy01* slime = new_ StEnemy01();
+	slime->SetPosition({ 0, 0, 0 });
+	SpinningTopEnemyManager::Instance().Register(slime);
+
 	// ステージ初期化
 	StageManager& stageManager = StageManager::Instance();
 	StageContext* stageMain = new_ StageContext();
@@ -37,6 +43,8 @@ void SceneSpinningTop::Finalize()
 	StageManager::Instance().Clear();
 
 	LightManager::Instance().Clear();
+
+	SpinningTopEnemyManager::Instance().Clear();
 }
 
 void SceneSpinningTop::Update()
@@ -53,6 +61,8 @@ void SceneSpinningTop::Update()
 	}
 
 	StageManager::Instance().Update();
+
+	SpinningTopEnemyManager::Instance().Update();
 }
 
 void SceneSpinningTop::Render()
@@ -93,6 +103,8 @@ void SceneSpinningTop::Render()
 
 		StageManager::Instance().Render();
 
+		SpinningTopEnemyManager::Instance().Render();
+
 		gfx.shadowBuffer->DeActivate();
 	}
 
@@ -123,6 +135,8 @@ void SceneSpinningTop::Render()
 	gfx.deviceContext->PSSetConstantBuffers(3, 1, gfx.constantBuffers[5].GetAddressOf());
 
 	StageManager::Instance().Render();
+
+	SpinningTopEnemyManager::Instance().Render();
 
 	// --- デバッグ描画 ---
 	DrawDebugGUI();

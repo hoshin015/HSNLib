@@ -171,6 +171,8 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BehaviorTree.cpp" />
+    <ClCompile Include="BehaviorTreeNode.cpp" />
     <ClCompile Include="Library\Easing.cpp" />
     <ClCompile Include="Library\Graphics\BloomBuffer.cpp" />
     <ClCompile Include="Character.cpp" />
@@ -244,13 +246,19 @@
     <ClCompile Include="Library\3D\SkyMap.cpp" />
     <ClCompile Include="Library\Graphics\ShadowBuffer.cpp" />
     <ClCompile Include="SpinningTopBase.cpp" />
+    <ClCompile Include="SpinningTopEnemy.cpp" />
+    <ClCompile Include="SpinningTopEnemyManager.cpp" />
     <ClCompile Include="StageBox.cpp" />
     <ClCompile Include="StageContext.cpp" />
     <ClCompile Include="StageMain.cpp" />
     <ClCompile Include="StageManager.cpp" />
     <ClCompile Include="Library\2D\UVScrollSprite.cpp" />
+    <ClCompile Include="StEnemy01.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BehaviorTree.h" />
+    <ClInclude Include="BehaviorTreeIF.h" />
+    <ClInclude Include="BehaviorTreeNode.h" />
     <ClInclude Include="Library\Easing.h" />
     <ClInclude Include="Library\Graphics\BloomBuffer.h" />
     <ClInclude Include="Character.h" />
@@ -330,12 +338,15 @@
     <ClInclude Include="Library\3D\SkyMap.h" />
     <ClInclude Include="Library\Graphics\ShadowBuffer.h" />
     <ClInclude Include="SpinningTopBase.h" />
+    <ClInclude Include="SpinningTopEnemy.h" />
+    <ClInclude Include="SpinningTopEnemyManager.h" />
     <ClInclude Include="Stage.h" />
     <ClInclude Include="StageBox.h" />
     <ClInclude Include="StageContext.h" />
     <ClInclude Include="StageMain.h" />
     <ClInclude Include="StageManager.h" />
     <ClInclude Include="Library\2D\UVScrollSprite.h" />
+    <ClInclude Include="StEnemy01.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Library\Icon\Icon.rc" />

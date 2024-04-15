@@ -61,6 +61,12 @@
     <Filter Include="ヘッダー ファイル\Scene">
       <UniqueIdentifier>{ea641868-10c0-4df6-9a5b-5ebed1e49e43}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\BehaviorTree">
+      <UniqueIdentifier>{fb6b2a40-cbfd-4eb0-aa9e-2d043e05cdc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\BehaviorTree">
+      <UniqueIdentifier>{d7cc401f-fcd2-4e19-8acb-b3c0cc6db4d7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Library\Graphics\Graphics.cpp">
@@ -296,6 +302,21 @@
     </ClCompile>
     <ClCompile Include="SceneSpinningTop.cpp">
       <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="BehaviorTree.cpp">
+      <Filter>ソース ファイル\BehaviorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="BehaviorTreeNode.cpp">
+      <Filter>ソース ファイル\BehaviorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="SpinningTopEnemy.cpp">
+      <Filter>ソース ファイル\SpinningTopBase</Filter>
+    </ClCompile>
+    <ClCompile Include="StEnemy01.cpp">
+      <Filter>ソース ファイル\SpinningTopBase</Filter>
+    </ClCompile>
+    <ClCompile Include="SpinningTopEnemyManager.cpp">
+      <Filter>ソース ファイル\SpinningTopBase</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -553,6 +574,24 @@
     </ClInclude>
     <ClInclude Include="SceneTitle.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="BehaviorTreeIF.h">
+      <Filter>ヘッダー ファイル\BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="BehaviorTree.h">
+      <Filter>ヘッダー ファイル\BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="BehaviorTreeNode.h">
+      <Filter>ヘッダー ファイル\BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="SpinningTopEnemy.h">
+      <Filter>ヘッダー ファイル\SpinningTopBase</Filter>
+    </ClInclude>
+    <ClInclude Include="StEnemy01.h">
+      <Filter>ヘッダー ファイル\SpinningTopBase</Filter>
+    </ClInclude>
+    <ClInclude Include="SpinningTopEnemyManager.h">
+      <Filter>ヘッダー ファイル\SpinningTopBase</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
