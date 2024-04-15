@@ -84,6 +84,10 @@ void SceneTitle::DrawDebugGUI()
 				{
 					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTest));
 				}
+				if (ImGui::MenuItem("SpinningTop"))
+				{
+					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneSpinningTop));
+				}
 				ImGui::EndMenu();
 			}
 			ImGui::EndMenu();

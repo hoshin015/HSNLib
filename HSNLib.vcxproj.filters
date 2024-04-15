@@ -49,6 +49,18 @@
     <Filter Include="HSNLib\Audio">
       <UniqueIdentifier>{0ce5ed7c-a0a5-4627-9445-11c20f275995}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\SpinningTopBase">
+      <UniqueIdentifier>{15369455-31b9-4419-98fc-abdb0c894628}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\SpinningTopBase">
+      <UniqueIdentifier>{9b5427bb-f56c-4130-a4e0-27f7497fba83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Scene">
+      <UniqueIdentifier>{6b0b97c4-41d8-43a9-ac94-137d96cc75c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Scene">
+      <UniqueIdentifier>{ea641868-10c0-4df6-9a5b-5ebed1e49e43}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Library\Graphics\Graphics.cpp">
@@ -89,12 +101,6 @@
     </ClCompile>
     <ClCompile Include="Library\WinMain.cpp">
       <Filter>HSNLib</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneGame.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneManager.cpp">
-      <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Library\2D\Primitive2D.cpp">
       <Filter>HSNLib\2D</Filter>
@@ -183,16 +189,7 @@
     <ClCompile Include="Library\Effekseer\EffectManager.cpp">
       <Filter>HSNLib\Effekseer</Filter>
     </ClCompile>
-    <ClCompile Include="SceneTitle.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneLoading.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="StageMain.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneAnimation.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Library\Audio\AudioManager.cpp">
@@ -221,9 +218,6 @@
     </ClCompile>
     <ClCompile Include="Library\3D\ResourceManager.cpp">
       <Filter>HSNLib\3D</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneContextBase.cpp">
-      <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Library\3D\LineRenderer.cpp">
       <Filter>HSNLib\3D</Filter>
@@ -273,11 +267,35 @@
     <ClCompile Include="Library\Graphics\ShadowBuffer.cpp">
       <Filter>HSNLib\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="SceneTest.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Library\Easing.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SpinningTopBase.cpp">
+      <Filter>ソース ファイル\SpinningTopBase</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneAnimation.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneContextBase.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneGame.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneLoading.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneTest.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneTitle.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneSpinningTop.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -325,15 +343,6 @@
     </ClInclude>
     <ClInclude Include="Library\Framework.h">
       <Filter>HSNLib</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneGame.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneManager.h">
-      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Library\2D\Primitive2D.h">
       <Filter>HSNLib\2D</Filter>
@@ -428,16 +437,7 @@
     <ClInclude Include="Library\MemoryLeak.h">
       <Filter>HSNLib\Misc</Filter>
     </ClInclude>
-    <ClInclude Include="SceneTitle.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneLoading.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="StageMain.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneAnimation.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Library\Audio\AudioManager.h">
@@ -469,9 +469,6 @@
     </ClInclude>
     <ClInclude Include="Library\3D\ResourceManager.h">
       <Filter>HSNLib\3D</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneContextBase.h">
-      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Library\3D\LineRenderer.h">
       <Filter>HSNLib\3D</Filter>
@@ -524,11 +521,38 @@
     <ClInclude Include="Library\Graphics\ShadowBuffer.h">
       <Filter>HSNLib\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="SceneTest.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Library\Easing.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SpinningTopBase.h">
+      <Filter>ヘッダー ファイル\SpinningTopBase</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneAnimation.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneContextBase.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneGame.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneLoading.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneSpinningTop.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneTest.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneTitle.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
