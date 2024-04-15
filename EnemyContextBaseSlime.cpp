@@ -83,9 +83,9 @@ void EnemyContextBaseSlime::DrawDebugGui()
 {
 	ImGui::Begin("ContextBaseSlime");
 	{
-		if (ImGui::Button(u8"追跡")) TransitionMoveState();
+		if (ImGui::Button("tuiseki")) TransitionMoveState();
 		ImGui::SameLine();
-		if (ImGui::Button(u8"停止")) TransitionIdleState();
+		if (ImGui::Button("Stop")) TransitionIdleState();
 
 		// ウィンドウ内で描画を開始
 		ImGui::BeginChild("Direction", ImVec2(300, 300), false);

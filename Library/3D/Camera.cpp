@@ -300,7 +300,7 @@ void Camera::DrawDebugGui()
 		// --- Rasterizer ---
 		{
 			const char* cameraTypeName[] = { "TARGET_PLAYER", "FREE", "ANIMATION_EDITOR" };
-			if (ImGui::BeginCombo(u8"カメラタイプ", cameraTypeName[cameraType]))
+			if (ImGui::BeginCombo("CameraType", cameraTypeName[cameraType]))
 			{
 				for (int i = 0; i < IM_ARRAYSIZE(cameraTypeName); i++)
 				{

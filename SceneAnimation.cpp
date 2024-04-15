@@ -476,8 +476,8 @@ void SceneAnimation::DrawDebugGUI()
 	//	}
 	//	ImGui::EndMainMenuBar();
 	//}
-	ImGui::Begin(u8"タイトル遷移用");
-	if (ImGui::Button(u8"タイトル"))
+	ImGui::Begin("go title");
+	if (ImGui::Button("title"))
 	{
 		SceneManager::Instance().ChangeScene(new SceneTitle);
 	}
@@ -491,10 +491,10 @@ void SceneAnimation::DrawDebugGUI()
 	//----------------------------------------------------------
 	//  ロード
 	//----------------------------------------------------------
-	ImGui::Begin(u8"ロード");
+	ImGui::Begin("load");
 
 	// --- FbxPath ---
-	if (ImGui::Button(u8"FbxPath 設定"))
+	if (ImGui::Button("FbxPath Setting"))
 	{
 		OPENFILENAME ofn;       // ファイル選択用の構造体
 		TCHAR szFile[260] = { 0 };  // ファイルパスを格納するバッファ
@@ -523,7 +523,7 @@ void SceneAnimation::DrawDebugGUI()
 	ImGui::InputText("FbxPath", (char*)fbxPath.c_str(), sizeof(fbxPath));
 
 	// --- model 生成 ---
-	if (ImGui::Button(u8"モデル読み込み"))
+	if (ImGui::Button("Load Model"))
 	{
 		ModelClear();
 		model = new SkinnedMesh(fbxPath.c_str(), triangulate);
@@ -567,7 +567,7 @@ void SceneAnimation::DrawDebugGUI()
 		}
 	}
 
-	if (ImGui::Button(u8".model 再生成"))
+	if (ImGui::Button(".model Create"))
 	{
 		std::string modelPathStr = model->fbxPath;
 		std::filesystem::path modelPath(modelPathStr);
@@ -585,9 +585,9 @@ void SceneAnimation::DrawDebugGUI()
 		}
 	}
 	ImGui::SameLine();
-	ImGui::Checkbox(u8"三角形化", &triangulate);
+	ImGui::Checkbox("Triangulate", &triangulate);
 
-	if (ImGui::Button(u8"アニメーション追加"))
+	if (ImGui::Button("Add Animation"))
 	{
 		if (model)
 		{
@@ -599,12 +599,12 @@ void SceneAnimation::DrawDebugGUI()
 	//----------------------------------------------------------
 	// モデル
 	//----------------------------------------------------------
-	ImGui::Begin(u8"モデル");
+	ImGui::Begin("Model");
 
 	if (model)
 	{
 		const char* coordinateSystemTransformName[] = { "RHS Y - UP", "LHS Y - UP", "RHS Z - UP", "LHS Z - UP"};
-		if (ImGui::BeginCombo(u8"軸方向", coordinateSystemTransformName[model->coordinateSystemIndex]))
+		if (ImGui::BeginCombo("Axis", coordinateSystemTransformName[model->coordinateSystemIndex]))
 		{
 			for (int i = 0; i < IM_ARRAYSIZE(coordinateSystemTransformName); i++)
 			{
@@ -622,8 +622,8 @@ void SceneAnimation::DrawDebugGUI()
 			ImGui::EndCombo();
 		}
 
-		const char* scaleFactorName[] = { u8"センチメートル", u8"メートル" };
-		if (ImGui::BeginCombo(u8"モデル単位", scaleFactorName[model->fbxUnit]))
+		const char* scaleFactorName[] = { "cm", "m" };
+		if (ImGui::BeginCombo("Model Unit", scaleFactorName[model->fbxUnit]))
 		{
 			for (int i = 0; i < IM_ARRAYSIZE(scaleFactorName); i++)
 			{
@@ -661,11 +661,11 @@ void SceneAnimation::DrawDebugGUI()
 	//----------------------------------------------------------
 	// アニメーション
 	//----------------------------------------------------------
-	ImGui::Begin(u8"アニメーション");
+	ImGui::Begin("Animation");
 
 	if (model)
 	{
-		if (ImGui::Button(u8".anim書き出し"))
+		if (ImGui::Button(".anim Output"))
 		{
 			// --- アニメーションディレクトリを一度削除してから生成 ---
 			std::string animPath = model->parentPath + "/Anim/";
@@ -740,14 +740,14 @@ void SceneAnimation::DrawDebugGUI()
 	//----------------------------------------------------------
 	// ボーン
 	//----------------------------------------------------------
-	ImGui::Begin(u8"ボーン");
+	ImGui::Begin("Bone");
 
 	if (model)
 	{
 		if (model)
 		{
 			static float boneRadius = 0.1f;
-			ImGui::DragFloat(u8"ボーン半径", &boneRadius, 0.01f);
+			ImGui::DragFloat("Bone Radius", &boneRadius, 0.01f);
 
 
 			// アニメーションを持っている場合
@@ -786,11 +786,11 @@ void SceneAnimation::DrawDebugGUI()
 	//----------------------------------------------------------
 	// ボーン
 	//----------------------------------------------------------
-	ImGui::Begin(u8"ボーン当たり判定");
+	ImGui::Begin("Bone Collision");
 	{
 		if (model && model->animationClips.size() > 0)
 		{
-			if (ImGui::Button(u8"書き出し"))
+			if (ImGui::Button("BoneCollision Output"))
 			{
 				std::filesystem::path newFilePath(model->fbxPath);
 				newFilePath.replace_extension(".model");
@@ -809,10 +809,10 @@ void SceneAnimation::DrawDebugGUI()
 			static std::string boneName = "";
 			static float boneRadius = 1.0f;
 
-			ImGui::InputText(u8"名前", (char*)boneName.c_str(), sizeof(boneName));
-			ImGui::DragFloat(u8"半径", &boneRadius);
+			ImGui::InputText("name", (char*)boneName.c_str(), sizeof(boneName));
+			ImGui::DragFloat("radius", &boneRadius);
 
-			if (ImGui::Button(u8"ボーン当たり判定追加"))
+			if (ImGui::Button("Add BoneCollision"))
 			{
 				SkeletonSphere skeletonSphere;
 				skeletonSphere.name = boneName.c_str();
@@ -908,7 +908,7 @@ void SceneAnimation::DrawDebugGUI()
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
 		// --- DockSpaceの作成 ---
-		ImGui::Begin(u8"インスペクター", NULL, windowFlags);
+		ImGui::Begin("Inspector", NULL, windowFlags);
 		ImGui::PopStyleVar(3);	// 周囲スタイルの適用?
 
 		ImGuiID dockSpaceID = ImGui::GetID("DockInspector");
@@ -921,16 +921,16 @@ void SceneAnimation::DrawDebugGUI()
 	// アニメーション名
 	//----------------------------------------------------------
 	ImGui::SetNextWindowBgAlpha(0.0f);					// 背景アルファの設定
-	ImGui::Begin(u8"アニメーション名前");
+	ImGui::Begin("AnimationName");
 	ImGui::PushItemWidth(150);
 	if (model && model->animationClips.size() > 0)
 	{
-		ImGui::InputText(u8"名前", (char*)model->animationClips.at(animationClipIndex).name.c_str(), sizeof(model->animationClips.at(animationClipIndex).name));
+		ImGui::InputText("name", (char*)model->animationClips.at(animationClipIndex).name.c_str(), sizeof(model->animationClips.at(animationClipIndex).name));
 	}
 	else
 	{
 		std::string s;
-		ImGui::InputText(u8"名前", (char*)s.c_str(), sizeof(s));
+		ImGui::InputText("name", (char*)s.c_str(), sizeof(s));
 	}
 	ImGui::End();
 
@@ -938,14 +938,14 @@ void SceneAnimation::DrawDebugGUI()
 	// アニメーション名変更
 	//----------------------------------------------------------
 	ImGui::SetNextWindowBgAlpha(0.0f);					// 背景アルファの設定
-	ImGui::Begin(u8"アニメーション変更");
+	ImGui::Begin("Change Animation");
 	{
 		if (model)
 		{
 			static std::string afterAnimationName = "";
-			ImGui::InputText(u8"変更後名前", (char*)afterAnimationName.c_str(), sizeof(afterAnimationName));
+			ImGui::InputText("after name", (char*)afterAnimationName.c_str(), sizeof(afterAnimationName));
 
-			if (ImGui::Button(u8"名前変更"))
+			if (ImGui::Button("Change name"))
 			{
 				// 元animファイルの削除
 				std::string deleteFilename = model->parentPath + "/Anim/" + model->animationClips.at(animationClipIndex).name + ".anim";
@@ -965,7 +965,7 @@ void SceneAnimation::DrawDebugGUI()
 				serialization(model->animationClips.at(animationClipIndex));
 			}
 			ImGui::SameLine();
-			if (ImGui::Button(u8"アニメーション削除"))
+			if (ImGui::Button("delete animtion"))
 			{
 				// 削除
 				std::string deleteFilename = model->parentPath + "/Anim/" + model->animationClips.at(animationClipIndex).name + ".anim";
@@ -993,13 +993,13 @@ void SceneAnimation::DrawDebugGUI()
 	//----------------------------------------------------------
 	ImGui::SetNextWindowBgAlpha(0.0f);					// 背景アルファの設定
 	static int selectSequencerItemTypeName;
-	ImGui::Begin(u8"新規タイムラインアイテム");
+	ImGui::Begin("new tileline item");
 	{
 		ImGui::PushItemWidth(150);
-		ImGui::InputText(u8"名前", (char*)newSequenceName.c_str(), sizeof(newSequenceName));
+		ImGui::InputText("name", (char*)newSequenceName.c_str(), sizeof(newSequenceName));
 		{
 			ImGui::PushItemWidth(150);
-			if (ImGui::BeginCombo(u8"タイプ", SequencerItemTypeNames[selectSequencerItemTypeName]))
+			if (ImGui::BeginCombo("type", SequencerItemTypeNames[selectSequencerItemTypeName]))
 			{
 				for (int i = 0; i < IM_ARRAYSIZE(SequencerItemTypeNames); i++)
 				{
@@ -1018,7 +1018,7 @@ void SceneAnimation::DrawDebugGUI()
 		}
 		ImGui::PopItemWidth();
 
-		if (ImGui::Button(u8"作成"))
+		if (ImGui::Button("create"))
 		{
 			if (model)
 			{
@@ -1072,7 +1072,7 @@ void SceneAnimation::DrawDebugGUI()
 	// 選択中タイムラインアイテム
 	//----------------------------------------------------------
 	ImGui::SetNextWindowBgAlpha(0.0f);					// 背景アルファの設定
-	ImGui::Begin(u8"選択中タイムラインアイテム");
+	ImGui::Begin("now select timeLineItem");
 	{
 		if (model)
 		{
@@ -1081,7 +1081,7 @@ void SceneAnimation::DrawDebugGUI()
 				bool isSkip = false;
 
 				// 複製
-				if (ImGui::Button(u8"複製"))
+				if (ImGui::Button("Deplicate"))
 				{
 					if (mySequence.myItems.at(mySequence.selectItemNum).mType == static_cast<int>(SequencerItemType::Sphere))
 					{
@@ -1106,7 +1106,7 @@ void SceneAnimation::DrawDebugGUI()
 
 				// 削除
 				ImGui::SameLine();
-				if (ImGui::Button(u8"削除"))
+				if (ImGui::Button("Delete"))
 				{
 					isSkip = true;
 
@@ -1149,10 +1149,10 @@ void SceneAnimation::DrawDebugGUI()
 				// 削除処理をしていなければ表示
 				if (!isSkip)
 				{
-					ImGui::InputText(u8"名前", (char*)selectName.c_str(), sizeof(selectName));
+					ImGui::InputText("name", (char*)selectName.c_str(), sizeof(selectName));
 
-					ImGui::DragInt(u8"開始フレーム", &selectStartFrame);
-					ImGui::DragInt(u8"終了フレーム", &selectEndFrame);
+					ImGui::DragInt("start frame", &selectStartFrame);
+					ImGui::DragInt("end frame", &selectEndFrame);
 
 
 					// --- Sphere ---
@@ -1170,10 +1170,10 @@ void SceneAnimation::DrawDebugGUI()
 						DirectX::XMFLOAT4& color = model->animationClips.at(animationClipIndex).spheres.at(index).color;
 						std::string bindBoneName = model->animationClips.at(animationClipIndex).spheres.at(index).bindBoneName;
 
-						ImGui::DragFloat(u8"半径", &radius, 0.01f);
-						ImGui::DragFloat3(u8"POSITION", &position.x, 0.01f);
-						ImGui::ColorEdit4(u8"COLOR", &color.x);
-						ImGui::InputText(u8"BONE名前", (char*)bindBoneName.c_str(), sizeof(bindBoneName));
+						ImGui::DragFloat("radius", &radius, 0.01f);
+						ImGui::DragFloat3("POSITION", &position.x, 0.01f);
+						ImGui::ColorEdit4("COLOR", &color.x);
+						ImGui::InputText("BONE name", (char*)bindBoneName.c_str(), sizeof(bindBoneName));
 
 						model->animationClips.at(animationClipIndex).spheres.at(index).bindBoneName = bindBoneName.c_str();
 					}
@@ -1196,7 +1196,7 @@ void SceneAnimation::DrawDebugGUI()
 						std::string effectTypeName[] = { "Hit1", "Move", "PowerUp", "Sleep", "Test1"};
 						int effectTypeCount = static_cast<int>(EffectType::LAST);
 
-						if (ImGui::BeginCombo(u8"エフェクトタイプ", effectTypeName[static_cast<int>(effecType)].c_str()))
+						if (ImGui::BeginCombo("Effect Type", effectTypeName[static_cast<int>(effecType)].c_str()))
 						{
 							for (int i = 0; i < IM_ARRAYSIZE(effectTypeName); i++)
 							{
@@ -1213,9 +1213,9 @@ void SceneAnimation::DrawDebugGUI()
 							ImGui::EndCombo();
 						}
 
-						ImGui::DragFloat(u8"スケール", &radius, 0.01f);
-						ImGui::DragFloat3(u8"POSITION", &position.x, 0.01f);
-						ImGui::DragFloat3(u8"ANGLE", &angle.x, 0.01f);
+						ImGui::DragFloat("Scale", &radius, 0.01f);
+						ImGui::DragFloat3("POSITION", &position.x, 0.01f);
+						ImGui::DragFloat3("ANGLE", &angle.x, 0.01f);
 					}
 
 					// --- SE ---
@@ -1233,7 +1233,7 @@ void SceneAnimation::DrawDebugGUI()
 
 						std::string musicTypeName[] = { "TEST_MUISC", "WEAPON" };
 
-						if (ImGui::BeginCombo(u8"効果音タイプ", musicTypeName[static_cast<int>(musicType)].c_str()))
+						if (ImGui::BeginCombo("SE TYPE", musicTypeName[static_cast<int>(musicType)].c_str()))
 						{
 							for (int i = 0; i < IM_ARRAYSIZE(musicTypeName); i++)
 							{
@@ -1296,7 +1296,7 @@ void SceneAnimation::DebugTimeLine()
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
 		// --- DockSpaceの作成 ---
-		ImGui::Begin(u8"タイムライン", NULL, windowFlags);
+		ImGui::Begin("TimeLine", NULL, windowFlags);
 		ImGui::PopStyleVar(3);	// 周囲スタイルの適用?
 
 		ImGuiID dockSpaceID = ImGui::GetID("DockTimeline");
@@ -1308,9 +1308,9 @@ void SceneAnimation::DebugTimeLine()
 	//----------------------------------------------------------
 	// アニメーション設定
 	//----------------------------------------------------------
-	ImGui::Begin(u8"アニメーション設定");
+	ImGui::Begin("Animation Setting");
 	{
-		if (ImGui::Button(u8"再生")) {
+		if (ImGui::Button("Play")) {
 			isPlay = true;
 			if (currentFrameInt >= mySequence.mFrameMax)
 			{
@@ -1319,19 +1319,19 @@ void SceneAnimation::DebugTimeLine()
 			}
 		}
 		ImGui::SameLine();
-		if (ImGui::Button(u8"停止")) {
+		if (ImGui::Button("Stop")) {
 			isPlay = false;
 		}
 		ImGui::SameLine();
-		ImGui::Checkbox(u8"ループ", &isLoop);
+		ImGui::Checkbox("Loop", &isLoop);
 		
 		
 		ImGui::PushItemWidth(130);
-		ImGui::DragFloat(u8"タイムスケール", &timeScale, 0.01f, 0.0f, 3.0f);
+		ImGui::DragFloat("Time Scale", &timeScale, 0.01f, 0.0f, 3.0f);
 
-		ImGui::InputInt(u8"フレーム", &currentFrameInt);
-		ImGui::InputInt(u8"開始フレーム", &mySequence.mFrameMin);
-		ImGui::InputInt(u8"終了フレーム", &mySequence.mFrameMax);
+		ImGui::InputInt("Frame", &currentFrameInt);
+		ImGui::InputInt("StartFrame", &mySequence.mFrameMin);
+		ImGui::InputInt("EndFrame", &mySequence.mFrameMax);
 		ImGui::PopItemWidth();
 	}
 	ImGui::End();
@@ -1339,7 +1339,7 @@ void SceneAnimation::DebugTimeLine()
 	//----------------------------------------------------------
 	// アニメーションタイムライン
 	//----------------------------------------------------------
-	ImGui::Begin(u8"アニメーションタイムライン");
+	ImGui::Begin("AnimationTimeLine");
 	{
 		Sequencer(&mySequence, &currentFrameInt, &expanded, &selectedEntry,&firstFrame, ImSequencer::SEQUENCER_EDIT_STARTEND |ImSequencer::SEQUENCER_ADD | ImSequencer::SEQUENCER_DEL |ImSequencer::SEQUENCER_COPYPASTE | ImSequencer::SEQUENCER_CHANGE_FRAME);
 		// add a UI to edit that particular item
@@ -1433,7 +1433,7 @@ void SceneAnimation::DebugGizmo()
 	//---------------------------------------------
 
 	// --- DockSpaceの作成 ---
-	ImGui::Begin(u8"グリッドスペース", NULL, windowFlags);
+	ImGui::Begin("GridSpace", NULL, windowFlags);
 	ImGui::PopStyleVar(3);	// 周囲スタイルの適用?
 
 	ImGuiID dockSpaceID = ImGui::GetID("DockGrid");

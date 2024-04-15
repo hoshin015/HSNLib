@@ -116,9 +116,9 @@ void ImGuiManager::DockSpace()
 // Console処理
 void ImGuiManager::Console()
 {
-	ImGui::Begin(u8"コンソール");
+	ImGui::Begin("Console");
 	{
-		if (ImGui::Button(u8"クリア", ImVec2(60, 20)))
+		if (ImGui::Button("Clear", ImVec2(60, 20)))
 		{
 			ConsoleData::Instance().logs.clear();
 		}
