@@ -240,6 +240,7 @@
     <ClCompile Include="Library\3D\SkinnedMesh.cpp" />
     <ClCompile Include="Library\3D\SpherePrimitive.cpp" />
     <ClCompile Include="SceneSpinningTop.cpp" />
+    <ClCompile Include="SceneSTPlayer.cpp" />
     <ClCompile Include="SceneTest.cpp" />
     <ClCompile Include="SceneTitle.cpp" />
     <ClCompile Include="Library\3D\Sprite3D.cpp" />
@@ -248,12 +249,14 @@
     <ClCompile Include="SpinningTopBase.cpp" />
     <ClCompile Include="SpinningTopEnemy.cpp" />
     <ClCompile Include="SpinningTopEnemyManager.cpp" />
+    <ClCompile Include="SpinningTopPlayerManager.cpp" />
     <ClCompile Include="StageBox.cpp" />
     <ClCompile Include="StageContext.cpp" />
     <ClCompile Include="StageMain.cpp" />
     <ClCompile Include="StageManager.cpp" />
     <ClCompile Include="Library\2D\UVScrollSprite.cpp" />
     <ClCompile Include="StEnemy01.cpp" />
+    <ClCompile Include="StPlayer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BehaviorTree.h" />
@@ -332,6 +335,7 @@
     <ClInclude Include="Library\3D\SkinnedMesh.h" />
     <ClInclude Include="Library\3D\SpherePrimitive.h" />
     <ClInclude Include="SceneSpinningTop.h" />
+    <ClInclude Include="SceneSTPlayer.h" />
     <ClInclude Include="SceneTest.h" />
     <ClInclude Include="SceneTitle.h" />
     <ClInclude Include="Library\3D\Sprite3D.h" />
@@ -340,6 +344,7 @@
     <ClInclude Include="SpinningTopBase.h" />
     <ClInclude Include="SpinningTopEnemy.h" />
     <ClInclude Include="SpinningTopEnemyManager.h" />
+    <ClInclude Include="SpinningTopPlayerManager.h" />
     <ClInclude Include="Stage.h" />
     <ClInclude Include="StageBox.h" />
     <ClInclude Include="StageContext.h" />
@@ -347,6 +352,7 @@
     <ClInclude Include="StageManager.h" />
     <ClInclude Include="Library\2D\UVScrollSprite.h" />
     <ClInclude Include="StEnemy01.h" />
+    <ClInclude Include="StPlayer.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Library\Icon\Icon.rc" />
