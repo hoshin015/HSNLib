@@ -14,9 +14,13 @@
 
 void SceneSpinningTop::Initialize()
 {
-	StEnemy01* slime = new_ StEnemy01();
-	slime->SetPosition({ 0, 0, 0 });
-	SpinningTopEnemyManager::Instance().Register(slime);
+	for (int i = 0; i < 2; i++)
+	{
+		StEnemy01* slime = new_ StEnemy01();
+		slime->SetPosition({ i * 2.0f, 0, 0 });
+		SpinningTopEnemyManager::Instance().Register(slime);
+	}
+	
 
 	// ステージ初期化
 	StageManager& stageManager = StageManager::Instance();
@@ -31,11 +35,11 @@ void SceneSpinningTop::Initialize()
 
 	// カメラ初期設定
 	Camera::Instance().SetLookAt(
-		DirectX::XMFLOAT3(0, 20, 40),		// カメラ座標
+		DirectX::XMFLOAT3(0, 50, 30),		// カメラ座標
 		DirectX::XMFLOAT3(-90, 0, -30),		// ターゲット(設定しても意味ない)
 		DirectX::XMFLOAT3(0, 1, 0)			// 上方向ベクトル
 	);
-	Camera::Instance().SetAngle({ DirectX::XMConvertToRadians(30), DirectX::XMConvertToRadians(180), 0 });
+	Camera::Instance().SetAngle({ DirectX::XMConvertToRadians(60), DirectX::XMConvertToRadians(180), 0 });
 
 	Camera::Instance().cameraType = Camera::CAMERA::FREE;
 }

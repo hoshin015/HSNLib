@@ -15,9 +15,9 @@ public:
 		NONE = 0,
 		ROOT,
 		IDLE,
-		WANDER,
 		SEEK,
 		ARRIVAL,
+		WANDER,
 	};
 
 
@@ -38,6 +38,9 @@ public:
 	void Destroy();
 
 	// ----- SteeringBehavior -----
+	DirectX::XMFLOAT3 SbSeek();
+	DirectX::XMFLOAT3 SbArrival();
+	DirectX::XMFLOAT3 SbWander();
 
 public:
 	// enemies ‚Å‚Ì index
@@ -52,8 +55,13 @@ public:
 	// ----- SteeringBehavior -----
 	DirectX::XMFLOAT3 targetPosition = { 3,0,0 };
 
-	float steeringMaxForce = 2.0f;
+	float steeringMaxForce = 1.1f;
 	float slowingArea = 3.0f;
+	float circleDistance = 4.0f;
+	float circleRadius = 2.0f;
+	float wanderAngle = 0;
+	int wanderAngleChange = 30;
+	float wanderAngleChangeTimer = 0.0f;
 
 	DirectX::XMFLOAT3 steeringForce = { 0,0,0 };
 

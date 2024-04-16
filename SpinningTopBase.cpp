@@ -272,6 +272,16 @@ void SpinningTopBase::UpdateHorizontalVelocity()
 			}
 		}
 	}
+	// 最大速度制限
+	length = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
+	if (length > maxMoveSpeed)
+	{
+		float vx = velocity.x / length;
+		float vz = velocity.z / length;
+		velocity.x = vx * maxMoveSpeed;
+		velocity.z = vz * maxMoveSpeed;
+	}
+
 	// 移動ベクトルゼロ
 	moveVecX = 0;
 	moveVecZ = 0;
