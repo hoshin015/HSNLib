@@ -190,6 +190,8 @@ void SpinningTopEnemyManager::DrawDebugGui()
 				DirectX::XMFLOAT3 position = enemy->GetPosition();
 				ImGui::DragFloat3("Position", &position.x, 0.1f);
 				ImGui::InputFloat("Distance", &enemy->playerDistance);
+				ImGui::DragFloat3("Target", &enemy->targetPosition.x, 0.1f);
+				ImGui::DragFloat("rotationSpeed", &enemy->rotationSpeed, 0.1f);
 			}
 		}
 	}

@@ -13,6 +13,12 @@ public:
 	// •`‰æˆ—
 	void Render();
 
+	// TargetPosition XV
+	void UpdateTargetPosition();
+
+	// DrawDebugPrimitive
+
+
 protected:
 	// €–Sˆ—
 	void OnDead() override;
@@ -20,5 +26,4 @@ protected:
 private:
 	float radius = 0.5f;
 	float height = 1.0f;
-
 };

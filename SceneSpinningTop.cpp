@@ -9,6 +9,8 @@
 #include "LightManager.h"
 #include "SpinningTopEnemyManager.h"
 #include "StEnemy01.h"
+#include "Library/3D/DebugPrimitive.h"
+#include "Library/3D/LineRenderer.h"
 
 void SceneSpinningTop::Initialize()
 {
@@ -139,7 +141,12 @@ void SceneSpinningTop::Render()
 	SpinningTopEnemyManager::Instance().Render();
 
 	// --- デバッグ描画 ---
+	DebugPrimitive::Instance().Render();
+	LineRenderer::Instance().Render();
+
+	// --- デバッグ描画 ---
 	DrawDebugGUI();
+
 }
 
 // デバッグ描画
@@ -170,4 +177,6 @@ void SceneSpinningTop::DrawDebugGUI()
 		}
 		ImGui::EndMainMenuBar();
 	}
+
+	SpinningTopEnemyManager::Instance().DrawDebugGui();
 }

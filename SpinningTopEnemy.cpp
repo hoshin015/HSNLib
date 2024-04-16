@@ -1,5 +1,5 @@
 #include "SpinningTopEnemy.h"
-#include "EnemyManager.h"
+#include "SpinningTopEnemyManager.h"
 #include "Collision.h"
 
 // レイキャスト
@@ -11,7 +11,7 @@ bool SpinningTopEnemy::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XM
 // 破棄
 void SpinningTopEnemy::Destroy()
 {
-	//EnemyManager::Instance().Remove(this);
+	SpinningTopEnemyManager::Instance().Remove(this);
 }
 
 bool SpinningTopEnemy::GetBTreeJudge(const int _kind)
@@ -41,12 +41,35 @@ IBTree::STATE SpinningTopEnemy::ActBTree(const int _kind)
 		return  IBTree::STATE::Complete;
 		break;
 	case KIND::SEEK:
-		//DirectX::XMVECTOR POSITION = DirectX::XMLoadFloat3(&GetPosition());
-		//DirectX::XMVECTOR TARGET = DirectX::XMLoadFloat3(&targetPosition);
-		//// ターゲットへおベクトルを求める
-		//DirectX::XMVECTOR ToTarget = DirectX::XMVectorSubtract(TARGET, POSITION);
-		//ToTarget = DirectX::XMVector3Normalize(ToTarget);
-		//ToTarget = DirectX::XM
+		// 回転
+		ang = GetAngle();
+		ang.y += rotationSpeed;
+		SetAngle(ang);
+
+		// ベクター作成
+		DirectX::XMVECTOR POSITION = DirectX::XMLoadFloat3(&GetPosition());
+		DirectX::XMVECTOR TARGET = DirectX::XMLoadFloat3(&targetPosition);
+		DirectX::XMVECTOR VELOCITY = DirectX::XMLoadFloat3(&velocity);
+
+		// ターゲットへのベクトルを求める
+		DirectX::XMVECTOR ToTarget = DirectX::XMVectorSubtract(TARGET, POSITION);
+		ToTarget = DirectX::XMVector3Normalize(ToTarget);				// 正規化
+		ToTarget = DirectX::XMVectorScale(ToTarget, steeringMaxForce);	// スケーリング
+
+		ToTarget = DirectX::XMVectorSubtract(ToTarget, VELOCITY);
+		DirectX::XMVECTOR LENGTH = DirectX::XMVector3Length(ToTarget);
+		float length;
+		DirectX::XMStoreFloat(&length, LENGTH);
+
+		if (length > steeringMaxSpeed)
+		{
+			ToTarget = DirectX::XMVector3Normalize(ToTarget);				// 正規化
+			ToTarget = DirectX::XMVectorScale(ToTarget, steeringMaxSpeed);	// スケーリング
+		}
+		DirectX::XMStoreFloat3(&steeringForce, ToTarget);
+
+		velocity.x += steeringForce.x;
+		velocity.z += steeringForce.z;
 
 		return  IBTree::STATE::Run;
 		break;

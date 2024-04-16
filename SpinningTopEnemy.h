@@ -1,5 +1,5 @@
 #pragma once
-#include "Character.h"
+#include "SpinningTopBase.h"
 #include "Library/3D/SkinnedMesh.h"
 #include "Collision.h"
 
@@ -7,7 +7,7 @@
 #include "BehaviorTree.h"
 
 // エネミー
-class SpinningTopEnemy : public Character, public IBTree
+class SpinningTopEnemy : public SpinningTopBase, public IBTree
 {
 public:
 	enum class KIND
@@ -45,10 +45,14 @@ public:
 	// プレイヤーとの距離
 	float playerDistance;
 
-	// ----- SteeringBehavior -----
-	DirectX::XMFLOAT3 targetPosition = { 0,0,0 };
 
-	float steeringMaxForce = 0.1f;
+	float rotationSpeed = 1;
+
+	// ----- SteeringBehavior -----
+	DirectX::XMFLOAT3 targetPosition = { 3,0,0 };
+
+	float steeringMaxForce = 3.0f;
+	float steeringMaxSpeed = 10.0f;
 	DirectX::XMFLOAT3 steeringForce = { 0,0,0 };
 
 
