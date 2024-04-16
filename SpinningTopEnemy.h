@@ -16,6 +16,7 @@ public:
 		ROOT,
 		IDLE,
 		WANDER,
+		SEEK,
 	};
 
 
@@ -35,6 +36,8 @@ public:
 	// îjä¸
 	void Destroy();
 
+	// ----- SteeringBehavior -----
+
 public:
 	// enemies Ç≈ÇÃ index
 	int id;
@@ -42,7 +45,14 @@ public:
 	// ÉvÉåÉCÉÑÅ[Ç∆ÇÃãóó£
 	float playerDistance;
 
-	// behaviorTree
+	// ----- SteeringBehavior -----
+	DirectX::XMFLOAT3 targetPosition = { 0,0,0 };
+
+	float steeringMaxForce = 0.1f;
+	DirectX::XMFLOAT3 steeringForce = { 0,0,0 };
+
+
+	// ----- behaviorTree -----
 	std::unique_ptr<BTree> aiTree;
 	bool GetBTreeJudge(const int kind) override;
 	IBTree::STATE ActBTree(const int kind) override;

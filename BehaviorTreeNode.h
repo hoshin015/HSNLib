@@ -9,7 +9,7 @@
 class Node
 {
 public:
-	Node(const int name, Node* parent, int priority, IBTree::RULE selectRule, IBTree* judgment, BTree* _behaviorTree) : kind(name), parent(parent), selectRule(selectRule), owner(judgment), children(NULL), behaviorTree(_behaviorTree) {}
+	Node(const int name, Node* parent, int priority, IBTree::RULE selectRule, IBTree* judgment, BTree* _behaviorTree) : kind(name), parent(parent), priority(priority), selectRule(selectRule), owner(judgment), children(NULL), behaviorTree(_behaviorTree) {}
 
 	~Node();
 

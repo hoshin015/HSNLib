@@ -33,12 +33,22 @@ IBTree::STATE SpinningTopEnemy::ActBTree(const int _kind)
 	{
 	case KIND::WANDER:
 		DirectX::XMFLOAT3 ang = GetAngle();
-		ang.y++;
+		ang.y+=2;
 		SetAngle(ang);
-		return  IBTree::STATE::Complete;
+		return  IBTree::STATE::Run;
 		break;
 	case KIND::IDLE:
 		return  IBTree::STATE::Complete;
+		break;
+	case KIND::SEEK:
+		//DirectX::XMVECTOR POSITION = DirectX::XMLoadFloat3(&GetPosition());
+		//DirectX::XMVECTOR TARGET = DirectX::XMLoadFloat3(&targetPosition);
+		//// ターゲットへおベクトルを求める
+		//DirectX::XMVECTOR ToTarget = DirectX::XMVectorSubtract(TARGET, POSITION);
+		//ToTarget = DirectX::XMVector3Normalize(ToTarget);
+		//ToTarget = DirectX::XM
+
+		return  IBTree::STATE::Run;
 		break;
 	}
 

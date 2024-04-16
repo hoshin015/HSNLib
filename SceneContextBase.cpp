@@ -42,7 +42,6 @@ void SceneContextBase::Initialize()
 		slime->SetPosition({i * 2.0f, 0, 0});
 		EnemyManager::Instance().Register(slime);
 	}
-	
 
 	// --- ƒJƒƒ‰‰Šúİ’è ---
 	Camera::Instance().SetLookAt(
