@@ -139,11 +139,11 @@ protected:
 	int maxHealth = 5;
 	float invincibleTimer = 1.0f;
 
-	float friction = 0.5f;
+	float friction = 0.25f;
 	float airControl = 0.3f;
 
 	float acceleration = 1.0f;
-	float maxMoveSpeed = 10.0f;
+	float maxMoveSpeed = 15.0f;
 	float moveVecX = 0.0f;
 	float moveVecZ = 0.0f;
 

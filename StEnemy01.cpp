@@ -19,9 +19,10 @@ StEnemy01::StEnemy01()
 	aiTree = std::make_unique <BTree>(this);
 	aiTree->AddNode((int)KIND::NONE, (int)KIND::ROOT, 0, IBTree::RULE::Priority, this);
 
-	aiTree->AddNode((int)KIND::ROOT, (int)KIND::SEEK, 0, IBTree::RULE::Non, this);
-	aiTree->AddNode((int)KIND::ROOT, (int)KIND::WANDER, 1, IBTree::RULE::Non, this);
-	aiTree->AddNode((int)KIND::ROOT, (int)KIND::IDLE, 2, IBTree::RULE::Non, this);
+	aiTree->AddNode((int)KIND::ROOT, (int)KIND::ARRIVAL, 0, IBTree::RULE::Non, this);
+	aiTree->AddNode((int)KIND::ROOT, (int)KIND::SEEK, 1, IBTree::RULE::Non, this);
+	aiTree->AddNode((int)KIND::ROOT, (int)KIND::WANDER, 2, IBTree::RULE::Non, this);
+	aiTree->AddNode((int)KIND::ROOT, (int)KIND::IDLE, 3, IBTree::RULE::Non, this);
 }
 
 StEnemy01::~StEnemy01()
@@ -30,6 +31,11 @@ StEnemy01::~StEnemy01()
 
 void StEnemy01::Update()
 {
+	// âÒì]
+	DirectX::XMFLOAT3 ang = GetAngle();
+	ang.y += rotationSpeed;
+	SetAngle(ang);
+
 	UpdateTargetPosition();
 
 	aiTree->Update();
@@ -51,7 +57,7 @@ void StEnemy01::Render()
 
 	//DebugPrimitive::Instance().AddCylinder(position, radius, height, { 1,0,0,1 });
 
-	DebugPrimitive::Instance().AddSphere(targetPosition, 1, {0,1,0,1});
+	DebugPrimitive::Instance().AddSphere(targetPosition, 0.2f, {0,1,0,1});
 }
 
 // TargetPosition çXêV

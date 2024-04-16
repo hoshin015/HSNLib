@@ -17,6 +17,7 @@ public:
 		IDLE,
 		WANDER,
 		SEEK,
+		ARRIVAL,
 	};
 
 
@@ -51,8 +52,9 @@ public:
 	// ----- SteeringBehavior -----
 	DirectX::XMFLOAT3 targetPosition = { 3,0,0 };
 
-	float steeringMaxForce = 3.0f;
-	float steeringMaxSpeed = 10.0f;
+	float steeringMaxForce = 2.0f;
+	float slowingArea = 3.0f;
+
 	DirectX::XMFLOAT3 steeringForce = { 0,0,0 };
 
 

@@ -110,7 +110,6 @@ void SceneSpinningTop::Render()
 		gfx.shadowBuffer->DeActivate();
 	}
 
-
 	// --- ImGuiのデバッグ適用処理 ---
 	gfx.SetRasterizer(static_cast<RASTERIZER_STATE>(RASTERIZER_STATE::CLOCK_FALSE_SOLID));
 
