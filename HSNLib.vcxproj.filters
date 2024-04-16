@@ -318,6 +318,15 @@
     <ClCompile Include="SpinningTopEnemyManager.cpp">
       <Filter>ソース ファイル\SpinningTopBase</Filter>
     </ClCompile>
+    <ClCompile Include="StPlayer.cpp">
+      <Filter>ソース ファイル\SpinningTopBase</Filter>
+    </ClCompile>
+    <ClCompile Include="SpinningTopPlayerManager.cpp">
+      <Filter>ソース ファイル\SpinningTopBase</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneSTPlayer.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\Graphics\Graphics.h">
@@ -592,6 +601,15 @@
     </ClInclude>
     <ClInclude Include="SpinningTopEnemyManager.h">
       <Filter>ヘッダー ファイル\SpinningTopBase</Filter>
+    </ClInclude>
+    <ClInclude Include="StPlayer.h">
+      <Filter>ヘッダー ファイル\SpinningTopBase</Filter>
+    </ClInclude>
+    <ClInclude Include="SpinningTopPlayerManager.h">
+      <Filter>ヘッダー ファイル\SpinningTopBase</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneSTPlayer.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

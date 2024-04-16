@@ -1,5 +1,5 @@
 #pragma once
-#include "Character.h"
+#include "SpinningTopBase.h"
 #include "Library/3D/SkinnedMesh.h"
 #include "Collision.h"
 
@@ -7,7 +7,7 @@
 #include "BehaviorTree.h"
 
 // エネミー
-class SpinningTopEnemy : public Character, public IBTree
+class SpinningTopEnemy : public SpinningTopBase, public IBTree
 {
 public:
 	enum class KIND
