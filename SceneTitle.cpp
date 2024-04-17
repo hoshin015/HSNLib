@@ -88,6 +88,10 @@ void SceneTitle::DrawDebugGUI()
 				{
 					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneSpinningTop));
 				}
+				if (ImGui::MenuItem("STPlayer"))
+				{
+					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneSTPlayer));
+				}
 				ImGui::EndMenu();
 			}
 			ImGui::EndMenu();
