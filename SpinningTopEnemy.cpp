@@ -4,6 +4,7 @@
 #include "Library/Timer.h"
 #include "Library/3D/DebugPrimitive.h"
 #include "Library/3D/LineRenderer.h"
+#include "Library/ImGui/ConsoleData.h"
 
 // レイキャスト
 bool SpinningTopEnemy::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit)
@@ -23,7 +24,7 @@ DirectX::XMFLOAT3 SpinningTopEnemy::SbSeek()
 	// ベクター作成
 	DirectX::XMVECTOR POSITION = DirectX::XMLoadFloat3(&GetPosition());
 	DirectX::XMVECTOR TARGET = DirectX::XMLoadFloat3(&targetPosition);
-	DirectX::XMVECTOR VELOCITY = DirectX::XMLoadFloat3(&velocity);
+	DirectX::XMVECTOR VELOCITY = DirectX::XMLoadFloat3(&velocity); 
 	DirectX::XMVECTOR DSERIRED_VELOCITY;
 	DirectX::XMVECTOR STEERING;
 
@@ -34,7 +35,8 @@ DirectX::XMFLOAT3 SpinningTopEnemy::SbSeek()
 
 	// ステアリング力の計算
 	STEERING = DirectX::XMVectorSubtract(DSERIRED_VELOCITY, VELOCITY);
-	DirectX::XMVECTOR LENGTH = DirectX::XMVector3LengthSq(STEERING);
+	STEERING = DirectX::XMVectorScale(STEERING, Timer::Instance().DeltaTime());
+	DirectX::XMVECTOR LENGTH = DirectX::XMVector3Length(STEERING);
 	float length;
 	DirectX::XMStoreFloat(&length, LENGTH);
 
@@ -46,6 +48,32 @@ DirectX::XMFLOAT3 SpinningTopEnemy::SbSeek()
 
 	DirectX::XMFLOAT3 steering;
 	DirectX::XMStoreFloat3(&steering, STEERING);
+
+#if 0
+	{
+		// 線描画
+		const DirectX::XMFLOAT4 white = DirectX::XMFLOAT4(0.5f, 0.5f, 0.5f, 1);
+		const DirectX::XMFLOAT4 red = DirectX::XMFLOAT4(1, 0, 0, 1);
+		const DirectX::XMFLOAT4 green = DirectX::XMFLOAT4(0, 1, 0, 1);
+		const DirectX::XMFLOAT4 yellow = DirectX::XMFLOAT4(1, 1, 0, 1);
+		LineRenderer& lineRenderer = LineRenderer::Instance();
+
+		DirectX::XMFLOAT3 dseriredV;
+		DirectX::XMStoreFloat3(&dseriredV, DSERIRED_VELOCITY);
+
+		// ターゲットへのベクトル
+		lineRenderer.AddVertex({ GetPosition().x, 0.2, GetPosition().z }, red);
+		lineRenderer.AddVertex({ GetPosition().x + dseriredV.x, 0.2, GetPosition().z + dseriredV.z }, red);
+
+		// velocityベクトル
+		lineRenderer.AddVertex({ GetPosition().x, 0.2, GetPosition().z }, green);
+		lineRenderer.AddVertex({ GetPosition().x + velocity.x, 0.2, GetPosition().z + velocity.z }, green);
+
+
+		lineRenderer.AddVertex({ GetPosition().x + velocity.x, 0.2, GetPosition().z + velocity.z }, yellow);
+		lineRenderer.AddVertex({ GetPosition().x + velocity.x + steering.x, 0.2, GetPosition().z + velocity.x + steering.z }, yellow);
+	}
+#endif	
 
 	return steering;
 }
@@ -70,16 +98,19 @@ DirectX::XMFLOAT3 SpinningTopEnemy::SbArrival()
 	{
 		ToTarget = DirectX::XMVector3Normalize(ToTarget);					// 正規化
 		DSERIRED_VELOCITY = DirectX::XMVectorScale(ToTarget, maxMoveSpeed);	// スケーリング
-	}
+	}														  
 	else
 	{
 		ToTarget = DirectX::XMVector3Normalize(ToTarget);					// 正規化
 		DSERIRED_VELOCITY = DirectX::XMVectorScale(ToTarget, maxMoveSpeed);	// スケーリング
 		DSERIRED_VELOCITY = DirectX::XMVectorScale(DSERIRED_VELOCITY, targetDistance / slowingArea);
 	}
+
 	// ステアリング力の計算
 	STEERING = DirectX::XMVectorSubtract(DSERIRED_VELOCITY, VELOCITY);
-	DirectX::XMVECTOR LENGTH = DirectX::XMVector3LengthSq(STEERING);
+	DirectX::XMVECTOR LENGTH = DirectX::XMVector3Length(STEERING);
+	STEERING = DirectX::XMVectorScale(STEERING, Timer::Instance().DeltaTime());
+
 	float length;
 	DirectX::XMStoreFloat(&length, LENGTH);
 
@@ -91,6 +122,32 @@ DirectX::XMFLOAT3 SpinningTopEnemy::SbArrival()
 
 	DirectX::XMFLOAT3 steering;
 	DirectX::XMStoreFloat3(&steering, STEERING);
+
+#if 1
+	{
+		// 線描画
+		const DirectX::XMFLOAT4 white = DirectX::XMFLOAT4(0.5f, 0.5f, 0.5f, 1);
+		const DirectX::XMFLOAT4 red = DirectX::XMFLOAT4(1, 0,0, 1);
+		const DirectX::XMFLOAT4 green = DirectX::XMFLOAT4(0, 1, 0, 1);
+		const DirectX::XMFLOAT4 yellow = DirectX::XMFLOAT4(1, 1, 0, 1);
+		LineRenderer& lineRenderer = LineRenderer::Instance();
+
+		DirectX::XMFLOAT3 dseriredV;
+		DirectX::XMStoreFloat3(&dseriredV, DSERIRED_VELOCITY);
+		
+		// ターゲットへのベクトル
+		lineRenderer.AddVertex({ GetPosition().x, 0.2, GetPosition().z }, red);
+		lineRenderer.AddVertex({ GetPosition().x + dseriredV.x, 0.2, GetPosition().z + dseriredV.z }, red);
+
+		// velocityベクトル
+		lineRenderer.AddVertex({ GetPosition().x, 0.2, GetPosition().z }, green);
+		lineRenderer.AddVertex({ GetPosition().x + velocity.x, 0.2, GetPosition().z + velocity.z }, green);
+
+
+		lineRenderer.AddVertex({ GetPosition().x + velocity.x, 0.2, GetPosition().z + velocity.z }, yellow);
+		lineRenderer.AddVertex({ GetPosition().x + velocity.x + steering.x, 0.2, GetPosition().z + velocity.x + steering.z }, yellow);
+	}
+#endif	
 
 	return steering;
 }
@@ -111,8 +168,9 @@ DirectX::XMFLOAT3 SpinningTopEnemy::SbWander()
 
 	// ２つのベクトルを加算して移動ベクトルを計算
 	DirectX::XMVECTOR STEERING = DirectX::XMVectorAdd(CircleCenter, FromCenter);
+	STEERING = DirectX::XMVectorScale(STEERING, Timer::Instance().DeltaTime());
 
-	DirectX::XMVECTOR LENGTH = DirectX::XMVector3LengthSq(STEERING);
+	DirectX::XMVECTOR LENGTH = DirectX::XMVector3Length(STEERING);
 	float length;
 	DirectX::XMStoreFloat(&length, LENGTH);
 
@@ -127,21 +185,24 @@ DirectX::XMFLOAT3 SpinningTopEnemy::SbWander()
 
 	// 次の角度を決める
 	{
-		// 次の角度を決めるのは 1/60に一回
 		wanderAngleChangeTimer += Timer::Instance().DeltaTime();
-		if (wanderAngleChangeTimer > 1.0f / 60.0f)
+		if (wanderAngleChangeTimer > wanderAngleChangeTime)
 		{
 			float addAngle = ((rand() % (wanderAngleChange * 2)) - wanderAngleChange);
 			wanderAngle += addAngle;
 			while (wanderAngle >= 360) wanderAngle -= 360;
 			while (wanderAngle < 0) wanderAngle += 360;
 
-			wanderAngleChangeTimer -= 1.0f / 60.0f;
+
+			Timer::Instance().CheckTick();
+			float time = Timer::Instance().CheckTime();
+			ConsoleData::Instance().logs.push_back("[ " + std::to_string(time) + " ] " + std::to_string(addAngle));
+
+			wanderAngleChangeTimer -= wanderAngleChangeTime;
 		}
 	}
 
-	
-#if 1
+#if 0
 	{
 		// 球体描画
 		DirectX::XMFLOAT3 circlePos;
@@ -209,7 +270,7 @@ IBTree::STATE SpinningTopEnemy::ActBTree(const int _kind)
 		velocity.x += steeringForce.x;
 		velocity.z += steeringForce.z;
 
-		Move(velocity.x, velocity.z, maxMoveSpeed);
+		//Move(velocity.x, velocity.z, maxMoveSpeed);
 
 		return  IBTree::STATE::Run;
 		break;
@@ -228,7 +289,7 @@ IBTree::STATE SpinningTopEnemy::ActBTree(const int _kind)
 		velocity.x += steeringForce.x;
 		velocity.z += steeringForce.z;
 
-		Move(velocity.x, velocity.z, maxMoveSpeed);
+		//Move(velocity.x, velocity.z, maxMoveSpeed);
 
 		return  IBTree::STATE::Run;
 
@@ -240,12 +301,12 @@ IBTree::STATE SpinningTopEnemy::ActBTree(const int _kind)
 
 		DirectX::XMFLOAT3 seekPower = SbSeek();
 		DirectX::XMVECTOR SeekPower = DirectX::XMLoadFloat3(&seekPower);
-		SeekPower = DirectX::XMVectorScale(SeekPower, 1.0f);
+		SeekPower = DirectX::XMVectorScale(SeekPower, 0.5f);
 		SteeringForce = DirectX::XMVectorAdd(SteeringForce, SeekPower);
 
 		DirectX::XMFLOAT3 wanderPower = SbWander();
 		DirectX::XMVECTOR WanderPower = DirectX::XMLoadFloat3(&wanderPower);
-		WanderPower = DirectX::XMVectorScale(WanderPower, 1.0f);
+		WanderPower = DirectX::XMVectorScale(WanderPower, 0.9f);
 		
 		SteeringForce = DirectX::XMVectorAdd(SteeringForce, WanderPower);
 		DirectX::XMStoreFloat3(&steeringForce, SteeringForce);
@@ -253,7 +314,7 @@ IBTree::STATE SpinningTopEnemy::ActBTree(const int _kind)
 		velocity.x += steeringForce.x;
 		velocity.z += steeringForce.z;
 
-		Move(velocity.x, velocity.z, maxMoveSpeed);
+		//Move(velocity.x, velocity.z, maxMoveSpeed);
 
 		return  IBTree::STATE::Run;
 		break;

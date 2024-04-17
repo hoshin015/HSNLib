@@ -8,10 +8,13 @@ public:
 	~StEnemy01() override;
 
 	// 更新処理
-	void Update();
+	void Update() override;
 
 	// 描画処理
-	void Render();
+	void Render() override;
+
+	// デバッグプリミティブ描画
+	void DrawDebugPrimitive() override;
 
 	// TargetPosition 更新
 	void UpdateTargetPosition();

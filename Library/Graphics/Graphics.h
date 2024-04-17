@@ -85,6 +85,8 @@ enum class VS_TYPE
 	NUM
 };
 
+
+
 //--------------------------------------------------------------
 //  Graphics
 //--------------------------------------------------------------
@@ -126,6 +128,8 @@ public:
 	void SetBlend(BLEND_STATE state);
 
 public:
+	bool sync = true;
+
 	// ïΩçsåıåπèÓïÒ
 	struct DirectionalLightData
 	{

@@ -2,6 +2,7 @@
 #include "Library/ImGui/Include/imgui.h"
 #include "Collision.h"
 #include "EnemySlime.h"
+#include "Library/Graphics/Graphics.h"
 
 // 更新処理
 void SpinningTopEnemyManager::Update()
@@ -34,6 +35,10 @@ void SpinningTopEnemyManager::Render()
 	for (SpinningTopEnemy* enemy : enemies)
 	{
 		enemy->Render();
+		if (drawDebugPrimitive)
+		{
+			enemy->DrawDebugPrimitive();
+		}
 	}
 
 	// 敵同士の衝突処理
@@ -152,19 +157,35 @@ void SpinningTopEnemyManager::CollisionEnemyVsEnemeis()
 			if (enemyA == enemyB) continue;
 
 			// 衝突処理
-			DirectX::XMFLOAT3 outPosition;
-			if (Collision::IntersectCylinderVsCylinder(
+			DirectX::XMFLOAT3 velocityA;
+			DirectX::XMFLOAT3 velocityB;
+			if (Collision::RepulsionSphereVsSphere(
 				enemyA->GetPosition(),
 				enemyA->GetRadius(),
-				enemyA->GetHeight(),
+				1,
 				enemyB->GetPosition(),
 				enemyB->GetRadius(),
-				enemyB->GetHeight(),
-				outPosition)
-				)
+				1,
+				velocityA,
+				velocityB
+			))
 			{
 				// 押し出し後の位置設定
-				enemyB->SetPosition(outPosition);
+				DirectX::XMFLOAT3 enemyAVel = enemyA->GetVelocity();
+				DirectX::XMVECTOR V_A = DirectX::XMLoadFloat3(&enemyAVel);
+				DirectX::XMFLOAT3 enemyBVel = enemyB->GetVelocity();
+				DirectX::XMVECTOR V_B = DirectX::XMLoadFloat3(&enemyBVel);
+
+				DirectX::XMVECTOR AddA = DirectX::XMLoadFloat3(&velocityA);
+				DirectX::XMVECTOR AddB = DirectX::XMLoadFloat3(&velocityB);
+
+				V_A = DirectX::XMVectorAdd(V_A, AddA);
+				DirectX::XMStoreFloat3(&velocityA, V_A);
+				V_B = DirectX::XMVectorAdd(V_B, AddB);
+				DirectX::XMStoreFloat3(&velocityB, V_B);
+
+				enemyA->SetVelocity(velocityA);
+				enemyB->SetVelocity(velocityB);
 			}
 		}
 	}
@@ -180,6 +201,10 @@ void SpinningTopEnemyManager::DrawDebugGui()
 
 	if (ImGui::Begin("SpinningTopEnemyManager", nullptr, ImGuiWindowFlags_None))
 	{
+		ImGui::Checkbox(("sync"), &Graphics::Instance().sync);
+		ImGui::Checkbox(("drawDebugPrimitive"), &drawDebugPrimitive);
+
+
 		uint32_t enemyCount = enemies.size();
 		for (int i = 0; i < enemyCount; i++)
 		{
@@ -188,12 +213,16 @@ void SpinningTopEnemyManager::DrawDebugGui()
 			{
 				// 位置
 				DirectX::XMFLOAT3 position = enemy->GetPosition();
+				DirectX::XMFLOAT3 vel = enemy->GetVelocity();
 				ImGui::DragFloat3("Position", &position.x, 0.1f);
-				ImGui::InputFloat("Distance", &enemy->playerDistance);
+				ImGui::InputFloat3("velocity", &vel.x);
 				ImGui::DragFloat3("Target", &enemy->targetPosition.x, 0.1f);
 				ImGui::DragFloat("rotationSpeed", &enemy->rotationSpeed, 0.1f);
 			}
 		}
 	}
+
 	ImGui::End();
+
+
 }

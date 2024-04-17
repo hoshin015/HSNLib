@@ -14,10 +14,10 @@
 
 void SceneSpinningTop::Initialize()
 {
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < 6; i++)
 	{
 		StEnemy01* slime = new_ StEnemy01();
-		slime->SetPosition({ i * 2.0f, 0, 0 });
+		slime->SetPosition({ i * 2.0f - 6, 0, 0 });
 		SpinningTopEnemyManager::Instance().Register(slime);
 	}
 	

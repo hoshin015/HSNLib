@@ -520,7 +520,7 @@ void Graphics::Begin()
 // •`‰æI—¹
 void Graphics::End()
 {
-	swapchain->Present(0, NULL);
+	swapchain->Present(sync ? 1 : 0, NULL);
 }
 
 

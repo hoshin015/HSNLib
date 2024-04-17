@@ -22,7 +22,7 @@ StEnemy01::StEnemy01()
 	aiTree->AddNode((int)KIND::ROOT, (int)KIND::WANDER, 0, IBTree::RULE::Non, this);
 	aiTree->AddNode((int)KIND::ROOT, (int)KIND::ARRIVAL, 1, IBTree::RULE::Non, this);
 	aiTree->AddNode((int)KIND::ROOT, (int)KIND::SEEK, 1, IBTree::RULE::Non, this);
-	aiTree->AddNode((int)KIND::ROOT, (int)KIND::IDLE, 3, IBTree::RULE::Non, this);
+	aiTree->AddNode((int)KIND::ROOT, (int)KIND::IDLE, 1, IBTree::RULE::Non, this);
 }
 
 StEnemy01::~StEnemy01()
@@ -54,12 +54,14 @@ void StEnemy01::Update()
 void StEnemy01::Render()
 {
 	model->Render(transform, { 1,1,1,1 }, &keyFrame);
+}
 
+// デバッグプリミティブ描画
+void StEnemy01::DrawDebugPrimitive()
+{
 	//DebugPrimitive::Instance().AddCylinder(position, radius, height, { 1,0,0,1 });
 
-	DebugPrimitive::Instance().AddSphere(targetPosition, 0.2f, {0,1,0,1});
-
-	
+	DebugPrimitive::Instance().AddSphere(targetPosition, 0.2f, { 0,1,0,1 });
 }
 
 // TargetPosition 更新

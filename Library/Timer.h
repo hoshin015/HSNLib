@@ -31,6 +31,7 @@ public:
 private:
 	double secondsPerCount{ 0.0 };
 	double deltaTime{ 0.0 };
+	double checkTime{ 0.0 };
 
 	LONGLONG baseTime{ 0LL };
 	LONGLONG pausedTime{ 0LL };
@@ -146,5 +147,35 @@ public:
 	float DeltaTime() const
 	{
 		return static_cast<float>(deltaTime);
+	}
+
+	void CheckTick()
+	{
+		if (stopped)
+		{
+			checkTime = 0.0f;
+			return;
+		}
+
+
+		QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&thisTime));
+		// Time difference between this frame and the previous.
+		checkTime = (thisTime - lastTime) * secondsPerCount;
+
+		// Prepare for next frame.
+		lastTime = thisTime;
+
+		// Force nonnegative.  The DXSDK's CDXUTTimer mentions that if the 
+		// processor goes into a power save mode or we get shuffled to another
+		// processor, then mDeltaTime can be negative.
+		if (checkTime < 0.0)
+		{
+			checkTime = 0.0;
+		}
+	}
+
+	float CheckTime() const
+	{
+		return static_cast<float>(checkTime);
 	}
 };

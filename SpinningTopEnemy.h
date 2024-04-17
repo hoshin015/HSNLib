@@ -31,6 +31,9 @@ public:
 	// 描画処理
 	virtual void Render() = 0;
 
+	// デバッグプリミティブ描画
+	virtual void DrawDebugPrimitive() {};
+
 	// レイキャスト
 	bool RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit);
 
@@ -55,13 +58,14 @@ public:
 	// ----- SteeringBehavior -----
 	DirectX::XMFLOAT3 targetPosition = { 3,0,0 };
 
-	float steeringMaxForce = 1.1f;
-	float slowingArea = 3.0f;
-	float circleDistance = 4.0f;
-	float circleRadius = 2.0f;
+	float steeringMaxForce = 0.1f;
+	float slowingArea = 1.0f;
+	float circleDistance = 3.0f;
+	float circleRadius = 2.5f;
 	float wanderAngle = 0;
 	int wanderAngleChange = 30;
 	float wanderAngleChangeTimer = 0.0f;
+	float wanderAngleChangeTime = 0.1f;
 
 	DirectX::XMFLOAT3 steeringForce = { 0,0,0 };
 

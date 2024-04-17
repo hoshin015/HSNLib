@@ -31,6 +31,11 @@ public:
 	// ”¼Œaİ’è
 	void SetRadius(const float radius) { this->radius = radius; }
 
+	// velocityæ“¾
+	DirectX::XMFLOAT3 GetVelocity() { return this->velocity; }
+	// velocityİ’è
+	void SetVelocity(const DirectX::XMFLOAT3& velocity) { this->velocity = velocity; }
+
 	// Ú’n”»’èæ“¾
 	bool IsGround() const { return isGround; }
 

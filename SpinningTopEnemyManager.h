@@ -55,6 +55,9 @@ private:
 	// エネミー同士の衝突判定
 	void CollisionEnemyVsEnemeis();
 
+public:
+	bool drawDebugPrimitive = true;
+
 private:
 	std::vector<SpinningTopEnemy*> enemies;
 	std::set<SpinningTopEnemy*> removes;

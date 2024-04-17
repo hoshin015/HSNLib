@@ -28,6 +28,48 @@ bool Collision::IntersectSphereVsSphere(const DirectX::XMFLOAT3& positionA, floa
     return true;
 }
 
+// 球と球の反発判定
+bool Collision::RepulsionSphereVsSphere(const DirectX::XMFLOAT3& positionA, float radiusA, float weightA, const DirectX::XMFLOAT3& positionB, float radiusB, float weightB, DirectX::XMFLOAT3& outPositionA, DirectX::XMFLOAT3& outPositionB)
+{
+    DirectX::XMVECTOR posA = DirectX::XMLoadFloat3(&positionA);
+    DirectX::XMVECTOR posB = DirectX::XMLoadFloat3(&positionB);
+    DirectX::XMVECTOR AtoB = DirectX::XMVectorSubtract(posB, posA);
+    DirectX::XMVECTOR BtoA = DirectX::XMVectorSubtract(posA, posB);
+    DirectX::XMVECTOR Length = DirectX::XMVector3Length(AtoB);
+    float length;
+    DirectX::XMStoreFloat(&length, Length);
+
+    float totalRadius = radiusA + radiusB;
+    if (totalRadius * totalRadius > length * length)
+    {
+        // めり込み量算出
+        float defLength = totalRadius - length;
+
+        // 比率を算出
+        float totalWeight = weightA + weightB;
+        float scaleA = weightA / totalWeight;
+        float scaleB = weightB / totalWeight;
+
+        // a の移動
+        BtoA = DirectX::XMVector3Normalize(BtoA);				    // bからaに向かう単位ベクトル
+        BtoA = DirectX::XMVectorScale(BtoA, defLength * scaleB);    // めり込んだ量 * bの重み = aの移動ベクトル
+        BtoA = DirectX::XMVectorScale(BtoA, 60.0);                   // スケーリング
+        //posA = DirectX::XMVectorAdd(posA, BtoA);				    // 移動ベクトルをポジションベクトルに加算
+        DirectX::XMStoreFloat3(&outPositionA, BtoA);			    // 適応
+
+        // b の移動
+        AtoB = DirectX::XMVector3Normalize(AtoB);
+        AtoB = DirectX::XMVectorScale(AtoB, defLength * scaleA);
+        AtoB = DirectX::XMVectorScale(AtoB, 60.0);
+        //posB = DirectX::XMVectorAdd(posB, AtoB);
+        DirectX::XMStoreFloat3(&outPositionB, AtoB);
+
+        return true;
+    }
+
+    return false;
+}
+
 // 円柱と円柱の交差判定
 bool Collision::IntersectCylinderVsCylinder(const DirectX::XMFLOAT3& positionA, float radiusA, float heightA, const DirectX::XMFLOAT3& positionB, float radiusB, float heightB, DirectX::XMFLOAT3& outPositionB)
 {
