@@ -2,7 +2,6 @@
 #include <memory>
 #include "Scene.h"
 #include "Library/3D/SkinnedMesh.h"
-#include "StageContext.h"
 
 // テストシーン
 class SceneSTPlayer : public Scene {
@@ -26,5 +25,4 @@ public:
 	void DrawDebugGUI();
 
 private:
-	std::unique_ptr<StageContext> stageMain;
 };

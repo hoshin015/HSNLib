@@ -5,7 +5,7 @@
 #include "Library/ImGui/Include/imgui.h"
 #include "Library/Timer.h"
 #include "StageManager.h"
-
+#include "StageContext.h"
 #include "LightManager.h"
 #include "SpinningTopEnemyManager.h"
 #include "StEnemy01.h"
@@ -23,8 +23,8 @@ void SceneSTPlayer::Initialize() {
 
 	// ステージ初期化
 	StageManager& stageManager = StageManager::Instance();
-	stageMain = std::make_unique<StageContext>();
-	stageManager.Register(stageMain.get());
+	StageContext* stageMain = new_ StageContext();
+	stageManager.Register(stageMain);
 
 	// ライト初期化
 	Light* directionLight = new Light(LightType::Directional);
@@ -44,7 +44,6 @@ void SceneSTPlayer::Initialize() {
 }
 
 void SceneSTPlayer::Finalize() {
-	StageManager::Instance().
 	StageManager::Instance().Clear();
 
 	LightManager::Instance().Clear();

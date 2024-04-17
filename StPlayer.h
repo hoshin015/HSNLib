@@ -12,6 +12,8 @@ public:
 	~StPlayer() override;
 
 	void Update();
+	void Render();
+	void DrawDebugGui();
 
 	void Render();
 	void DrawDebugGui();
