@@ -33,8 +33,20 @@ void StPlayer::Render() {
 
 void StPlayer::DrawDebugGui() {
 	if (ImGui::Begin("Player")) {
-		ImGui::DragFloat2("vel", &vel.x);
+		ImGui::Text("aaaa");
+		if (ImGui::BeginListBox("Input")) {
+			XMFLOAT2 outDebugFloat2;
+			float outDebugFloat;
+			int outDebugInt;
 
+			outDebugFloat2 = std::get<XMFLOAT2>(inputAnalogMap["Move"]);
+			ImGui::Text("Move:%.3f,%.3f", outDebugFloat2.x, outDebugFloat2.y);
+
+			outDebugInt = inputDigitalMap["Attack"];
+			ImGui::Text("Attack:%d", outDebugInt);
+
+			ImGui::EndListBox();
+		}
 		ImGui::End();
 	}
 }
@@ -47,8 +59,14 @@ void StPlayer::Input() {
 	movefloat2.y = im.GetKeyPress(Keyboard::S) - im.GetKeyPress(Keyboard::W);
 	XMStoreFloat2(&movefloat2, XMVector2Normalize(XMLoadFloat2(&movefloat2)));
 
-	vel = movefloat2;
-	
+	if (im.IsGamePadConnected()) {
+		movefloat2.x = im.GetThumSticksLeftX();
+		movefloat2.y = im.GetThumSticksLeftY();
+	}
+
+	inputAnalogMap["Move"] = movefloat2;
+
+	inputDigitalMap["Attack"] = im.GetKeyPressed(Keyboard::Space) | im.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a);
 	Move(movefloat2.x, movefloat2.y, 10);
 }
 
