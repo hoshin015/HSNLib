@@ -1,4 +1,7 @@
 #pragma once
+#include <variant>
+#include <map>
+
 #include "SpinningTopBase.h"
 #include "Collision.h"
 
@@ -21,8 +24,11 @@ protected:
 	void OnDead() override;
 
 private:
-	std::vector<float> a;
-	DirectX::XMFLOAT2 vel {};
+	float moveSpeed;
+	float rotateSpeed;
+	std::map<std::string, std::variant<float, DirectX::XMFLOAT2>> inputAnalogMap;
+	std::map<std::string, int> inputDigitalMap;
+	//DirectX::XMFLOAT2 vel {};
 
 };
 
