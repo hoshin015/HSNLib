@@ -318,6 +318,12 @@
     <ClCompile Include="SpinningTopEnemyManager.cpp">
       <Filter>ソース ファイル\SpinningTopBase</Filter>
     </ClCompile>
+    <ClCompile Include="Obstacle.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="ObstacleManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\Graphics\Graphics.h">
@@ -592,6 +598,12 @@
     </ClInclude>
     <ClInclude Include="SpinningTopEnemyManager.h">
       <Filter>ヘッダー ファイル\SpinningTopBase</Filter>
+    </ClInclude>
+    <ClInclude Include="Obstacle.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="ObstacleManager.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

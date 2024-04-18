@@ -8,6 +8,7 @@
 #include "StageContext.h"
 #include "LightManager.h"
 #include "SpinningTopEnemyManager.h"
+#include "ObstacleManager.h"
 #include "StEnemy01.h"
 #include "Library/3D/DebugPrimitive.h"
 #include "Library/3D/LineRenderer.h"
@@ -23,6 +24,14 @@ void SceneSpinningTop::Initialize()
 		SpinningTopEnemyManager::Instance().Register(slime);
 	}
 	
+	for (int i = 0; i < 3; i++)
+	{
+		Obstacle* obstacle = new_ Obstacle("Data/FBX/cylinder/cylinder.fbx");
+		obstacle->SetPosition({ i * 4.0f - 6.0f, 0, -6.0f });
+		ObstacleManager::Instance().Register(obstacle);
+	}
+	
+
 
 	// ステージ初期化
 	StageManager& stageManager = StageManager::Instance();
@@ -53,6 +62,8 @@ void SceneSpinningTop::Finalize()
 	LightManager::Instance().Clear();
 
 	SpinningTopEnemyManager::Instance().Clear();
+
+	ObstacleManager::Instance().Clear();
 }
 
 void SceneSpinningTop::Update()
@@ -63,6 +74,8 @@ void SceneSpinningTop::Update()
 	StageManager::Instance().Update();
 
 	SpinningTopEnemyManager::Instance().Update();
+
+	ObstacleManager::Instance().Update();
 }
 
 void SceneSpinningTop::Render()
@@ -105,6 +118,8 @@ void SceneSpinningTop::Render()
 
 		SpinningTopEnemyManager::Instance().Render();
 
+		ObstacleManager::Instance().Render();
+
 		gfx.shadowBuffer->DeActivate();
 	}
 
@@ -136,6 +151,8 @@ void SceneSpinningTop::Render()
 	StageManager::Instance().Render();
 
 	SpinningTopEnemyManager::Instance().Render();
+
+	ObstacleManager::Instance().Render();
 
 	// --- デバッグ描画 ---
 	DebugPrimitive::Instance().Render();
@@ -176,4 +193,5 @@ void SceneSpinningTop::DrawDebugGUI()
 	}
 
 	SpinningTopEnemyManager::Instance().DrawDebugGui();
+	ObstacleManager::Instance().DrawDebugGui();
 }
