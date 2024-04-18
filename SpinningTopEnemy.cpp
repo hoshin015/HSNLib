@@ -6,6 +6,7 @@
 #include "Library/3D/LineRenderer.h"
 #include "Library/ImGui/ConsoleData.h"
 #include "PlayerManager.h"
+#include "ObstacleManager.h"
 
 // レイキャスト
 bool SpinningTopEnemy::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit)
@@ -203,7 +204,7 @@ DirectX::XMFLOAT3 SpinningTopEnemy::SbWander()
 		}
 	}
 
-#if 1
+#if 0
 	{
 		// 球体描画
 		DirectX::XMFLOAT3 circlePos;
@@ -233,6 +234,152 @@ DirectX::XMFLOAT3 SpinningTopEnemy::SbWander()
 		lineRenderer.AddVertex({ circlePos.x + fromCenter.x, 0.2, circlePos.z + fromCenter.z }, green);
 	}
 #endif	
+
+	return steering;
+}
+
+DirectX::XMFLOAT3 SpinningTopEnemy::SbCollisionAvoidance()
+{
+	DirectX::XMFLOAT3 steering = { 0,0,0 };
+
+	// ベクター作成
+	DirectX::XMVECTOR POSITION = DirectX::XMLoadFloat3(&GetPosition());
+	DirectX::XMVECTOR VELOCITY = DirectX::XMLoadFloat3(&velocity);
+	DirectX::XMVECTOR N_VEC = DirectX::XMVector3Normalize(VELOCITY);
+
+	DirectX::XMVECTOR L_VEC = VELOCITY;
+	DirectX::XMVECTOR L_VEC_START;
+	DirectX::XMVECTOR L_VEC_END;
+	L_VEC = DirectX::XMVectorSetX(L_VEC, -velocity.z);
+	L_VEC = DirectX::XMVectorSetZ(L_VEC, velocity.x);
+	L_VEC = DirectX::XMVector3Normalize(L_VEC);
+	L_VEC = DirectX::XMVectorScale(L_VEC, radius);
+	DirectX::XMVECTOR R_VEC = VELOCITY;
+	DirectX::XMVECTOR R_VEC_START;
+	DirectX::XMVECTOR R_VEC_END;
+	R_VEC = DirectX::XMVectorSetX(R_VEC, velocity.z);
+	R_VEC = DirectX::XMVectorSetZ(R_VEC, -velocity.x);
+	R_VEC = DirectX::XMVector3Normalize(R_VEC);
+	R_VEC = DirectX::XMVectorScale(R_VEC, radius);
+
+	DirectX::XMVECTOR AvoidanceForce;
+	DirectX::XMVECTOR STEERING;
+	DirectX::XMVECTOR ObsPos;
+	DirectX::XMVECTOR PosToObs;
+	DirectX::XMVECTOR HitPos;
+
+
+	// 障害物と衝突しているかチェック
+	ObstacleManager& obsM = ObstacleManager::Instance();
+
+	// 一番近い障害物を探す
+	int obsCount = obsM.GetObstacleCount();
+	Obstacle* obs = obsM.GetObstacle(0);
+	float obsDistance = FLT_MAX;
+
+	for (int i = 0; i < obsCount; i++)
+	{
+		Obstacle* iObs = obsM.GetObstacle(i);
+		ObsPos = DirectX::XMLoadFloat3(&iObs->GetPosition());
+		// 長さ取得
+		PosToObs = DirectX::XMVectorSubtract(POSITION, ObsPos);
+		DirectX::XMVECTOR LENGTH = DirectX::XMVector3Length(PosToObs);
+		float length;
+		DirectX::XMStoreFloat(&length, LENGTH);
+
+		if (obsDistance > length)
+		{
+			obsDistance = length;
+			obs = obsM.GetObstacle(i);
+		}
+	}
+	ObsPos = DirectX::XMLoadFloat3(&obs->GetPosition());
+
+	// ahead velocity を求める
+	DirectX::XMVECTOR AHEAD = DirectX::XMVectorScale(N_VEC, maxSeeAhead);
+	AHEAD = DirectX::XMVectorAdd(AHEAD, POSITION);
+	
+	L_VEC_START = DirectX::XMVectorAdd(POSITION, L_VEC);
+	R_VEC_START = DirectX::XMVectorAdd(POSITION, R_VEC);
+	L_VEC_END = DirectX::XMVectorAdd(AHEAD, L_VEC);
+	R_VEC_END = DirectX::XMVectorAdd(AHEAD, R_VEC);
+
+	DirectX::XMFLOAT3 rVecStart;
+	DirectX::XMFLOAT3 lVecStart;
+	DirectX::XMFLOAT3 rVecEnd;
+	DirectX::XMFLOAT3 lVecEnd;
+	DirectX::XMFLOAT3 ahead1;
+	DirectX::XMFLOAT3 ahead2;
+	DirectX::XMStoreFloat3(&rVecStart, R_VEC_START);
+	DirectX::XMStoreFloat3(&lVecStart, L_VEC_START);
+	DirectX::XMStoreFloat3(&rVecEnd, R_VEC_END);
+	DirectX::XMStoreFloat3(&lVecEnd, L_VEC_END);
+#if 0
+	// 線描画
+	const DirectX::XMFLOAT4 white = DirectX::XMFLOAT4(0.5f, 0.5f, 0.5f, 1);
+	const DirectX::XMFLOAT4 green = DirectX::XMFLOAT4(0, 1, 0, 1);
+	const DirectX::XMFLOAT4 red = DirectX::XMFLOAT4(1, 0, 0, 1);
+	LineRenderer& lineRenderer = LineRenderer::Instance();
+
+	lineRenderer.AddVertex({ lVecStart.x, 0.3, lVecStart.z }, white);
+	lineRenderer.AddVertex({ lVecEnd.x, 0.3, lVecEnd.z }, white);
+
+	lineRenderer.AddVertex({ rVecStart.x, 0.3, rVecStart.z }, white);
+	lineRenderer.AddVertex({ rVecEnd.x , 0.3, rVecEnd.z }, white);
+#endif
+	float rLength = 0;
+	DirectX::XMVECTOR RLength;
+	float lLength = 0;
+	DirectX::XMVECTOR LLength;
+
+	HitResult hit;
+	if (obs->RayCast(lVecStart, lVecEnd, hit))
+	{
+		// hitポジション
+		HitPos = DirectX::XMLoadFloat3(&hit.position);
+		// 長さ取得
+		DirectX::XMVECTOR EndToObs = DirectX::XMVectorSubtract(L_VEC_END, ObsPos);
+		LLength = DirectX::XMVector3Length(EndToObs);
+		DirectX::XMStoreFloat(&lLength, LLength);
+		
+		DirectX::XMVECTOR HitToObs = DirectX::XMVectorSubtract(HitPos, ObsPos);
+		AvoidanceForce = DirectX::XMVector3Normalize(HitToObs);
+		AvoidanceForce = DirectX::XMVectorScale(AvoidanceForce, maxAvoidForce);
+
+		//DirectX::XMFLOAT3 avoid;
+		//DirectX::XMStoreFloat3(&avoid, AvoidanceForce);
+		//lineRenderer.AddVertex({ hit.position.x, 0.3, hit.position.z }, green);
+		//lineRenderer.AddVertex({ hit.position.x + avoid.x , 0.3, hit.position.z + avoid.z }, red);
+
+		float power = 1.5 - (hit.distance / maxSeeAhead);
+
+		STEERING = AvoidanceForce;
+		STEERING = DirectX::XMVectorScale(STEERING, Timer::Instance().DeltaTime() * power);
+		DirectX::XMStoreFloat3(&steering, STEERING);
+	}
+
+	if (obs->RayCast(rVecStart, rVecEnd, hit))
+	{
+		// obsポジション
+		HitPos = DirectX::XMLoadFloat3(&hit.position);
+		// 長さ取得
+		DirectX::XMVECTOR EndToObs = DirectX::XMVectorSubtract(R_VEC_END, ObsPos);
+		RLength = DirectX::XMVector3Length(EndToObs);
+		DirectX::XMStoreFloat(&rLength, RLength);
+
+		if (lLength < rLength)
+		{
+			DirectX::XMVECTOR HitToObs = DirectX::XMVectorSubtract(HitPos, ObsPos);
+			AvoidanceForce = DirectX::XMVector3Normalize(HitToObs);
+			AvoidanceForce = DirectX::XMVectorScale(AvoidanceForce, maxAvoidForce);
+
+			float power = 1.5 - (hit.distance / maxSeeAhead);
+
+			STEERING = AvoidanceForce;
+			STEERING = DirectX::XMVectorScale(STEERING, Timer::Instance().DeltaTime() * power);
+			DirectX::XMStoreFloat3(&steering, STEERING);
+		}
+	}
 
 	return steering;
 }
@@ -337,6 +484,11 @@ IBTree::STATE SpinningTopEnemy::ActBTree(const int _kind)
 
 		return  IBTree::STATE::Run;
 		break;
+	case KIND::CollisionAvoidance:
+	{
+
+		break;
+	}
 	case KIND::SeekPlayer:
 	{
 		// プレイヤーが追従可能範囲外にでたらノードを抜ける
@@ -359,8 +511,14 @@ IBTree::STATE SpinningTopEnemy::ActBTree(const int _kind)
 		targetPosition = plPosition;
 		DirectX::XMFLOAT3 seekPower = SbSeek();
 		DirectX::XMVECTOR SeekPower = DirectX::XMLoadFloat3(&seekPower);
-
+		SeekPower = DirectX::XMVectorScale(SeekPower, 1.0f);
 		SteeringForce = DirectX::XMVectorAdd(SteeringForce, SeekPower);
+
+		DirectX::XMFLOAT3 avoidancePower = SbCollisionAvoidance();
+		DirectX::XMVECTOR AvoidancePower = DirectX::XMLoadFloat3(&avoidancePower);
+		AvoidancePower = DirectX::XMVectorScale(AvoidancePower, 5.0f);
+		SteeringForce = DirectX::XMVectorAdd(SteeringForce, AvoidancePower);
+
 		DirectX::XMStoreFloat3(&steeringForce, SteeringForce);
 
 		velocity.x += steeringForce.x;
@@ -385,6 +543,13 @@ IBTree::STATE SpinningTopEnemy::ActBTree(const int _kind)
 		WanderPower = DirectX::XMVectorScale(WanderPower, 0.9f);
 
 		SteeringForce = DirectX::XMVectorAdd(SteeringForce, WanderPower);
+
+		DirectX::XMFLOAT3 avoidancePower = SbCollisionAvoidance();
+		DirectX::XMVECTOR AvoidancePower = DirectX::XMLoadFloat3(&avoidancePower);
+		AvoidancePower = DirectX::XMVectorScale(AvoidancePower, 0.5f);
+		
+		SteeringForce = DirectX::XMVectorAdd(SteeringForce, AvoidancePower);
+
 		DirectX::XMStoreFloat3(&steeringForce, SteeringForce);
 
 		velocity.x += steeringForce.x;

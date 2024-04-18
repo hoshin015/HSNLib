@@ -35,6 +35,11 @@ void Obstacle::DrawDebugPrimitive()
 	DebugPrimitive::Instance().AddSphere(position, 1.1, { 0,0,0,1 });		// スポーン地点
 }
 
+bool Obstacle::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit)
+{
+	return Collision::IntersectRayVsModel(start, end, model, transform, hit);
+	//return Collision::IntersectRayVsModel(start, end, collisionModel, hit);
+}
 void Obstacle::UpdateTransform()
 {
 	const float scaleFactor = model->scaleFactors[model->fbxUnit];

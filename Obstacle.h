@@ -1,6 +1,7 @@
 #pragma once
 #include "Library/3D/SkinnedMesh.h"
 
+#include "Collision.h"
 
 class Obstacle
 {
@@ -31,6 +32,11 @@ public:
 	void SetScale(const DirectX::XMFLOAT3& scale) { this->scale = scale; }
 
 	float GetRadius() { return radius; }
+
+	// レイキャスト
+	bool RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit);
+	
+
 
 private:
 	// 行列更新関数

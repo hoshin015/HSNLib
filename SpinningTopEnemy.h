@@ -18,6 +18,7 @@ public:
 		SEEK,
 		ARRIVAL,
 		WANDER,
+		CollisionAvoidance,
 		SeekPlayer,
 		WanderSpawnArea,
 	};
@@ -45,6 +46,7 @@ public:
 	DirectX::XMFLOAT3 SbSeek();
 	DirectX::XMFLOAT3 SbArrival();
 	DirectX::XMFLOAT3 SbWander();
+	DirectX::XMFLOAT3 SbCollisionAvoidance();
 
 public:
 	// enemies での index
@@ -58,7 +60,7 @@ public:
 	float rotationSpeed = 720;	// 1秒に回転する角度
 
 	float searchRadius = 6.0f;		// プレイヤー追従開始の範囲
-	float notSearchRadius = 10.0f;	// プレイヤーの追従をあきらめる範囲
+	float notSearchRadius = 15.0f;	// プレイヤーの追従をあきらめる範囲
 
 
 	// ----- SteeringBehavior -----
@@ -75,7 +77,8 @@ public:
 	float wanderAngleChangeTimer = 0.0f;
 	float wanderAngleChangeTime = 0.1f;
 
-
+	float maxSeeAhead = 6.0f;
+	float maxAvoidForce = 60.0f;
 
 	// ----- behaviorTree -----
 	std::unique_ptr<BTree> aiTree;

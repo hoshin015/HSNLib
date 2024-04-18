@@ -27,7 +27,7 @@ void SceneSpinningTop::Initialize()
 	for (int i = 0; i < 3; i++)
 	{
 		Obstacle* obstacle = new_ Obstacle("Data/FBX/cylinder/cylinder.fbx");
-		obstacle->SetPosition({ i * 4.0f - 6.0f, 0, -6.0f });
+		obstacle->SetPosition({ i * 10.0f - 15.0f, 0, -6.0f });
 		ObstacleManager::Instance().Register(obstacle);
 	}
 	

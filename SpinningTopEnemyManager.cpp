@@ -110,16 +110,24 @@ bool SpinningTopEnemyManager::RayCast(const DirectX::XMFLOAT3& start, const Dire
 {
 	bool result = false;
 
+	ObstacleManager& obsM = ObstacleManager::Instance();
+
 	hit.distance = FLT_MAX;
+	int obsCount = obsM.GetObstacleCount();
 	for (SpinningTopEnemy* enemy : enemies)
 	{
-		HitResult hitResult;
-		if (enemy->RayCast(start, end, hitResult))
+		for (int i = 0; i < obsCount; i++)
 		{
-			if (hit.distance > hitResult.distance)
+			Obstacle* obs = obsM.GetObstacle(i);
+
+			HitResult hitResult;
+			if (enemy->RayCast(start, end, hitResult))
 			{
-				hit = hitResult;
-				result = true;
+				if (hit.distance > hitResult.distance)
+				{
+					hit = hitResult;
+					result = true;
+				}
 			}
 		}
 	}
