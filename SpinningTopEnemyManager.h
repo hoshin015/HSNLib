@@ -55,6 +55,9 @@ private:
 	// エネミー同士の衝突判定
 	void CollisionEnemyVsEnemeis();
 
+	// エネミーと障害物の衝突判定
+	void CollisionEnemyVsObstacle();
+
 public:
 	bool drawDebugPrimitive = true;
 

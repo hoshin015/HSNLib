@@ -3,6 +3,7 @@
 #include "Collision.h"
 #include "EnemySlime.h"
 #include "Library/Graphics/Graphics.h"
+#include "ObstacleManager.h"
 
 // 更新処理
 void SpinningTopEnemyManager::Update()
@@ -43,6 +44,8 @@ void SpinningTopEnemyManager::Render()
 
 	// 敵同士の衝突処理
 	CollisionEnemyVsEnemeis();
+
+	CollisionEnemyVsObstacle();
 }
 
 // エネミー登録
@@ -190,6 +193,42 @@ void SpinningTopEnemyManager::CollisionEnemyVsEnemeis()
 		}
 	}
 
+}
+
+void SpinningTopEnemyManager::CollisionEnemyVsObstacle()
+{
+	ObstacleManager& obsM = ObstacleManager::Instance();
+
+	for (SpinningTopEnemy* enemyA : enemies)
+	{
+		int obsCount = obsM.GetObstacleCount();
+		for(int i = 0; i < obsCount; i++)
+		{
+			Obstacle* obs = obsM.GetObstacle(i);
+
+			// 衝突処理
+			DirectX::XMFLOAT3 velocityA;
+			if (Collision::StaticRepulsionSphereVsSphere(
+				enemyA->GetPosition(),
+				enemyA->GetRadius(),
+				obs->GetPosition(),
+				obs->GetRadius(),
+				velocityA
+			))
+			{
+				// 押し出し後の位置設定
+				DirectX::XMFLOAT3 enemyAVel = enemyA->GetVelocity();
+				DirectX::XMVECTOR V_A = DirectX::XMLoadFloat3(&enemyAVel);
+
+				DirectX::XMVECTOR AddA = DirectX::XMLoadFloat3(&velocityA);
+
+				V_A = DirectX::XMVectorAdd(V_A, AddA);
+				DirectX::XMStoreFloat3(&velocityA, V_A);
+
+				enemyA->SetVelocity(velocityA);
+			}
+		}
+	}
 }
 
 

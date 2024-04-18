@@ -1,5 +1,6 @@
 #include "Obstacle.h"
 #include "Library/Graphics/Graphics.h"
+#include "Library/3D/DebugPrimitive.h"
 
 Obstacle::Obstacle(const char* name)
 {
@@ -27,6 +28,11 @@ void Obstacle::Render()
 	gfx.SetRasterizer(RASTERIZER_STATE::CLOCK_TRUE_SOLID);
 
 	model->Render(transform, { 1, 1, 1, 1 }, 0);
+}
+
+void Obstacle::DrawDebugPrimitive()
+{
+	DebugPrimitive::Instance().AddSphere(position, 1.1, { 0,0,0,1 });		// スポーン地点
 }
 
 void Obstacle::UpdateTransform()

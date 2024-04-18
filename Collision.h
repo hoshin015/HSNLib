@@ -38,6 +38,15 @@ public:
 		DirectX::XMFLOAT3& outPositionB
 	);
 
+	// ‹…‚ÆŒÅ’è‹…‚Ì”½”­”»’è
+	static bool StaticRepulsionSphereVsSphere(
+		const DirectX::XMFLOAT3& positionA,
+		float radiusA,
+		const DirectX::XMFLOAT3& positionB,
+		float radiusB,
+		DirectX::XMFLOAT3& outPositionA
+	);
+
 	// ‰~’Œ‚Æ‰~’Œ‚ÌŒğ·”»’è
 	static bool IntersectCylinderVsCylinder(
 		const DirectX::XMFLOAT3& positionA,

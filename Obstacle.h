@@ -15,7 +15,7 @@ public:
 	void Render();
 
 	// デバッグプリミティブ描画
-	void DrawDebugPrimitive() {};
+	void DrawDebugPrimitive();
 
 	// 位置取得
 	const DirectX::XMFLOAT3& GetPosition() const { return position; }
@@ -29,6 +29,8 @@ public:
 	const DirectX::XMFLOAT3& GetScale() const { return scale; }
 	// スケール設定
 	void SetScale(const DirectX::XMFLOAT3& scale) { this->scale = scale; }
+
+	float GetRadius() { return radius; }
 
 private:
 	// 行列更新関数
@@ -47,4 +49,6 @@ public:
 		0,0,1,0,
 		0,0,0,1
 	};
+
+	float radius = 1.1f;
 };

@@ -33,8 +33,11 @@ void ObstacleManager::Render()
 	for (Obstacle* obstacle : obstacles)
 	{
 		obstacle->Render();
+		obstacle->DrawDebugPrimitive();
 	}
 }
+
+
 
 // エネミー登録
 void ObstacleManager::Register(Obstacle* obstacle)

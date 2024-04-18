@@ -70,6 +70,34 @@ bool Collision::RepulsionSphereVsSphere(const DirectX::XMFLOAT3& positionA, floa
     return false;
 }
 
+bool Collision::StaticRepulsionSphereVsSphere(const DirectX::XMFLOAT3& positionA, float radiusA, const DirectX::XMFLOAT3& positionB, float radiusB, DirectX::XMFLOAT3& outPositionA)
+{
+    DirectX::XMVECTOR posA = DirectX::XMLoadFloat3(&positionA);
+    DirectX::XMVECTOR posB = DirectX::XMLoadFloat3(&positionB);
+    DirectX::XMVECTOR AtoB = DirectX::XMVectorSubtract(posB, posA);
+    DirectX::XMVECTOR BtoA = DirectX::XMVectorSubtract(posA, posB);
+    DirectX::XMVECTOR Length = DirectX::XMVector3Length(AtoB);
+    float length;
+    DirectX::XMStoreFloat(&length, Length);
+
+    float totalRadius = radiusA + radiusB;
+    if (totalRadius * totalRadius > length * length)
+    {
+        // めり込み量算出
+        float defLength = totalRadius - length;
+
+        // a の移動
+        BtoA = DirectX::XMVector3Normalize(BtoA);				    // bからaに向かう単位ベクトル
+        BtoA = DirectX::XMVectorScale(BtoA, defLength);             // めり込んだ量
+        BtoA = DirectX::XMVectorScale(BtoA, 2.0);                   // スケーリング
+        DirectX::XMStoreFloat3(&outPositionA, BtoA);			    // 適応
+
+        return true;
+    }
+
+    return false;
+}
+
 // 円柱と円柱の交差判定
 bool Collision::IntersectCylinderVsCylinder(const DirectX::XMFLOAT3& positionA, float radiusA, float heightA, const DirectX::XMFLOAT3& positionB, float radiusB, float heightB, DirectX::XMFLOAT3& outPositionB)
 {
