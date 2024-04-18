@@ -25,10 +25,10 @@ protected:
 	void OnDead() override;
 
 private:
-	float maxSpeed = 0;
-	float rotateSpeed = 0;
+	float mobility;
+	float rotateSpeed;
 	float speed;
-	float turningSpeed = 0;
+	float accel;
 	DirectX::XMFLOAT2 moveDirection;
 
 	using InputVariant = std::variant<bool, int, float, DirectX::XMFLOAT2>;
