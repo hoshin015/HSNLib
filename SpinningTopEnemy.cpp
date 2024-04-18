@@ -5,6 +5,7 @@
 #include "Library/3D/DebugPrimitive.h"
 #include "Library/3D/LineRenderer.h"
 #include "Library/ImGui/ConsoleData.h"
+#include "PlayerManager.h"
 
 // レイキャスト
 bool SpinningTopEnemy::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit)
@@ -108,8 +109,8 @@ DirectX::XMFLOAT3 SpinningTopEnemy::SbArrival()
 
 	// ステアリング力の計算
 	STEERING = DirectX::XMVectorSubtract(DSERIRED_VELOCITY, VELOCITY);
-	DirectX::XMVECTOR LENGTH = DirectX::XMVector3Length(STEERING);
 	STEERING = DirectX::XMVectorScale(STEERING, Timer::Instance().DeltaTime());
+	DirectX::XMVECTOR LENGTH = DirectX::XMVector3Length(STEERING);
 
 	float length;
 	DirectX::XMStoreFloat(&length, LENGTH);
@@ -202,14 +203,14 @@ DirectX::XMFLOAT3 SpinningTopEnemy::SbWander()
 		}
 	}
 
-#if 0
+#if 1
 	{
 		// 球体描画
 		DirectX::XMFLOAT3 circlePos;
 		DirectX::XMStoreFloat3(&circlePos, CircleCenter);
 		circlePos.x += position.x;
 		circlePos.z += position.z;
-		DebugPrimitive::Instance().AddSphere(circlePos, circleRadius, { 0,0,1,1 });
+		DebugPrimitive::Instance().AddCylinder(circlePos, circleRadius, 0.2, { 0,1,0,1 });
 
 		// 線描画
 		const DirectX::XMFLOAT4 white = DirectX::XMFLOAT4(0.5f, 0.5f, 0.5f, 1);
@@ -242,6 +243,24 @@ bool SpinningTopEnemy::GetBTreeJudge(const int _kind)
 	switch (kind)
 	{
 	case KIND::WANDER:
+		return true;
+	case KIND::SeekPlayer:
+		// プレイヤーが searchRadius の範囲内なら追跡する
+		//DirectX::XMFLOAT3 plPosition = PlayerManager::Instance().GetPlayer(0)->GetPosition();
+		DirectX::XMFLOAT3 playerPosition = this->plPosition;
+		DirectX::XMVECTOR PlPOSITION = DirectX::XMLoadFloat3(&playerPosition);
+		DirectX::XMVECTOR POSITION = DirectX::XMLoadFloat3(&GetPosition());
+		DirectX::XMVECTOR LENGTH = DirectX::XMVector3Length(DirectX::XMVectorSubtract(PlPOSITION, POSITION));
+		float length;
+		DirectX::XMStoreFloat(&length, LENGTH);
+		if (length < searchRadius)
+		{
+			return true;
+		}
+		// 範囲内にいないなら除外
+		return false;
+	case KIND::WanderSpawnArea:
+		
 		return true;
 	}
 
@@ -318,7 +337,64 @@ IBTree::STATE SpinningTopEnemy::ActBTree(const int _kind)
 
 		return  IBTree::STATE::Run;
 		break;
+	case KIND::SeekPlayer:
+	{
+		// プレイヤーが追従可能範囲外にでたらノードを抜ける
+		{
+			DirectX::XMFLOAT3 playerPosition = this->plPosition;
+			DirectX::XMVECTOR PlPOSITION = DirectX::XMLoadFloat3(&playerPosition);
+			DirectX::XMVECTOR POSITION = DirectX::XMLoadFloat3(&GetPosition());
+			DirectX::XMVECTOR LENGTH = DirectX::XMVector3Length(DirectX::XMVectorSubtract(PlPOSITION, POSITION));
+			float length;
+			DirectX::XMStoreFloat(&length, LENGTH);
+			if (length > notSearchRadius)
+			{
+				return  IBTree::STATE::Complete;
+			}
+		}
+
+		steeringForce = { 0,0,0 };
+		DirectX::XMVECTOR SteeringForce = DirectX::XMLoadFloat3(&steeringForce);
+
+		targetPosition = plPosition;
+		DirectX::XMFLOAT3 seekPower = SbSeek();
+		DirectX::XMVECTOR SeekPower = DirectX::XMLoadFloat3(&seekPower);
+
+		SteeringForce = DirectX::XMVectorAdd(SteeringForce, SeekPower);
+		DirectX::XMStoreFloat3(&steeringForce, SteeringForce);
+
+		velocity.x += steeringForce.x;
+		velocity.z += steeringForce.z;
+
+		return IBTree::STATE::Run;
+		break;
 	}
+	case KIND::WanderSpawnArea:
+	{
+		steeringForce = { 0,0,0 };
+		DirectX::XMVECTOR SteeringForce = DirectX::XMLoadFloat3(&steeringForce);
+
+		targetPosition = spawnPosition;
+		DirectX::XMFLOAT3 seekPower = SbSeek();
+		DirectX::XMVECTOR SeekPower = DirectX::XMLoadFloat3(&seekPower);
+		SeekPower = DirectX::XMVectorScale(SeekPower, 0.5f);
+		SteeringForce = DirectX::XMVectorAdd(SteeringForce, SeekPower);
+
+		DirectX::XMFLOAT3 wanderPower = SbWander();
+		DirectX::XMVECTOR WanderPower = DirectX::XMLoadFloat3(&wanderPower);
+		WanderPower = DirectX::XMVectorScale(WanderPower, 0.9f);
+
+		SteeringForce = DirectX::XMVectorAdd(SteeringForce, WanderPower);
+		DirectX::XMStoreFloat3(&steeringForce, SteeringForce);
+
+		velocity.x += steeringForce.x;
+		velocity.z += steeringForce.z;
+
+		break;
+	}
+	
+	}
+	
 
 	return IBTree::STATE::Complete;
 }

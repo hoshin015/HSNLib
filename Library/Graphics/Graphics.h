@@ -128,7 +128,7 @@ public:
 	void SetBlend(BLEND_STATE state);
 
 public:
-	bool sync = true;
+	bool sync = false;
 
 	// •½sŒõŒ¹î•ñ
 	struct DirectionalLightData

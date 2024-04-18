@@ -18,8 +18,9 @@ public:
 		SEEK,
 		ARRIVAL,
 		WANDER,
+		SeekPlayer,
+		WanderSpawnArea,
 	};
-
 
 public:
 	SpinningTopEnemy() {};
@@ -51,14 +52,21 @@ public:
 
 	// プレイヤーとの距離
 	float playerDistance;
+	DirectX::XMFLOAT3 plPosition = { 0,0,0 };	// TODO: デバッグ用だから削除する
 
+	
+	float rotationSpeed = 720;	// 1秒に回転する角度
 
-	float rotationSpeed = 1;
+	float searchRadius = 6.0f;		// プレイヤー追従開始の範囲
+	float notSearchRadius = 10.0f;	// プレイヤーの追従をあきらめる範囲
+
 
 	// ----- SteeringBehavior -----
+	DirectX::XMFLOAT3 steeringForce = { 0,0,0 };
 	DirectX::XMFLOAT3 targetPosition = { 3,0,0 };
+	DirectX::XMFLOAT3 spawnPosition = { 0,0,0 };
 
-	float steeringMaxForce = 0.1f;
+	float steeringMaxForce = 1.0f;
 	float slowingArea = 1.0f;
 	float circleDistance = 3.0f;
 	float circleRadius = 2.5f;
@@ -67,7 +75,6 @@ public:
 	float wanderAngleChangeTimer = 0.0f;
 	float wanderAngleChangeTime = 0.1f;
 
-	DirectX::XMFLOAT3 steeringForce = { 0,0,0 };
 
 
 	// ----- behaviorTree -----

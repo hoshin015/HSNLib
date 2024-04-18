@@ -10,7 +10,7 @@
 
 StEnemy01::StEnemy01()
 {
-	model = ResourceManager::Instance().LoadModelResource("Data/Fbx/SpinningTopTest/SpinningTopTest.fbx");
+	model = ResourceManager::Instance().LoadModelResource("Data/Fbx/SpinningTopTest2/SpinningTopTest2.fbx");
 
 	// アニメーション変更
 	PlayAnimation(5, true);
@@ -19,10 +19,12 @@ StEnemy01::StEnemy01()
 	aiTree = std::make_unique <BTree>(this);
 	aiTree->AddNode((int)KIND::NONE, (int)KIND::ROOT, 0, IBTree::RULE::Priority, this);
 
-	aiTree->AddNode((int)KIND::ROOT, (int)KIND::WANDER, 0, IBTree::RULE::Non, this);
-	aiTree->AddNode((int)KIND::ROOT, (int)KIND::ARRIVAL, 1, IBTree::RULE::Non, this);
-	aiTree->AddNode((int)KIND::ROOT, (int)KIND::SEEK, 1, IBTree::RULE::Non, this);
-	aiTree->AddNode((int)KIND::ROOT, (int)KIND::IDLE, 1, IBTree::RULE::Non, this);
+	aiTree->AddNode((int)KIND::ROOT, (int)KIND::SeekPlayer, 0, IBTree::RULE::Non, this);
+	aiTree->AddNode((int)KIND::ROOT, (int)KIND::WanderSpawnArea, 1, IBTree::RULE::Non, this);
+	aiTree->AddNode((int)KIND::ROOT, (int)KIND::WANDER, 2, IBTree::RULE::Non, this);
+	aiTree->AddNode((int)KIND::ROOT, (int)KIND::ARRIVAL, 2, IBTree::RULE::Non, this);
+	aiTree->AddNode((int)KIND::ROOT, (int)KIND::SEEK, 2, IBTree::RULE::Non, this);
+	aiTree->AddNode((int)KIND::ROOT, (int)KIND::IDLE, 2, IBTree::RULE::Non, this);
 }
 
 StEnemy01::~StEnemy01()
@@ -33,7 +35,7 @@ void StEnemy01::Update()
 {
 	// 回転
 	DirectX::XMFLOAT3 ang = GetAngle();
-	ang.y += rotationSpeed;
+	ang.y += rotationSpeed * Timer::Instance().DeltaTime();
 	SetAngle(ang);
 
 	UpdateTargetPosition();
@@ -59,9 +61,16 @@ void StEnemy01::Render()
 // デバッグプリミティブ描画
 void StEnemy01::DrawDebugPrimitive()
 {
+	DebugPrimitive::Instance().AddSphere(plPosition, 0.5f, { 1,1,0,1 });		// スポーン地点
+
+
 	//DebugPrimitive::Instance().AddCylinder(position, radius, height, { 1,0,0,1 });
 
-	DebugPrimitive::Instance().AddSphere(targetPosition, 0.2f, { 0,1,0,1 });
+	DebugPrimitive::Instance().AddSphere(targetPosition, 0.2f, { 0,1,0,1 });	// ターゲット座標
+	DebugPrimitive::Instance().AddSphere(spawnPosition, 0.2f, { 0,1,1,1 });		// スポーン地点
+
+	DebugPrimitive::Instance().AddCylinder(position, searchRadius, 0.2, { 1,0,0,1 });
+	DebugPrimitive::Instance().AddCylinder(position, notSearchRadius, 0.2, { 0,0,1,1 });
 }
 
 // TargetPosition 更新
@@ -133,7 +142,8 @@ void StEnemy01::UpdateTargetPosition()
 		if (StageManager::Instance().RayCast(rayStart, rayEnd, hit))
 		{
 			// 敵を配置
-			targetPosition = hit.position;
+			//targetPosition = hit.position;
+			plPosition = hit.position;
 		}
 	}
 }

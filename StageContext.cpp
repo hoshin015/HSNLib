@@ -7,7 +7,7 @@
 // コンストラクタ
 StageContext::StageContext()
 {
-	model = new_ SkinnedMesh("Data/Fbx/MyStage/MyStage.fbx");
+	model = new_ SkinnedMesh("Data/Fbx/testStage/testStage.fbx");
 	//collisionModel = new_ SkinnedMesh("Data/Fbx/MyStageCollision/MyStageCollision.fbx");
 }
 
