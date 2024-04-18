@@ -104,10 +104,13 @@ void StPlayer::UpdateMove() {
 	speed -= speed * 0.98f * Timer::Instance().DeltaTime();
 	//inputVec *= speed;
 	if (fabsf(input.x) > 0.00001f || fabsf(input.y) > 0.00001f) {
-		speed += XMVectorGetX(XMVector2Length(inputVec)) * Timer::Instance().DeltaTime();
+		speed += XMVectorGetX(XMVector2Length(inputVec)) * 10 * Timer::Instance().DeltaTime();
 	}
 
-	XMStoreFloat2(&moveDirection, inputVec * speed);
+
+	direction = XMVectorLerp(XMVector2Normalize(direction), inputVec,0.01f);
+
+	XMStoreFloat2(&moveDirection, direction * speed);
 
 	debugValue["x"] = moveDirection.x;
 	debugValue["y"] = moveDirection.y;
