@@ -7,12 +7,13 @@
 using namespace DirectX;
 
 StPlayer::StPlayer() {
-	model = ResourceManager::Instance().LoadModelResource("Data/Fbx/Jummo/Jummo.fbx");
+	model = ResourceManager::Instance().LoadModelResource("Data/Fbx/SpinningTopTest/SpinningTopTest.fbx");
 
-	maxSpeed = 10;
-	rotateSpeed = 2;
+	mobility = 1;
+	rotateSpeed = 560;
 	speed = 0;
 	moveDirection = { 0,0 };
+	accel = 10;
 }
 
 StPlayer::~StPlayer() {}
@@ -20,7 +21,7 @@ StPlayer::~StPlayer() {}
 void StPlayer::Update() {
 	Input();
 
-	angle.y += 2;
+	angle.y += rotateSpeed * Timer::Instance().DeltaTime();
 	UpdateMove();
 
 	// 速力更新処理
@@ -39,8 +40,19 @@ void StPlayer::Render() {
 }
 
 void StPlayer::DrawDebugGui() {
+	auto ImguiVectorDirDraw = [](float centerX, float centerY, float radius, XMFLOAT2 dir) {
+		ImVec2 center = ImGui::GetCursorScreenPos();
+		center.x += centerX;
+		center.y += centerY;
+
+		ImGui::GetWindowDrawList()->AddCircleFilled(center, radius, IM_COL32(128, 128, 128, 255), 32);
+		ImVec2 arrowEnd = { center.x + dir.x * radius,center.y + dir.y * radius };
+		ImGui::GetWindowDrawList()->AddLine(center, arrowEnd, IM_COL32(0, 255, 0, 255), 2.f);
+	};
+
 	if (ImGui::Begin("Player")) {
-		ImGui::DragFloat("Speed", &maxSpeed, 0.1f);
+		ImGui::DragFloat("Mobility", &mobility, 0.1f);
+		ImGui::DragFloat("Accel", &accel, 0.1f);
 
 		if (ImGui::CollapsingHeader(u8"インプット", ImGuiTreeNodeFlags_DefaultOpen)) {
 			XMFLOAT2 outDebugFloat2;
@@ -48,7 +60,10 @@ void StPlayer::DrawDebugGui() {
 			int outDebugInt;
 
 			outDebugFloat2 = GetInputMap<XMFLOAT2>("Move");
+			outDebugFloat2.x *= -1;
 			ImGui::Text("Move:%.3f,%.3f", outDebugFloat2.x, outDebugFloat2.y);
+			ImguiVectorDirDraw(20, 10, 20, outDebugFloat2);
+
 
 			outDebugInt = GetInputMap<bool>("Attack");
 			ImGui::Text("Attack:%d", outDebugInt);
@@ -59,17 +74,18 @@ void StPlayer::DrawDebugGui() {
 			float outDebugFloat;
 			int outDebugInt;
 
-			outDebugFloat2 = { GetDebugValue<float>("x"),GetDebugValue<float>("y") };
-			ImGui::Text("debug:%.3f,%.3f", outDebugFloat2.x, outDebugFloat2.y);
+			outDebugFloat2 = { GetDebugValue<float>("directionX"),GetDebugValue<float>("directionY") };
+			outDebugFloat2.x *= -1;
+			ImGui::Text("direction:%.3f,%.3f", outDebugFloat2.x,outDebugFloat2.y);
+			ImguiVectorDirDraw(20, 10, 20, outDebugFloat2);
 
-			//outDebugFloat = GetDebugValue<float>("t");
-			//ImGui::Text("t:%.3f", outDebugFloat);
+			outDebugFloat = GetDebugValue<float>("directionLength");
+			ImGui::Text("directionLength:%.3f", outDebugFloat);
 
-			outDebugFloat = GetDebugValue<float>("direction");
-			ImGui::Text("direction:%.3f", outDebugFloat);
+			outDebugFloat = GetDebugValue<float>("dot");
+			ImGui::Text("dot:%.3f", outDebugFloat);
 
 			ImGui::Text("speed:%.3f", speed);
-			ImGui::Text("frame:%.3f", 0.99999999f * Timer::Instance().DeltaTime());
 
 		}
 
@@ -104,19 +120,24 @@ void StPlayer::UpdateMove() {
 	speed -= speed * 0.98f * Timer::Instance().DeltaTime();
 	//inputVec *= speed;
 	if (fabsf(input.x) > 0.00001f || fabsf(input.y) > 0.00001f) {
-		speed += XMVectorGetX(XMVector2Length(inputVec)) * 10 * Timer::Instance().DeltaTime();
+		float dot = XMVectorGetX(XMVector2Dot(direction, inputVec));
+		dot = dot < 0 ? -1 : 1;
+		speed += XMVectorGetX(XMVector2Length(inputVec) * dot)  * accel * Timer::Instance().DeltaTime();
+		speed = fabsf(speed);
 	}
 
+	float a = 1 - speed / 13;
+	direction = XMVectorLerp(XMVector2Normalize(direction), inputVec, mobility*a * Timer::Instance().DeltaTime());
 
-	direction = XMVectorLerp(XMVector2Normalize(direction), inputVec,0.01f);
+	XMStoreFloat2(&moveDirection, direction);
 
-	XMStoreFloat2(&moveDirection, direction * speed);
+	debugValue["directionX"] = moveDirection.x;
+	debugValue["directionY"] = moveDirection.y;
+	debugValue["directionLength"] = XMVectorGetX(XMVector2Length(XMLoadFloat2(&moveDirection)));
+	debugValue["dot"] = XMVectorGetX(XMVector2Dot(direction, inputVec));
 
-	debugValue["x"] = moveDirection.x;
-	debugValue["y"] = moveDirection.y;
-	debugValue["direction"] = XMVectorGetX(XMVector2Length(XMLoadFloat2(&moveDirection)));
-
-	Move(moveDirection.x, moveDirection.y, maxSpeed);
+	velocity.x = moveDirection.x * speed;
+	velocity.z = moveDirection.y * speed;
 }
 
 void StPlayer::OnLanding() {}
