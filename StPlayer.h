@@ -17,6 +17,7 @@ public:
 
 private:
 	void Input();
+	void UpdateMove();
 
 protected:
 	void OnLanding() override;
@@ -24,11 +25,30 @@ protected:
 	void OnDead() override;
 
 private:
-	float moveSpeed;
-	float rotateSpeed;
-	std::map<std::string, std::variant<float, DirectX::XMFLOAT2>> inputAnalogMap;
-	std::map<std::string, int> inputDigitalMap;
-	//DirectX::XMFLOAT2 vel {};
+	float maxSpeed = 0;
+	float rotateSpeed = 0;
+	float speed;
+	float turningSpeed = 0;
+	DirectX::XMFLOAT2 moveDirection;
+
+	using InputVariant = std::variant<bool, int, float, DirectX::XMFLOAT2>;
+	std::map<std::string, InputVariant> inputMap;
+
+	template<typename T>
+	T GetInputMap(std::string str) {
+		return std::get<T>(inputMap[str]);
+	}
+
+#if _DEBUG
+	using debugVariant = std::variant<bool, int, float>;
+	std::map<std::string, InputVariant> debugValue;
+
+	template<typename T>
+	T GetDebugValue(std::string str) {
+		return std::get<T>(debugValue[str]);
+	}
+#endif // _DEBUG
+
 
 };
 
