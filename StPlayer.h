@@ -25,11 +25,21 @@ protected:
 	void OnDead() override;
 
 private:
+	//プロパティ&ステータス
 	float mobility;
 	float rotateSpeed;
 	float speed;
 	float accel;
+	float slow;
 	DirectX::XMFLOAT2 moveDirection;
+
+	//パリィ
+	float parryRadius;
+	float parryCooldown;
+	float parryCooldownCount;
+	float parryKnockback;
+
+	//子機
 
 	using InputVariant = std::variant<bool, int, float, DirectX::XMFLOAT2>;
 	std::map<std::string, InputVariant> inputMap;
@@ -39,7 +49,6 @@ private:
 		return std::get<T>(inputMap[str]);
 	}
 
-#if _DEBUG
 	using debugVariant = std::variant<bool, int, float>;
 	std::map<std::string, InputVariant> debugValue;
 
@@ -47,7 +56,6 @@ private:
 	T GetDebugValue(std::string str) {
 		return std::get<T>(debugValue[str]);
 	}
-#endif // _DEBUG
 
 
 };
