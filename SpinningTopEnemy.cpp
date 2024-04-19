@@ -275,6 +275,7 @@ DirectX::XMFLOAT3 SpinningTopEnemy::SbCollisionAvoidance()
 
 	// ˆê”Ô‹ß‚¢áŠQ•¨‚ğ’T‚·
 	int obsCount = obsM.GetObstacleCount();
+	if (obsCount == 0) return {};
 	Obstacle* obs = obsM.GetObstacle(0);
 	float obsDistance = FLT_MAX;
 
