@@ -62,10 +62,6 @@ void SceneSTPlayer::Update() {
 
 	InputManager& input = InputManager::Instance();
 
-	if (input.GetKeyPressed(Keyboard::Enter)) {
-		SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
-	}
-
 	StageManager::Instance().Update();
 
 	SpinningTopEnemyManager::Instance().Update();

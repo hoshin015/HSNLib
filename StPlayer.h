@@ -36,6 +36,8 @@ private:
 
 	//ƒpƒŠƒB
 	float parryRadius;
+	float parryDamageRadius;
+	float parryMaxRadius;
 	float parryCooldown;
 	float parryCooldownCount;
 	float parryKnockback;

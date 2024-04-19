@@ -19,8 +19,8 @@ StPlayer::StPlayer() {
 	radius = 1;
 	mobility = 1.f;
 	rotateSpeed = 560;
-	accel = 60;
-	slow = 50;
+	accel = 10;
+	slow = 1;
 
 	parryRadius = 1;
 	parryKnockback = 30;
@@ -71,6 +71,7 @@ void StPlayer::DrawDebugGui() {
 			ImGui::DragFloat("Slow", &slow, 0.1f);
 
 			ImGui::DragFloat("ParryKnockback", &parryKnockback, 0.1f);
+			ImGui::DragFloat("ParryRadius", &parryRadius, 0.1f);
 		}
 
 		if (ImGui::CollapsingHeader(u8"デバック", ImGuiTreeNodeFlags_DefaultOpen)) {
@@ -168,15 +169,15 @@ void StPlayer::UpdateMove() {
 	}
 	else speed = max(0.0f, speed - (slow * deltaTime));
 
-	speed -= speed * 0.98f * deltaTime;
-	maxMoveSpeed = (accel + (accel * 0.02f));
+	speed -= speed * 0.998f * deltaTime;
+	maxMoveSpeed = (accel + (accel * 0.002f));
 	speed = min(speed, maxMoveSpeed);
 
 	//機動性の計算
 	if (speed < 0.0000001) direction = {};
 	float lerp = min(max(0,(speed / maxMoveSpeed * mobility)+(1 - mobility)), 0.95f);
-	direction = XMVector2Normalize(direction);
 	direction = XMVectorLerp(direction, XMVectorLerp(inputVec, direction, lerp), 30 * deltaTime);
+	direction = XMVector2Normalize(direction);
 	XMStoreFloat2(&moveDirection, direction);
 
 	//デバッグ用
@@ -208,12 +209,22 @@ void StPlayer::UpdateAttack() {
 			XMVECTOR knockbackVec = XMVector3Normalize(pPosVec - ePosVec);
 			XMFLOAT3 result;
 
+#if 0
 			XMStoreFloat3(&result, (-knockbackVec) * parryKnockback);
 			enemy->SetVelocity(result);
 
 			XMStoreFloat3(&result, (knockbackVec) * parryKnockback);
 			velocity = result;
+#else
+			XMFLOAT3 out1, out2;
+			XMFLOAT3 eVel(enemy->GetVelocity());
+			Collision::RepulsionSphereVsSphere(position, parryRadius, 1, enemy->GetPosition(), eRadius, 1, out1, out2);
+			XMStoreFloat3(&out1, XMVector2Normalize(XMLoadFloat3(&out1) * XMVector3Length(XMLoadFloat3(&velocity))));
+			XMStoreFloat3(&out2, XMVector2Normalize(XMLoadFloat3(&out2) * XMVector3Length(XMLoadFloat3(&eVel))));
 
+			velocity = out1;
+			enemy->SetVelocity(out2);
+#endif
 			DebugPrimitive::Instance().AddSphere(position, parryRadius, { 0,1,0,1 });
 		}
 
