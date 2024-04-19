@@ -11,7 +11,7 @@ public:
 	void Update() override;
 
 	// 描画処理
-	void Render() override;
+	void Render(bool drawShadow = false) override;
 
 	// デバッグプリミティブ描画
 	void DrawDebugPrimitive() override;

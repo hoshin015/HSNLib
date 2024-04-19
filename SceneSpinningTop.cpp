@@ -18,7 +18,7 @@ void SceneSpinningTop::Initialize()
 	for (int i = 0; i < 6; i++)
 	{
 		StEnemy01* slime = new_ StEnemy01();
-		slime->SetPosition({ i * 3.0f - 10.5f, 0, 0 });
+		slime->SetPosition({ i * 3.0f - 10.5f, 10, 0 });
 		// スポーン座標設定
 		slime->spawnPosition = slime->GetPosition();
 		SpinningTopEnemyManager::Instance().Register(slime);
@@ -46,7 +46,7 @@ void SceneSpinningTop::Initialize()
 
 	// カメラ初期設定
 	Camera::Instance().SetLookAt(
-		DirectX::XMFLOAT3(0, 50, 30),		// カメラ座標
+		DirectX::XMFLOAT3(0, 90, 60),		// カメラ座標
 		DirectX::XMFLOAT3(-90, 0, -30),		// ターゲット(設定しても意味ない)
 		DirectX::XMFLOAT3(0, 1, 0)			// 上方向ベクトル
 	);
@@ -116,7 +116,7 @@ void SceneSpinningTop::Render()
 
 		StageManager::Instance().Render();
 
-		SpinningTopEnemyManager::Instance().Render();
+		SpinningTopEnemyManager::Instance().Render(true);
 
 		ObstacleManager::Instance().Render();
 
@@ -184,6 +184,14 @@ void SceneSpinningTop::DrawDebugGUI()
 				if (ImGui::MenuItem("ContextBase"))
 				{
 					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneContextBase));
+				}
+				if (ImGui::MenuItem("Test"))
+				{
+					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTest));
+				}
+				if (ImGui::MenuItem("SpinningTop"))
+				{
+					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneSpinningTop));
 				}
 				ImGui::EndMenu();
 			}

@@ -31,11 +31,11 @@ void SpinningTopEnemyManager::Update()
 }
 
 //@•`‰æˆ—
-void SpinningTopEnemyManager::Render()
+void SpinningTopEnemyManager::Render(bool drawShadow)
 {
 	for (SpinningTopEnemy* enemy : enemies)
 	{
-		enemy->Render();
+		enemy->Render(drawShadow);
 		if (drawDebugPrimitive)
 		{
 			enemy->DrawDebugPrimitive();

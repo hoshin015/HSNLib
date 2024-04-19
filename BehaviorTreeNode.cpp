@@ -95,6 +95,9 @@ Node* Node::Inference()
 		break;
 	}
 
+	// リスト削除
+	list.clear();
+
 	if (result != nullptr)
 	{
 		// 行動があれば終了

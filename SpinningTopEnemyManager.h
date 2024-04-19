@@ -24,7 +24,7 @@ public:
 	void Update();
 
 	//　描画処理
-	void Render();
+	void Render(bool drawShadow = false);
 
 	// エネミー登録
 	void Register(SpinningTopEnemy* enemy);

@@ -14,11 +14,14 @@ public:
 	{
 		NONE = 0,
 		ROOT,
+		Normal,
 		IDLE,
-		SEEK,
-		ARRIVAL,
-		WANDER,
 		CollisionAvoidance,
+		Generate,
+		PlayerPursuit,
+		PlayerPositionGet,
+		WaitChargeAttack,
+		ChargeAttack,
 		SeekPlayer,
 		WanderSpawnArea,
 	};
@@ -31,7 +34,7 @@ public:
 	virtual void Update() = 0;
 
 	// 描画処理
-	virtual void Render() = 0;
+	virtual void Render(bool drawShadow = false) = 0;
 
 	// デバッグプリミティブ描画
 	virtual void DrawDebugPrimitive() {};
@@ -52,6 +55,9 @@ public:
 	// enemies での index
 	int id;
 
+	bool isGenerateFinish = false;	// 生成が終わってるかどうか
+	bool isPursuit = false;			// プレイヤーに突っ込んでいる最中かどうか
+
 	// プレイヤーとの距離
 	float playerDistance;
 	DirectX::XMFLOAT3 plPosition = { 0,0,0 };	// TODO: デバッグ用だから削除する
@@ -59,7 +65,8 @@ public:
 	
 	float rotationSpeed = 720;	// 1秒に回転する角度
 
-	float searchRadius = 6.0f;		// プレイヤー追従開始の範囲
+	float pursuitRadius = 8.0f;		// プレイヤーに突っ込み始める範囲
+	float searchRadius = 12.0f;		// プレイヤー追従開始の範囲
 	float notSearchRadius = 15.0f;	// プレイヤーの追従をあきらめる範囲
 
 
@@ -79,6 +86,15 @@ public:
 
 	float maxSeeAhead = 6.0f;
 	float maxAvoidForce = 60.0f;
+
+	float chargeAttackCoolTimer = 0.0f;
+	float chargeAttackCoolTime = 1.0f;
+
+	float waitChargeAttackTimer = 0.0f;
+	float waitChargeAttackTime = 0.3f;
+
+	float chargeAttackTimer = 0.0f;
+	float chargeAttackTime = 2.0f;
 
 	// ----- behaviorTree -----
 	std::unique_ptr<BTree> aiTree;

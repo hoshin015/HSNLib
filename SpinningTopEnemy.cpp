@@ -196,9 +196,9 @@ DirectX::XMFLOAT3 SpinningTopEnemy::SbWander()
 			while (wanderAngle < 0) wanderAngle += 360;
 
 
-			Timer::Instance().CheckTick();
-			float time = Timer::Instance().CheckTime();
-			ConsoleData::Instance().logs.push_back("[ " + std::to_string(time) + " ] " + std::to_string(addAngle));
+			//Timer::Instance().CheckTick();
+			//float time = Timer::Instance().CheckTime();
+			//ConsoleData::Instance().logs.push_back("[ " + std::to_string(time) + " ] " + std::to_string(addAngle));
 
 			wanderAngleChangeTimer -= wanderAngleChangeTime;
 		}
@@ -240,6 +240,7 @@ DirectX::XMFLOAT3 SpinningTopEnemy::SbWander()
 
 DirectX::XMFLOAT3 SpinningTopEnemy::SbCollisionAvoidance()
 {
+
 	DirectX::XMFLOAT3 steering = { 0,0,0 };
 
 	// ベクター作成
@@ -389,9 +390,38 @@ bool SpinningTopEnemy::GetBTreeJudge(const int _kind)
 	KIND kind = (KIND)_kind;
 	switch (kind)
 	{
-	case KIND::WANDER:
-		return true;
+	case KIND::Generate:
+		return (isGenerateFinish) ? false : true;
+	case KIND::PlayerPursuit:
+	{
+		// クールタイムチェック
+		chargeAttackCoolTimer += Timer::Instance().DeltaTime();
+		if (chargeAttackCoolTimer < chargeAttackCoolTime)
+		{
+			return false;
+		}
+
+
+		// プレイヤーが pursuitRadius の範囲内なら追跡する
+		//DirectX::XMFLOAT3 plPosition = PlayerManager::Instance().GetPlayer(0)->GetPosition();
+		DirectX::XMFLOAT3 playerPosition = this->plPosition;
+		DirectX::XMVECTOR PlPOSITION = DirectX::XMLoadFloat3(&playerPosition);
+		DirectX::XMVECTOR POSITION = DirectX::XMLoadFloat3(&GetPosition());
+		DirectX::XMVECTOR LENGTH = DirectX::XMVector3Length(DirectX::XMVectorSubtract(PlPOSITION, POSITION));
+		float length;
+		DirectX::XMStoreFloat(&length, LENGTH);
+		if (length < pursuitRadius)
+		{
+			// クールタイムリセット
+			chargeAttackCoolTimer = 0.0f;
+
+			return true;
+		}
+		// 範囲内にいないなら除外
+		return false;
+	}
 	case KIND::SeekPlayer:
+	{
 		// プレイヤーが searchRadius の範囲内なら追跡する
 		//DirectX::XMFLOAT3 plPosition = PlayerManager::Instance().GetPlayer(0)->GetPosition();
 		DirectX::XMFLOAT3 playerPosition = this->plPosition;
@@ -406,8 +436,8 @@ bool SpinningTopEnemy::GetBTreeJudge(const int _kind)
 		}
 		// 範囲内にいないなら除外
 		return false;
+	}
 	case KIND::WanderSpawnArea:
-		
 		return true;
 	}
 
@@ -422,70 +452,92 @@ IBTree::STATE SpinningTopEnemy::ActBTree(const int _kind)
 	case KIND::IDLE:
 		return  IBTree::STATE::Complete;
 		break;
-	case KIND::SEEK:
-	{
-		steeringForce = { 0,0,0 };
-		DirectX::XMVECTOR SteeringForce = DirectX::XMLoadFloat3(&steeringForce);
-
-		DirectX::XMFLOAT3 seekPower = SbSeek();
-		DirectX::XMVECTOR SeekPower = DirectX::XMLoadFloat3(&seekPower);
-		
-		SteeringForce = DirectX::XMVectorAdd(SteeringForce, SeekPower);
-		DirectX::XMStoreFloat3(&steeringForce, SteeringForce);
-
-		velocity.x += steeringForce.x;
-		velocity.z += steeringForce.z;
-
-		//Move(velocity.x, velocity.z, maxMoveSpeed);
-
-		return  IBTree::STATE::Run;
-		break;
-	}
-	case KIND::ARRIVAL:
-	{
-		steeringForce = { 0,0,0 };
-		DirectX::XMVECTOR SteeringForce = DirectX::XMLoadFloat3(&steeringForce);
-
-		DirectX::XMFLOAT3 arrivalPower = SbArrival();
-		DirectX::XMVECTOR ArrivalPower = DirectX::XMLoadFloat3(&arrivalPower);
-
-		SteeringForce = DirectX::XMVectorAdd(SteeringForce, ArrivalPower);
-		DirectX::XMStoreFloat3(&steeringForce, SteeringForce);
-
-		velocity.x += steeringForce.x;
-		velocity.z += steeringForce.z;
-
-		//Move(velocity.x, velocity.z, maxMoveSpeed);
-
-		return  IBTree::STATE::Run;
-
-		break;
-	}
-	case KIND::WANDER:
-		steeringForce = { 0,0,0 };
-		DirectX::XMVECTOR SteeringForce = DirectX::XMLoadFloat3(&steeringForce);
-
-		DirectX::XMFLOAT3 seekPower = SbSeek();
-		DirectX::XMVECTOR SeekPower = DirectX::XMLoadFloat3(&seekPower);
-		SeekPower = DirectX::XMVectorScale(SeekPower, 0.5f);
-		SteeringForce = DirectX::XMVectorAdd(SteeringForce, SeekPower);
-
-		DirectX::XMFLOAT3 wanderPower = SbWander();
-		DirectX::XMVECTOR WanderPower = DirectX::XMLoadFloat3(&wanderPower);
-		WanderPower = DirectX::XMVectorScale(WanderPower, 0.9f);
-		
-		SteeringForce = DirectX::XMVectorAdd(SteeringForce, WanderPower);
-		DirectX::XMStoreFloat3(&steeringForce, SteeringForce);
-
-		velocity.x += steeringForce.x;
-		velocity.z += steeringForce.z;
-
-		//Move(velocity.x, velocity.z, maxMoveSpeed);
-
-		return  IBTree::STATE::Run;
-		break;
 	case KIND::CollisionAvoidance:
 	{
+
+		break;
+	}
+	case KIND::Generate:
+	{
+		if (isGround)
+			isGenerateFinish = true;
+
+		//velocity.x += 5;
+		break;
+	}
+	case KIND::PlayerPositionGet:
+	{
+		// プレイヤーの座標を保存しておく
+		targetPosition = this->plPosition;	//TODO: デバッグ用(本環境ではplayerの座標)
+
+		// 停止処理
+		velocity = { 0,0,0 };
+
+		break;
+	}
+	case KIND::WaitChargeAttack:
+	{
+		// 減速処理
+		//DirectX::XMVECTOR VLEOCITY = DirectX::XMLoadFloat3(&velocity);
+		//DirectX::XMVectorScale(VLEOCITY, 0.01f);
+		//DirectX::XMStoreFloat3(&velocity, VLEOCITY);
+		
+
+
+		waitChargeAttackTimer += Timer::Instance().DeltaTime();
+
+		if (waitChargeAttackTimer > waitChargeAttackTime)
+		{
+			waitChargeAttackTimer = 0.0f;
+			return  IBTree::STATE::Complete;
+		}
+
+		return  IBTree::STATE::Run;
+
+		break;
+	}
+	case KIND::ChargeAttack:
+	{
+		// ターゲット座標の +-0.01 に到達したらノードを抜ける
+		{
+			DirectX::XMVECTOR TARGETPOSITION = DirectX::XMLoadFloat3(&targetPosition);
+			DirectX::XMVECTOR POSITION = DirectX::XMLoadFloat3(&GetPosition());
+			DirectX::XMVECTOR LENGTH = DirectX::XMVector3Length(DirectX::XMVectorSubtract(TARGETPOSITION, POSITION));
+			float length;
+			DirectX::XMStoreFloat(&length, LENGTH);
+			if (length < 0.1)
+			{
+				return  IBTree::STATE::Complete;
+			}
+		}
+
+		steeringForce = { 0,0,0 };
+		DirectX::XMVECTOR SteeringForce = DirectX::XMLoadFloat3(&steeringForce);
+
+		DirectX::XMFLOAT3 seekPower = SbSeek();
+		DirectX::XMVECTOR SeekPower = DirectX::XMLoadFloat3(&seekPower);
+		SeekPower = DirectX::XMVectorScale(SeekPower, 5.0f);
+		SteeringForce = DirectX::XMVectorAdd(SteeringForce, SeekPower);
+
+		DirectX::XMFLOAT3 avoidancePower = SbCollisionAvoidance();
+		DirectX::XMVECTOR AvoidancePower = DirectX::XMLoadFloat3(&avoidancePower);
+		AvoidancePower = DirectX::XMVectorScale(AvoidancePower, 1.0f);
+		SteeringForce = DirectX::XMVectorAdd(SteeringForce, AvoidancePower);
+
+		DirectX::XMStoreFloat3(&steeringForce, SteeringForce);
+
+		velocity.x += steeringForce.x;
+		velocity.z += steeringForce.z;
+
+		// 何か問題があってスタックした場合の抜けるよう処理
+		chargeAttackTimer += Timer::Instance().DeltaTime();
+		if (chargeAttackTimer > chargeAttackTime)
+		{
+			chargeAttackTimer = 0.0f;
+			return  IBTree::STATE::Complete;
+		}
+
+		return IBTree::STATE::Run;
 
 		break;
 	}
@@ -524,7 +576,6 @@ IBTree::STATE SpinningTopEnemy::ActBTree(const int _kind)
 		velocity.x += steeringForce.x;
 		velocity.z += steeringForce.z;
 
-		return IBTree::STATE::Run;
 		break;
 	}
 	case KIND::WanderSpawnArea:
@@ -557,7 +608,6 @@ IBTree::STATE SpinningTopEnemy::ActBTree(const int _kind)
 
 		break;
 	}
-	
 	}
 	
 

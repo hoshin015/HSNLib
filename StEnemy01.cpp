@@ -12,19 +12,36 @@ StEnemy01::StEnemy01()
 {
 	model = ResourceManager::Instance().LoadModelResource("Data/Fbx/SpinningTopTest2/SpinningTopTest2.fbx");
 
+	paryEffect = ResourceManager::Instance().LoadModelResource("Data/Fbx/paryEffectTest/paryEffectTest.fbx");
+
 	// アニメーション変更
 	PlayAnimation(5, true);
 
 	// BehaviorTreeを構築
 	aiTree = std::make_unique <BTree>(this);
-	aiTree->AddNode((int)KIND::NONE, (int)KIND::ROOT, 0, IBTree::RULE::Priority, this);
+	
+#if 0
 
-	aiTree->AddNode((int)KIND::ROOT, (int)KIND::SeekPlayer, 0, IBTree::RULE::Non, this);
-	aiTree->AddNode((int)KIND::ROOT, (int)KIND::WanderSpawnArea, 1, IBTree::RULE::Non, this);
-	aiTree->AddNode((int)KIND::ROOT, (int)KIND::WANDER, 2, IBTree::RULE::Non, this);
-	aiTree->AddNode((int)KIND::ROOT, (int)KIND::ARRIVAL, 2, IBTree::RULE::Non, this);
-	aiTree->AddNode((int)KIND::ROOT, (int)KIND::SEEK, 2, IBTree::RULE::Non, this);
-	aiTree->AddNode((int)KIND::ROOT, (int)KIND::IDLE, 2, IBTree::RULE::Non, this);
+	aiTree->AddNode((int)KIND::NONE, (int)KIND::ROOT, 0, IBTree::RULE::Priority, this);
+	//aiTree->AddNode((int)KIND::ROOT, (int)KIND::IDLE, 0, IBTree::RULE::Non, this);
+	aiTree->AddNode((int)KIND::ROOT, (int)KIND::Generate, 0, IBTree::RULE::Non, this);
+	aiTree->AddNode((int)KIND::ROOT, (int)KIND::SeekPlayer, 1, IBTree::RULE::Non, this);
+	aiTree->AddNode((int)KIND::ROOT, (int)KIND::WanderSpawnArea, 2, IBTree::RULE::Non, this);
+
+#else
+
+	aiTree->AddNode((int)KIND::NONE, (int)KIND::ROOT, 0, IBTree::RULE::Priority, this);
+		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Generate, 0, IBTree::RULE::Non, this);
+		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Normal, 1, IBTree::RULE::Priority, this);
+			aiTree->AddNode((int)KIND::Normal, (int)KIND::PlayerPursuit, 0, IBTree::RULE::Sequence, this);
+				aiTree->AddNode((int)KIND::PlayerPursuit, (int)KIND::PlayerPositionGet, 0, IBTree::RULE::Non, this);
+				aiTree->AddNode((int)KIND::PlayerPursuit, (int)KIND::WaitChargeAttack, 1, IBTree::RULE::Non, this);
+				aiTree->AddNode((int)KIND::PlayerPursuit, (int)KIND::ChargeAttack, 2, IBTree::RULE::Non, this);
+
+			aiTree->AddNode((int)KIND::Normal, (int)KIND::SeekPlayer, 1, IBTree::RULE::Non, this);
+			aiTree->AddNode((int)KIND::Normal, (int)KIND::WanderSpawnArea, 2, IBTree::RULE::Non, this);
+
+#endif
 }
 
 StEnemy01::~StEnemy01()
@@ -53,9 +70,13 @@ void StEnemy01::Update()
 	UpdateTransform();
 }
 
-void StEnemy01::Render()
+void StEnemy01::Render(bool drawShadow)
 {
 	model->Render(transform, { 1,1,1,1 }, &keyFrame);
+
+
+	if(!drawShadow)
+		paryEffect->Render(transform, { 1,1,1,1 }, &keyFrame);
 }
 
 // デバッグプリミティブ描画
@@ -69,8 +90,9 @@ void StEnemy01::DrawDebugPrimitive()
 	DebugPrimitive::Instance().AddSphere(targetPosition, 0.2f, { 0,1,0,1 });	// ターゲット座標
 	DebugPrimitive::Instance().AddSphere(spawnPosition, 0.2f, { 0,1,1,1 });		// スポーン地点
 
-	DebugPrimitive::Instance().AddCylinder(position, searchRadius, 0.2, { 1,0,0,1 });
-	DebugPrimitive::Instance().AddCylinder(position, notSearchRadius, 0.2, { 0,0,1,1 });
+	//DebugPrimitive::Instance().AddCylinder(position, pursuitRadius, 0.2, { 0,1,0,1 });
+	//DebugPrimitive::Instance().AddCylinder(position, searchRadius, 0.2, { 1,0,0,1 });
+	//DebugPrimitive::Instance().AddCylinder(position, notSearchRadius, 0.2, { 0,0,1,1 });
 }
 
 // TargetPosition 更新

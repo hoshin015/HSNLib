@@ -159,6 +159,7 @@ protected:
 
 public:
 	std::shared_ptr<SkinnedMesh>	model;
+	std::shared_ptr<SkinnedMesh>	paryEffect;
 
 	// --- アニメーションフラグ ---
 	Animation::KeyFrame keyFrame;			// 使用されるキーフレーム
