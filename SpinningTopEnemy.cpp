@@ -204,7 +204,7 @@ DirectX::XMFLOAT3 SpinningTopEnemy::SbWander()
 		}
 	}
 
-#if 0
+#if 1
 	{
 		// ãÖëÃï`âÊ
 		DirectX::XMFLOAT3 circlePos;
@@ -315,7 +315,7 @@ DirectX::XMFLOAT3 SpinningTopEnemy::SbCollisionAvoidance()
 	DirectX::XMStoreFloat3(&lVecStart, L_VEC_START);
 	DirectX::XMStoreFloat3(&rVecEnd, R_VEC_END);
 	DirectX::XMStoreFloat3(&lVecEnd, L_VEC_END);
-#if 0
+#if 1
 	// ê¸ï`âÊ
 	const DirectX::XMFLOAT4 white = DirectX::XMFLOAT4(0.5f, 0.5f, 0.5f, 1);
 	const DirectX::XMFLOAT4 green = DirectX::XMFLOAT4(0, 1, 0, 1);

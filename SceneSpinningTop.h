@@ -2,6 +2,7 @@
 #include <memory>
 #include "Scene.h"
 #include "Library/3D/SkinnedMesh.h"
+#include "Library/3D/SkyMap.h"
 
 // テストシーン
 class SceneSpinningTop : public Scene
@@ -26,4 +27,5 @@ public:
 	void DrawDebugGUI();
 
 private:
+	std::unique_ptr<SkyMap> skyMap;
 };

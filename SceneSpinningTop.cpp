@@ -38,11 +38,51 @@ void SceneSpinningTop::Initialize()
 	StageContext* stageMain = new_ StageContext();
 	stageManager.Register(stageMain);
 
+#if 1
 	// ライト初期化
 	Light* directionLight = new Light(LightType::Directional);
 	directionLight->SetDirection(DirectX::XMFLOAT3(0.5, -1, -1));
 	directionLight->SetColor(DirectX::XMFLOAT4(1, 1, 1, 1));
 	LightManager::Instance().Register(directionLight);
+
+#else
+	{
+		// ライト初期化
+		Light* directionLight = new Light(LightType::Directional);
+		directionLight->SetDirection(DirectX::XMFLOAT3(0.5, -1, -1));
+		//directionLight->SetColor(DirectX::XMFLOAT4(1, 1, 1, 1));
+		directionLight->SetColor(DirectX::XMFLOAT4(0, 0, 0, 1));
+		LightManager::Instance().Register(directionLight);
+
+		// 点光源追加
+		{
+			Light* light = new Light(LightType::Point);
+			light->SetPosition(DirectX::XMFLOAT3(2, 1, 0));
+			light->SetColor(DirectX::XMFLOAT4(1, 1, 1, 1));
+			light->SetRange(30.0f);
+			LightManager::Instance().Register(light);
+
+			//Light* light2 = new Light(LightType::Point);
+			//light2->SetPosition(DirectX::XMFLOAT3(-2, 1, 0));
+			//light2->SetColor(DirectX::XMFLOAT4(1, 0, 1, 1));
+			//LightManager::Instance().Register(light2);
+		}
+		// スポットライトを追加
+		{
+			Light* light = new Light(LightType::Spot);
+			light->SetPosition(DirectX::XMFLOAT3(-3, 2, 0));
+			light->SetColor(DirectX::XMFLOAT4(1, 0, 0, 1));
+			light->SetDirection(DirectX::XMFLOAT3(+1, -1, 0));
+			light->SetRange(4.0f);
+			LightManager::Instance().Register(light);
+		}
+
+		LightManager::Instance().SetAmbientColor({ 0,0,0,1.0f });
+#endif
+
+	// スカイマップ
+	skyMap = std::make_unique<SkyMap>(L"Data/Texture/kloppenheim_05_puresky_4k.hdr");
+
 
 	// カメラ初期設定
 	Camera::Instance().SetLookAt(
@@ -123,7 +163,10 @@ void SceneSpinningTop::Render()
 		gfx.shadowBuffer->DeActivate();
 	}
 
-	// --- ImGuiのデバッグ適用処理 ---
+	skyMap->Render();
+
+
+	gfx.SetDepthStencil(DEPTHSTENCIL_STATE::ZT_ON_ZW_ON);
 	gfx.SetRasterizer(static_cast<RASTERIZER_STATE>(RASTERIZER_STATE::CLOCK_FALSE_SOLID));
 
 	Graphics::SceneConstants data{};
