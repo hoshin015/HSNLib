@@ -196,9 +196,9 @@ DirectX::XMFLOAT3 SpinningTopEnemy::SbWander()
 			while (wanderAngle < 0) wanderAngle += 360;
 
 
-			Timer::Instance().CheckTick();
-			float time = Timer::Instance().CheckTime();
-			ConsoleData::Instance().logs.push_back("[ " + std::to_string(time) + " ] " + std::to_string(addAngle));
+			//Timer::Instance().CheckTick();
+			//float time = Timer::Instance().CheckTime();
+			//ConsoleData::Instance().logs.push_back("[ " + std::to_string(time) + " ] " + std::to_string(addAngle));
 
 			wanderAngleChangeTimer -= wanderAngleChangeTime;
 		}
@@ -274,6 +274,7 @@ DirectX::XMFLOAT3 SpinningTopEnemy::SbCollisionAvoidance()
 
 	// ˆê”Ô‹ß‚¢áŠQ•¨‚ð’T‚·
 	int obsCount = obsM.GetObstacleCount();
+	if (obsCount == 0) return {};
 	Obstacle* obs = obsM.GetObstacle(0);
 	float obsDistance = FLT_MAX;
 

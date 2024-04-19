@@ -13,16 +13,17 @@ using namespace DirectX;
 StPlayer::StPlayer() {
 	model = ResourceManager::Instance().LoadModelResource("Data/Fbx/SpinningTopTest/SpinningTopTest.fbx");
 
-	moveDirection = { 1,0 };
-	speed = 0;
+	//moveDirection = { 0,0 };
+	//speed = 0;
 
 	radius = 1;
-	mobility = 0.5f;
+	mobility = 1.f;
 	rotateSpeed = 560;
-	accel = 10;
-	slow = 10;
+	accel = 60;
+	slow = 50;
 
 	parryRadius = 1;
+	parryKnockback = 30;
 
 }
 
@@ -66,7 +67,10 @@ void StPlayer::DrawDebugGui() {
 		if (ImGui::CollapsingHeader(u8"パラメータ", ImGuiTreeNodeFlags_DefaultOpen)) {
 			ImGui::DragFloat("Mobility", &mobility, 0.01f);
 			ImGui::DragFloat("Accel", &accel, 0.1f);
+			if (accel < 0)accel = 0;
 			ImGui::DragFloat("Slow", &slow, 0.1f);
+
+			ImGui::DragFloat("ParryKnockback", &parryKnockback, 0.1f);
 		}
 
 		if (ImGui::CollapsingHeader(u8"デバック", ImGuiTreeNodeFlags_DefaultOpen)) {
@@ -101,7 +105,8 @@ void StPlayer::DrawDebugGui() {
 				outDebugFloat = GetDebugValue<float>("dot");
 				ImGui::Text("dot:%.3f", outDebugFloat);
 
-				ImGui::Text("speed:%.3f", speed);
+				outDebugFloat = GetDebugValue<float>("speed");
+				ImGui::Text("speed:%.3f", outDebugFloat);
 
 				outDebugFloat = GetDebugValue<float>("t");
 				ImGui::Text("t:%.3f", outDebugFloat);
@@ -136,15 +141,18 @@ void StPlayer::Input() {
 	inputMap["Move"] = movefloat2;
 
 	//Attack
-	bool attack = im.GetMousePress(MOUSEBUTTON_STATE::leftButton) || im.GetGamePadButtonPress(GAMEPADBUTTON_STATE::a);
+	bool attack = im.GetKeyPressed(Keyboard::Space) || im.GetGamePadButtonPress(GAMEPADBUTTON_STATE::a);
 	inputMap["Attack"] = attack;
 }
 
 void StPlayer::UpdateMove() {
 	float deltaTime = Timer::Instance().DeltaTime();
 	XMFLOAT2 input = GetInputMap<XMFLOAT2>("Move");
+	XMFLOAT2 moveDirection;
 	XMVECTOR inputVec = XMLoadFloat2(&input);
-	XMVECTOR direction = XMLoadFloat2(&moveDirection);
+	XMVECTOR direction = XMVectorSet(velocity.x,velocity.z,0,0);
+	float speed = XMVectorGetX(XMVector2Length(direction));
+	direction = XMVector2Normalize(direction);
 
 	//コントローラー用
 	if (XMVectorGetX(XMVector2Length(inputVec)) > 1) {
@@ -154,21 +162,25 @@ void StPlayer::UpdateMove() {
 	//速度計算
 	if (fabsf(input.x) > 0.00001f || fabsf(input.y) > 0.00001f) {
 		float dot = XMVectorGetX(XMVector2Dot(direction, inputVec));
-		dot = dot;
+		if (speed == 0) dot = 1;
 		speed += XMVectorGetX(XMVector2Length(inputVec) * dot) * accel * deltaTime;
-		speed = max(0.f,speed);
+		speed = max(0.f, speed);
 	}
-	else speed = max(0.0f, speed - slow * deltaTime);
+	else speed = max(0.0f, speed - (slow * deltaTime));
 
 	speed -= speed * 0.98f * deltaTime;
+	maxMoveSpeed = (accel + (accel * 0.02f));
+	speed = min(speed, maxMoveSpeed);
 
 	//機動性の計算
-	float lerp = min(max(0,(speed / (accel + (accel * 0.02f)) * mobility)+(1 - mobility)), 0.999f);
+	if (speed < 0.0000001) direction = {};
+	float lerp = min(max(0,(speed / maxMoveSpeed * mobility)+(1 - mobility)), 0.95f);
 	direction = XMVector2Normalize(direction);
 	direction = XMVectorLerp(direction, XMVectorLerp(inputVec, direction, lerp), 30 * deltaTime);
 	XMStoreFloat2(&moveDirection, direction);
 
 	//デバッグ用
+	debugValue["speed"] = speed;
 	debugValue["directionX"] = moveDirection.x;
 	debugValue["directionY"] = moveDirection.y;
 	debugValue["directionLength"] = XMVectorGetX(XMVector2Length(XMLoadFloat2(&moveDirection)));
@@ -186,11 +198,22 @@ void StPlayer::UpdateAttack() {
 	SpinningTopEnemyManager& stEManager = SpinningTopEnemyManager::Instance();
 
 	for (int i = 0; i < stEManager.GetEnemyCount(); i++) {
-		XMFLOAT3 ePos = stEManager.GetEnemy(i)->GetPosition();
-		float eRadius = stEManager.GetEnemy(i)->GetRadius();
-		float distance = XMVectorGetX(XMVector3Length(XMLoadFloat3(&ePos) - XMLoadFloat3(&position)));
+		SpinningTopEnemy* enemy = stEManager.GetEnemy(i);
+		XMVECTOR pPosVec = XMLoadFloat3(&position);
+		XMVECTOR ePosVec = XMLoadFloat3(&enemy->GetPosition());
+		float eRadius = enemy->GetRadius();
+		float distance = XMVectorGetX(XMVector3Length(ePosVec - pPosVec));
 
 		if (eRadius + parryRadius > distance) {
+			XMVECTOR knockbackVec = XMVector3Normalize(pPosVec - ePosVec);
+			XMFLOAT3 result;
+
+			XMStoreFloat3(&result, (-knockbackVec) * parryKnockback);
+			enemy->SetVelocity(result);
+
+			XMStoreFloat3(&result, (knockbackVec) * parryKnockback);
+			velocity = result;
+
 			DebugPrimitive::Instance().AddSphere(position, parryRadius, { 0,1,0,1 });
 		}
 

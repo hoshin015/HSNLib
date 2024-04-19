@@ -29,10 +29,10 @@ private:
 	//プロパティ&ステータス
 	float mobility;
 	float rotateSpeed;
-	float speed;
+	//float speed;
 	float accel;
 	float slow;
-	DirectX::XMFLOAT2 moveDirection;
+	//DirectX::XMFLOAT2 moveDirection;
 
 	//パリィ
 	float parryRadius;
