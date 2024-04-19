@@ -15,9 +15,6 @@ public:
 	void Render();
 	void DrawDebugGui();
 
-	void Render();
-	void DrawDebugGui();
-
 private:
 	void Input();
 	void UpdateMove();
