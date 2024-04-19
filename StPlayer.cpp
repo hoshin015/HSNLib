@@ -4,17 +4,26 @@
 #include "Library/Input/InputManager.h"
 #include "Library/ImGui/Include/imgui.h"
 #include "Library/Timer.h"
+
+#include "SpinningTopEnemyManager.h"
+#include "Collision.h"
+
 using namespace DirectX;
 
 StPlayer::StPlayer() {
 	model = ResourceManager::Instance().LoadModelResource("Data/Fbx/SpinningTopTest/SpinningTopTest.fbx");
 
+	moveDirection = { 1,0 };
+	speed = 0;
+
+	radius = 1;
 	mobility = 0.5f;
 	rotateSpeed = 560;
-	speed = 0;
-	moveDirection = { 1,0 };
 	accel = 10;
 	slow = 10;
+
+	parryRadius = 1;
+
 }
 
 StPlayer::~StPlayer() {}
@@ -23,7 +32,9 @@ void StPlayer::Update() {
 	Input();
 
 	angle.y += rotateSpeed * Timer::Instance().DeltaTime();
+	DebugPrimitive::Instance().AddSphere(position, parryRadius, { 1,1,255,255 });
 	UpdateMove();
+	UpdateAttack();
 
 	// 速力更新処理
 	UpdateVelocity();
@@ -37,7 +48,7 @@ void StPlayer::Update() {
 }
 
 void StPlayer::Render() {
-	model->Render(transform, { 0,1,1,1 }, &keyFrame);
+	model->Render(transform, { 0,1,0,1 }, &keyFrame);
 }
 
 void StPlayer::DrawDebugGui() {
@@ -111,6 +122,7 @@ void StPlayer::DrawDebugGui() {
 void StPlayer::Input() {
 	InputManager& im = InputManager::Instance();
 
+	//Move
 	XMFLOAT2 movefloat2;
 	movefloat2.x = im.GetKeyPress(Keyboard::A) - im.GetKeyPress(Keyboard::D);
 	movefloat2.y = im.GetKeyPress(Keyboard::S) - im.GetKeyPress(Keyboard::W);
@@ -123,7 +135,8 @@ void StPlayer::Input() {
 
 	inputMap["Move"] = movefloat2;
 
-	bool attack = im.GetMousePressed(MOUSEBUTTON_STATE::leftButton) || im.GetGamePadButtonPress(GAMEPADBUTTON_STATE::a);
+	//Attack
+	bool attack = im.GetMousePress(MOUSEBUTTON_STATE::leftButton) || im.GetGamePadButtonPress(GAMEPADBUTTON_STATE::a);
 	inputMap["Attack"] = attack;
 }
 
@@ -133,11 +146,12 @@ void StPlayer::UpdateMove() {
 	XMVECTOR inputVec = XMLoadFloat2(&input);
 	XMVECTOR direction = XMLoadFloat2(&moveDirection);
 
+	//コントローラー用
 	if (XMVectorGetX(XMVector2Length(inputVec)) > 1) {
 		inputVec = XMVector2Normalize(inputVec);
 	}
 
-	//inputVec *= speed;
+	//速度計算
 	if (fabsf(input.x) > 0.00001f || fabsf(input.y) > 0.00001f) {
 		float dot = XMVectorGetX(XMVector2Dot(direction, inputVec));
 		dot = dot;
@@ -148,12 +162,13 @@ void StPlayer::UpdateMove() {
 
 	speed -= speed * 0.98f * deltaTime;
 
+	//機動性の計算
 	float lerp = min(max(0,(speed / (accel + (accel * 0.02f)) * mobility)+(1 - mobility)), 0.999f);
-	//float lerp = (speed / * (0.9999f));
 	direction = XMVector2Normalize(direction);
 	direction = XMVectorLerp(direction, XMVectorLerp(inputVec, direction, lerp), 30 * deltaTime);
 	XMStoreFloat2(&moveDirection, direction);
 
+	//デバッグ用
 	debugValue["directionX"] = moveDirection.x;
 	debugValue["directionY"] = moveDirection.y;
 	debugValue["directionLength"] = XMVectorGetX(XMVector2Length(XMLoadFloat2(&moveDirection)));
@@ -163,7 +178,23 @@ void StPlayer::UpdateMove() {
 	velocity.x = moveDirection.x * speed;
 	velocity.z = moveDirection.y * speed;
 
-	//for (size_t i = 0; i < 10000000; i++);
+}
+
+void StPlayer::UpdateAttack() {
+	if (!GetInputMap<bool>("Attack")) return;
+
+	SpinningTopEnemyManager& stEManager = SpinningTopEnemyManager::Instance();
+
+	for (int i = 0; i < stEManager.GetEnemyCount(); i++) {
+		XMFLOAT3 ePos = stEManager.GetEnemy(i)->GetPosition();
+		float eRadius = stEManager.GetEnemy(i)->GetRadius();
+		float distance = XMVectorGetX(XMVector3Length(XMLoadFloat3(&ePos) - XMLoadFloat3(&position)));
+
+		if (eRadius + parryRadius > distance) {
+			DebugPrimitive::Instance().AddSphere(position, parryRadius, { 0,1,0,1 });
+		}
+
+	}
 }
 
 void StPlayer::OnLanding() {}

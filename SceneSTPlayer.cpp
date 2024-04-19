@@ -4,6 +4,7 @@
 #include "Library/Input/InputManager.h"
 #include "Library/ImGui/Include/imgui.h"
 #include "Library/Timer.h"
+#include "Library/3D/DebugPrimitive.h"
 #include "StageManager.h"
 
 #include "LightManager.h"
@@ -144,6 +145,7 @@ void SceneSTPlayer::Render() {
 
 	SpinningTopEnemyManager::Instance().Render();
 	SpinningTopPlayerManager::Instance().Render();
+	DebugPrimitive::Instance().Render();
 
 	// --- デバッグ描画 ---
 	DrawDebugGUI();

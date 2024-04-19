@@ -18,6 +18,7 @@ public:
 private:
 	void Input();
 	void UpdateMove();
+	void UpdateAttack();
 
 protected:
 	void OnLanding() override;
@@ -38,6 +39,7 @@ private:
 	float parryCooldown;
 	float parryCooldownCount;
 	float parryKnockback;
+
 
 	//Žq‹@
 
