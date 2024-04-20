@@ -15,12 +15,11 @@
 #include "StPlayer.h"
 
 void SceneSTPlayer::Initialize() {
-	StEnemy01* slime = new_ StEnemy01();
-	slime->SetPosition({ 0, 0, 0 });
-	SpinningTopEnemyManager::Instance().Register(slime);
-	slime = new_ StEnemy01();
-	slime->SetPosition({ 1,0,0 });
-	SpinningTopEnemyManager::Instance().Register(slime);
+	for (size_t i = 0; i < 100; i++) {
+		StEnemy01* slime = new_ StEnemy01();
+		slime->SetPosition({ 0, 0, 0 });
+		SpinningTopEnemyManager::Instance().Register(slime);
+	}
 
 	StPlayer* player = new_ StPlayer();
 	SpinningTopPlayerManager::Instance().Register(player);

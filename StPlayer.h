@@ -3,7 +3,7 @@
 #include <map>
 
 #include "SpinningTopBase.h"
-#include "Collision.h"
+#include "SpinningTopEnemyManager.h"
 
 class StPlayer :public SpinningTopBase
 {
@@ -15,10 +15,14 @@ public:
 	void Render();
 	void DrawDebugGui();
 
+	bool IsCoolDown() { return parryCooldownCount <= 0; }
+
 private:
 	void Input();
 	void UpdateMove();
 	void UpdateAttack();
+	void UpdateDamage();
+	void UpdateEDistance();
 
 protected:
 	void OnLanding() override;
@@ -27,6 +31,8 @@ protected:
 
 private:
 	//パラメータは上に,プロパティは下に書いてる
+	std::vector<SpinningTopEnemy*> nearEnemy;
+
 	//移動
 	float mobility;
 	float accel;
@@ -46,6 +52,9 @@ private:
 	float parryDamageIncrementSpeed;
 	float parryCooldown;
 	float parryKnockback;
+
+	//ダメージ
+	float damagedKnockback;
 
 	//子機
 
