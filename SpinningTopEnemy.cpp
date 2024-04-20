@@ -544,20 +544,6 @@ IBTree::STATE SpinningTopEnemy::ActBTree(const int _kind)
 	}
 	case KIND::SeekPlayer:
 	{
-		// プレイヤーが追従可能範囲外にでたらノードを抜ける
-		{
-			DirectX::XMFLOAT3 playerPosition = this->plPosition;
-			DirectX::XMVECTOR PlPOSITION = DirectX::XMLoadFloat3(&playerPosition);
-			DirectX::XMVECTOR POSITION = DirectX::XMLoadFloat3(&GetPosition());
-			DirectX::XMVECTOR LENGTH = DirectX::XMVector3Length(DirectX::XMVectorSubtract(PlPOSITION, POSITION));
-			float length;
-			DirectX::XMStoreFloat(&length, LENGTH);
-			if (length > notSearchRadius)
-			{
-				return  IBTree::STATE::Complete;
-			}
-		}
-
 		steeringForce = { 0,0,0 };
 		DirectX::XMVECTOR SteeringForce = DirectX::XMLoadFloat3(&steeringForce);
 
@@ -576,6 +562,29 @@ IBTree::STATE SpinningTopEnemy::ActBTree(const int _kind)
 
 		velocity.x += steeringForce.x;
 		velocity.z += steeringForce.z;
+
+		{
+			DirectX::XMFLOAT3 playerPosition = this->plPosition;
+			DirectX::XMVECTOR PlPOSITION = DirectX::XMLoadFloat3(&playerPosition);
+			DirectX::XMVECTOR POSITION = DirectX::XMLoadFloat3(&GetPosition());
+			DirectX::XMVECTOR LENGTH = DirectX::XMVector3Length(DirectX::XMVectorSubtract(PlPOSITION, POSITION));
+			float length;
+			DirectX::XMStoreFloat(&length, LENGTH);
+
+			// プレイヤーが攻撃範囲内ならノードを抜ける
+			if (length < pursuitRadius)
+			{
+				return  IBTree::STATE::Complete;
+			}
+
+			// プレイヤーが追従可能範囲外にでたらノードを抜ける
+			if (length > notSearchRadius)
+			{
+				return  IBTree::STATE::Complete;
+			}
+		}
+
+		return IBTree::STATE::Run;
 
 		break;
 	}

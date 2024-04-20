@@ -10,12 +10,13 @@
 #include "SpinningTopEnemyManager.h"
 #include "ObstacleManager.h"
 #include "StEnemy01.h"
+#include "StEnemy02.h"
 #include "Library/3D/DebugPrimitive.h"
 #include "Library/3D/LineRenderer.h"
 
 void SceneSpinningTop::Initialize()
 {
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < 1; i++)
 	{
 		StEnemy01* slime = new_ StEnemy01();
 		slime->SetPosition({ i * 3.0f - 10.5f, 10, 0 });

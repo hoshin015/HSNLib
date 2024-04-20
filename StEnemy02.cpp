@@ -1,4 +1,4 @@
-#include "StEnemy01.h""
+#include "StEnemy02.h""
 #include "Library/Graphics/Graphics.h"
 #include "Library/MemoryLeak.h"
 #include "Library/Timer.h"
@@ -8,9 +8,9 @@
 #include "Library/Input/InputManager.h"
 #include "StageManager.h"
 
-StEnemy01::StEnemy01()
+StEnemy02::StEnemy02()
 {
-	model = ResourceManager::Instance().LoadModelResource("Data/Fbx/SpinningTopTest2/SpinningTopTest2.fbx");
+	model = ResourceManager::Instance().LoadModelResource("Data/Fbx/SpinningTopTest/SpinningTopTest.fbx");
 
 	paryEffect = ResourceManager::Instance().LoadModelResource("Data/Fbx/paryEffectTest/paryEffectTest.fbx");
 
@@ -21,23 +21,18 @@ StEnemy01::StEnemy01()
 	aiTree = std::make_unique <BTree>(this);
 
 	aiTree->AddNode((int)KIND::NONE, (int)KIND::ROOT, 0, IBTree::RULE::Priority, this);
-		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Generate, 0, IBTree::RULE::Non, this);
-		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Normal, 1, IBTree::RULE::Priority, this);
-			aiTree->AddNode((int)KIND::Normal, (int)KIND::PlayerPursuit, 0, IBTree::RULE::Sequence, this);
-				aiTree->AddNode((int)KIND::PlayerPursuit, (int)KIND::PlayerPositionGet, 0, IBTree::RULE::Non, this);
-				aiTree->AddNode((int)KIND::PlayerPursuit, (int)KIND::WaitChargeAttack, 1, IBTree::RULE::Non, this);
-				aiTree->AddNode((int)KIND::PlayerPursuit, (int)KIND::ChargeAttack, 2, IBTree::RULE::Non, this);
+	aiTree->AddNode((int)KIND::ROOT, (int)KIND::Generate, 0, IBTree::RULE::Non, this);
+	aiTree->AddNode((int)KIND::ROOT, (int)KIND::Normal, 1, IBTree::RULE::Priority, this);
 
-			aiTree->AddNode((int)KIND::Normal, (int)KIND::SeekPlayer, 1, IBTree::RULE::Non, this);
-			aiTree->AddNode((int)KIND::Normal, (int)KIND::WanderSpawnArea, 2, IBTree::RULE::Non, this);
-
+	aiTree->AddNode((int)KIND::Normal, (int)KIND::SeekPlayer, 1, IBTree::RULE::Non, this);
+	aiTree->AddNode((int)KIND::Normal, (int)KIND::WanderSpawnArea, 2, IBTree::RULE::Non, this);
 }
 
-StEnemy01::~StEnemy01()
+StEnemy02::~StEnemy02()
 {
 }
 
-void StEnemy01::Update()
+void StEnemy02::Update()
 {
 	// 回転
 	DirectX::XMFLOAT3 ang = GetAngle();
@@ -59,17 +54,17 @@ void StEnemy01::Update()
 	UpdateTransform();
 }
 
-void StEnemy01::Render(bool drawShadow)
+void StEnemy02::Render(bool drawShadow)
 {
 	model->Render(transform, { 1,1,1,1 }, &keyFrame);
 
 
-	if(!drawShadow)
+	if (!drawShadow)
 		paryEffect->Render(transform, { 1,1,1,1 }, &keyFrame);
 }
 
 // デバッグプリミティブ描画
-void StEnemy01::DrawDebugPrimitive()
+void StEnemy02::DrawDebugPrimitive()
 {
 	DebugPrimitive::Instance().AddSphere(plPosition, 0.5f, { 1,1,0,1 });		// スポーン地点
 
@@ -85,7 +80,7 @@ void StEnemy01::DrawDebugPrimitive()
 }
 
 // TargetPosition 更新
-void StEnemy01::UpdateTargetPosition()
+void StEnemy02::UpdateTargetPosition()
 {
 	// --- Graphics 取得 ---
 	Graphics& gfx = Graphics::Instance();
@@ -160,7 +155,7 @@ void StEnemy01::UpdateTargetPosition()
 }
 
 // 死亡処理
-void StEnemy01::OnDead()
+void StEnemy02::OnDead()
 {
 	Destroy();
 }

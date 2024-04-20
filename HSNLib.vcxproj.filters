@@ -333,6 +333,9 @@
     <ClCompile Include="SceneSTPlayer.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="StEnemy02.cpp">
+      <Filter>ソース ファイル\SpinningTopBase</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\Graphics\Graphics.h">
@@ -622,6 +625,9 @@
     </ClInclude>
     <ClInclude Include="SceneSTPlayer.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="StEnemy02.h">
+      <Filter>ヘッダー ファイル\SpinningTopBase</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

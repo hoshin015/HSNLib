@@ -258,6 +258,7 @@
     <ClCompile Include="StageManager.cpp" />
     <ClCompile Include="Library\2D\UVScrollSprite.cpp" />
     <ClCompile Include="StEnemy01.cpp" />
+    <ClCompile Include="StEnemy02.cpp" />
     <ClCompile Include="StPlayer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -356,6 +357,7 @@
     <ClInclude Include="StageManager.h" />
     <ClInclude Include="Library\2D\UVScrollSprite.h" />
     <ClInclude Include="StEnemy01.h" />
+    <ClInclude Include="StEnemy02.h" />
     <ClInclude Include="StPlayer.h" />
   </ItemGroup>
   <ItemGroup>
