@@ -214,6 +214,8 @@ void SpinningTopEnemyManager::CollisionEnemyVsObstacle()
 		{
 			Obstacle* obs = obsM.GetObstacle(i);
 
+			if (!obs->isCollision) continue;
+
 			// è’ìÀèàóù
 			DirectX::XMFLOAT3 velocityA;
 			if (Collision::StaticRepulsionSphereVsSphere(
@@ -251,7 +253,6 @@ void SpinningTopEnemyManager::DrawDebugGui()
 		ImGui::Checkbox(("sync"), &Graphics::Instance().sync);
 		ImGui::Checkbox(("drawDebugPrimitive"), &drawDebugPrimitive);
 
-
 		uint32_t enemyCount = enemies.size();
 		for (int i = 0; i < enemyCount; i++)
 		{
@@ -265,6 +266,11 @@ void SpinningTopEnemyManager::DrawDebugGui()
 				ImGui::InputFloat3("velocity", &vel.x);
 				ImGui::DragFloat3("Target", &enemy->targetPosition.x, 0.1f);
 				ImGui::DragFloat("rotationSpeed", &enemy->rotationSpeed, 0.1f);
+
+				if (ImGui::Button("damage"))
+				{
+					enemy->ApplyDamage(1, 0.0f);
+				}
 			}
 		}
 	}

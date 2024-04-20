@@ -24,6 +24,7 @@ public:
 		ChargeAttack,
 		SeekPlayer,
 		WanderSpawnArea,
+		Death,
 	};
 
 public:

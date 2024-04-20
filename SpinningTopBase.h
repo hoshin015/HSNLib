@@ -159,6 +159,9 @@ protected:
 
 public:
 	std::shared_ptr<SkinnedMesh>	model;
+	std::shared_ptr<SkinnedMesh>	topParts;
+	std::shared_ptr<SkinnedMesh>	middleParts;
+	std::shared_ptr<SkinnedMesh>	bottomParts;
 	std::shared_ptr<SkinnedMesh>	paryEffect;
 
 	// --- アニメーションフラグ ---

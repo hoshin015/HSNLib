@@ -18,7 +18,7 @@ void SceneSpinningTop::Initialize()
 {
 	for (int i = 0; i < 1; i++)
 	{
-		StEnemy01* slime = new_ StEnemy01();
+		StEnemy02* slime = new_ StEnemy02();
 		slime->SetPosition({ i * 3.0f - 10.5f, 10, 0 });
 		// スポーン座標設定
 		slime->spawnPosition = slime->GetPosition();

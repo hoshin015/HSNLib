@@ -282,6 +282,10 @@ DirectX::XMFLOAT3 SpinningTopEnemy::SbCollisionAvoidance()
 	for (int i = 0; i < obsCount; i++)
 	{
 		Obstacle* iObs = obsM.GetObstacle(i);
+
+		// obsのisCollisionがfalseなら無視
+		if (!iObs->isCollision) continue;
+
 		ObsPos = DirectX::XMLoadFloat3(&iObs->GetPosition());
 		// 長さ取得
 		PosToObs = DirectX::XMVectorSubtract(POSITION, ObsPos);
@@ -563,6 +567,7 @@ IBTree::STATE SpinningTopEnemy::ActBTree(const int _kind)
 		velocity.x += steeringForce.x;
 		velocity.z += steeringForce.z;
 
+		// targetPosition の更新後にチェックしないと挙動がかわる
 		{
 			DirectX::XMFLOAT3 playerPosition = this->plPosition;
 			DirectX::XMVECTOR PlPOSITION = DirectX::XMLoadFloat3(&playerPosition);
