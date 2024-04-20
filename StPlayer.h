@@ -26,25 +26,30 @@ protected:
 	void OnDead() override;
 
 private:
-	//プロパティ&ステータス
+	//パラメータは上に,プロパティは下に書いてる
+	//移動
 	float mobility;
-	float rotateSpeed;
-	//float speed;
 	float accel;
 	float slow;
-	//DirectX::XMFLOAT2 moveDirection;
+
+	//回転
+	float rotateIncrementSpeed;
+	float rotateIncrement;
 
 	//パリィ
-	float parryRadius;
-	float parryDamageRadius;
-	float parryMaxRadius;
-	float parryCooldown;
-	float parryCooldownCount;
-	float parryKnockback;
+	bool parry = false;
+	float parryDamageRadius = 0;
+	float parryCooldownCount = 0;
 
+	float parryRadius;
+	float parryDamageMaxRadius;
+	float parryDamageIncrementSpeed;
+	float parryCooldown;
+	float parryKnockback;
 
 	//子機
 
+	//入力
 	using InputVariant = std::variant<bool, int, float, DirectX::XMFLOAT2>;
 	std::map<std::string, InputVariant> inputMap;
 
@@ -53,8 +58,9 @@ private:
 		return std::get<T>(inputMap[str]);
 	}
 
-	using debugVariant = std::variant<bool, int, float>;
-	std::map<std::string, InputVariant> debugValue;
+	//デバッグ用
+	using debugVariant = std::variant<bool, int, float ,DirectX::XMFLOAT2>;
+	std::map<std::string, debugVariant> debugValue;
 
 	template<typename T>
 	T GetDebugValue(std::string str) {

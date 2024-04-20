@@ -18,6 +18,9 @@ void SceneSTPlayer::Initialize() {
 	StEnemy01* slime = new_ StEnemy01();
 	slime->SetPosition({ 0, 0, 0 });
 	SpinningTopEnemyManager::Instance().Register(slime);
+	slime = new_ StEnemy01();
+	slime->SetPosition({ 1,0,0 });
+	SpinningTopEnemyManager::Instance().Register(slime);
 
 	StPlayer* player = new_ StPlayer();
 	SpinningTopPlayerManager::Instance().Register(player);
@@ -40,12 +43,10 @@ void SceneSTPlayer::Initialize() {
 		DirectX::XMFLOAT3(0, 1, 0)			// ã•ûŒüƒxƒNƒgƒ‹
 	);
 	Camera::Instance().SetAngle({ DirectX::XMConvertToRadians(30), DirectX::XMConvertToRadians(180), 0 });
-
 	Camera::Instance().cameraType = Camera::CAMERA::FREE;
 }
 
 void SceneSTPlayer::Finalize() {
-	StageManager::Instance().
 	StageManager::Instance().Clear();
 
 	LightManager::Instance().Clear();
