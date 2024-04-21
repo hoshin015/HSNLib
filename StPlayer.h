@@ -19,10 +19,13 @@ public:
 
 private:
 	void Input();
+	void UpdateEDistance();
+	void UpdateRotate();
 	void UpdateMove();
 	void UpdateAttack();
 	void UpdateDamage();
-	void UpdateEDistance();
+
+	void RenderDebugPrimitive();
 
 protected:
 	void OnLanding() override;
@@ -39,19 +42,26 @@ private:
 	float slow;
 
 	//回転
-	float rotateIncrementSpeed;
-	float rotateIncrement;
+	float rotateSpeed;
+	float rotateMaxSpeed;
 
 	//パリィ
 	bool parry = false;
 	float parryDamageRadius = 0;
 	float parryCooldownCount = 0;
 
+	bool parryGauge = false;
+	float parryGaugeDamageRadius = 0;
+
 	float parryRadius;
 	float parryDamageMaxRadius;
 	float parryDamageIncrementSpeed;
 	float parryCooldown;
 	float parryKnockback;
+
+	float parryGaugeRadius;
+	float parryGaugeConsumed;
+	float parryGaugeDamageMaxRadius;
 
 	//ダメージ
 	float damagedKnockback;
@@ -63,8 +73,9 @@ private:
 	std::map<std::string, InputVariant> inputMap;
 
 	template<typename T>
-	T GetInputMap(std::string str) {
-		return std::get<T>(inputMap[str]);
+	const T& GetInputMap(std::string str) {
+		T* result = std::get_if<T>(&inputMap[str]);
+		return result ? *result : T();
 	}
 
 	//デバッグ用
