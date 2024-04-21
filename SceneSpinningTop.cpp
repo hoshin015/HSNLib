@@ -16,13 +16,24 @@
 
 void SceneSpinningTop::Initialize()
 {
-	for (int i = 0; i < 1; i++)
+	for (int i = 0; i < 4; i++)
 	{
-		StEnemy02* slime = new_ StEnemy02();
-		slime->SetPosition({ i * 3.0f - 10.5f, 10, 0 });
-		// スポーン座標設定
-		slime->spawnPosition = slime->GetPosition();
-		SpinningTopEnemyManager::Instance().Register(slime);
+		if (i % 2 == 0)
+		{
+			StEnemy02* slime = new_ StEnemy02();
+			slime->SetPosition({ i * 3.0f - 10.5f, 10, 0 });
+			// スポーン座標設定
+			slime->spawnPosition = slime->GetPosition();
+			SpinningTopEnemyManager::Instance().Register(slime);
+		}
+		else
+		{
+			StEnemy01* slime = new_ StEnemy01();
+			slime->SetPosition({ i * 3.0f - 10.5f, 10, 0 });
+			// スポーン座標設定
+			slime->spawnPosition = slime->GetPosition();
+			SpinningTopEnemyManager::Instance().Register(slime);
+		}
 	}
 	
 	for (int i = 0; i < 3; i++)
