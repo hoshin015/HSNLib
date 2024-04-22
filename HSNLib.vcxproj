@@ -259,6 +259,7 @@
     <ClCompile Include="Library\2D\UVScrollSprite.cpp" />
     <ClCompile Include="StEnemy01.cpp" />
     <ClCompile Include="StPlayer.cpp" />
+    <ClCompile Include="StPlayerOption.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BehaviorTree.h" />
@@ -357,6 +358,7 @@
     <ClInclude Include="Library\2D\UVScrollSprite.h" />
     <ClInclude Include="StEnemy01.h" />
     <ClInclude Include="StPlayer.h" />
+    <ClInclude Include="StPlayerOption.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Library\Icon\Icon.rc" />
