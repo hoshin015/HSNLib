@@ -4,7 +4,7 @@
 class StEnemy : public SpinningTopEnemy
 {
 public:
-	StEnemy(ENEMY_TYPE enemyType);
+	StEnemy(int enemyType);
 	~StEnemy() override;
 
 	// 更新処理
@@ -19,7 +19,8 @@ public:
 	// TargetPosition 更新
 	void UpdateTargetPosition();
 
-	// DrawDebugPrimitive
+private:
+	void CreateAiTree();
 
 
 protected:

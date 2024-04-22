@@ -229,7 +229,7 @@ void SceneEnemyLevelEditor::DrawDebugGUI()
 
 	if (ImGui::Button(u8"生成"))
 	{
-		StEnemy* enemy = new_ StEnemy(ENEMY_0);
+		StEnemy* enemy = new_ StEnemy(selectEnemyType);
 		enemy->SetPosition({ generatePosition.x, 10.0f, generatePosition.z });
 		// スポーン座標設定
 		enemy->spawnPosition = { enemy->GetPosition().x, 0, enemy->GetPosition().z };
