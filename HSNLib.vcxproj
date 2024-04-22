@@ -233,6 +233,7 @@
     <ClCompile Include="Library\3D\ResourceManager.cpp" />
     <ClCompile Include="SceneAnimation.cpp" />
     <ClCompile Include="SceneContextBase.cpp" />
+    <ClCompile Include="SceneEnemyLevelEditor.cpp" />
     <ClCompile Include="SceneGame.cpp" />
     <ClCompile Include="SceneLoading.cpp" />
     <ClCompile Include="SceneManager.cpp" />
@@ -336,6 +337,7 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneAnimation.h" />
     <ClInclude Include="SceneContextBase.h" />
+    <ClInclude Include="SceneEnemyLevelEditor.h" />
     <ClInclude Include="SceneGame.h" />
     <ClInclude Include="SceneLoading.h" />
     <ClInclude Include="SceneManager.h" />

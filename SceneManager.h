@@ -8,6 +8,7 @@
 #include "SceneTest.h"
 #include "SceneSpinningTop.h"
 #include "SceneSTPlayer.h"
+#include "SceneEnemyLevelEditor.h"
 #include "Library/MemoryLeak.h"
 
 // シーンマネージャー

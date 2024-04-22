@@ -5,13 +5,13 @@
 // nlohmann
 #include <nlohmann/json.hpp>
 
-#include "StEnemyData.h"
 
 
 
 // ロード
-void DataManager::LoadData()
+void DataManager::LoadEnemyData(EnemyData* pData)
 {
+	// enemyData のロード
 	std::ifstream enemyFile("Data/Json/enemy.json");
 	if (enemyFile.good())
 	{
@@ -20,11 +20,11 @@ void DataManager::LoadData()
 		int index = 0;
 		for (auto& jsonEnemy : j["EnemyData"])
 		{
-			enemyData[index].enemyType = jsonEnemy["Type"];
-			enemyData[index].radius = jsonEnemy["Radius"];
-			enemyData[index].pursuitRadius = jsonEnemy["Pursuit"];
-			enemyData[index].searchRadius = jsonEnemy["Search"];
-			enemyData[index].notSearchRadius = jsonEnemy["NotSearch"];
+			pData[index].enemyType = jsonEnemy["Type"];
+			pData[index].radius = jsonEnemy["Radius"];
+			pData[index].pursuitRadius = jsonEnemy["Pursuit"];
+			pData[index].searchRadius = jsonEnemy["Search"];
+			pData[index].notSearchRadius = jsonEnemy["NotSearch"];
 
 			index++;
 		}
@@ -32,8 +32,9 @@ void DataManager::LoadData()
 }
 
 // セーブ
-void DataManager::SaveData()
+void DataManager::SaveEnemyData(EnemyData* pData)
 {
+	// enemyData のセーブ
 	using json = nlohmann::json;
 	json enemyJson;
 
@@ -41,11 +42,11 @@ void DataManager::SaveData()
 	{
 		enemyJson["EnemyData"] +=
 		{
-			{"Type", enemyData[i].enemyType},
-			{ "Radius", enemyData[i].radius },
-			{ "Pursuit", enemyData[i].pursuitRadius },
-			{ "Search", enemyData[i].searchRadius },
-			{ "NotSearch", enemyData[i].notSearchRadius }
+			{"Type", pData[i].enemyType},
+			{ "Radius", pData[i].radius },
+			{ "Pursuit", pData[i].pursuitRadius },
+			{ "Search", pData[i].searchRadius },
+			{ "NotSearch", pData[i].notSearchRadius }
 		};
 	};
 	std::ofstream enemyFile("Data/Json/enemy.json");

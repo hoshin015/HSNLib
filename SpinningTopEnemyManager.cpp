@@ -158,6 +158,22 @@ bool SpinningTopEnemyManager::RayCast(const DirectX::XMFLOAT3& start, const Dire
 	return result;
 }
 
+// エネミーのステータス値を更新
+void SpinningTopEnemyManager::UpdateStatusValue(EnemyData* pData)
+{
+	for (SpinningTopEnemy* enemy : enemies)
+	{
+		if (pData->enemyType != enemy->enemyType) continue;
+
+		enemy->enemyType = pData->enemyType;
+		enemy->SetRadius(pData->radius);
+		enemy->searchRadius = pData->searchRadius;
+		enemy->notSearchRadius = pData->notSearchRadius;
+		enemy->pursuitRadius = pData->pursuitRadius;
+	}
+}
+
+
 // エネミー同士の衝突判定
 void SpinningTopEnemyManager::CollisionEnemyVsEnemeis()
 {

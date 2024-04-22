@@ -4,6 +4,7 @@
 #include <vector>
 #include <set>
 #include "SpinningTopEnemy.h"
+#include "StEnemyData.h"
 
 // エネミーマネージャー
 class SpinningTopEnemyManager
@@ -50,6 +51,9 @@ public:
 	// レイキャスト
 	bool RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit);
 	bool RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit, int id);
+
+	// エネミーのステータス値を更新
+	void UpdateStatusValue(EnemyData* pData);
 
 private:
 	// エネミー同士の衝突判定

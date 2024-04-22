@@ -56,6 +56,8 @@ public:
 	// enemies での index
 	int id;
 
+	int enemyType;	// 敵のタイプ
+
 	bool isGenerateFinish = false;	// 生成が終わってるかどうか
 	bool isPursuit = false;			// プレイヤーに突っ込んでいる最中かどうか
 
