@@ -11,29 +11,44 @@
 #include "ObstacleManager.h"
 #include "StEnemy01.h"
 #include "StEnemy02.h"
+#include "StEnemy.h"
 #include "Library/3D/DebugPrimitive.h"
 #include "Library/3D/LineRenderer.h"
 
+#include "DataManager.h"
+
 void SceneSpinningTop::Initialize()
 {
+	DataManager::Instance().LoadData();
+
+	//for (int i = 0; i < 4; i++)
+	//{
+	//	if (i % 2 == 0)
+	//	{
+	//		StEnemy02* slime = new_ StEnemy02();
+	//		slime->SetPosition({ i * 3.0f - 10.5f, 10, 0 });
+	//		// スポーン座標設定
+	//		slime->spawnPosition = slime->GetPosition();
+	//		SpinningTopEnemyManager::Instance().Register(slime);
+	//	}
+	//	else
+	//	{
+	//		StEnemy01* slime = new_ StEnemy01();
+	//		slime->SetPosition({ i * 3.0f - 10.5f, 10, 0 });
+	//		// スポーン座標設定
+	//		slime->spawnPosition = slime->GetPosition();
+	//		SpinningTopEnemyManager::Instance().Register(slime);
+	//	}
+	//}
+
 	for (int i = 0; i < 4; i++)
 	{
-		if (i % 2 == 0)
-		{
-			StEnemy02* slime = new_ StEnemy02();
-			slime->SetPosition({ i * 3.0f - 10.5f, 10, 0 });
-			// スポーン座標設定
-			slime->spawnPosition = slime->GetPosition();
-			SpinningTopEnemyManager::Instance().Register(slime);
-		}
-		else
-		{
-			StEnemy01* slime = new_ StEnemy01();
-			slime->SetPosition({ i * 3.0f - 10.5f, 10, 0 });
-			// スポーン座標設定
-			slime->spawnPosition = slime->GetPosition();
-			SpinningTopEnemyManager::Instance().Register(slime);
-		}
+		StEnemy* enemy;
+		enemy = (i % 2 == 0) ? new_ StEnemy(ENEMY_0) : new_ StEnemy(ENEMY_1);
+		enemy->SetPosition({ i * 3.0f - 10.5f, 10, 0 });
+		// スポーン座標設定
+		enemy->spawnPosition = enemy->GetPosition();
+		SpinningTopEnemyManager::Instance().Register(enemy);
 	}
 	
 	for (int i = 0; i < 3; i++)
