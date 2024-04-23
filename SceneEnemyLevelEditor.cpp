@@ -1,5 +1,5 @@
 #include <tchar.h>
-#include "SceneSpinningTop.h"
+#include "SceneEnemyLevelEditor.h"
 #include "SceneManager.h"
 #include "Library/Input/InputManager.h"
 #include "Library/ImGui/Include/imgui.h"
@@ -9,83 +9,48 @@
 #include "LightManager.h"
 #include "SpinningTopEnemyManager.h"
 #include "ObstacleManager.h"
-#include "StEnemy01.h"
-#include "StEnemy02.h"
 #include "StEnemy.h"
 #include "Library/3D/DebugPrimitive.h"
 #include "Library/3D/LineRenderer.h"
+#include "Library/ImGui/ConsoleData.h"
 
 #include "DataManager.h"
 
-void SceneSpinningTop::Initialize()
+void SceneEnemyLevelEditor::Initialize()
 {
+	// json のデータを enemyData に読みこむ
 	DataManager::Instance().LoadEnemyData(enemyData);
+	subEnemyData = enemyData[0];
 
-	for (int i = 0; i < 4; i++)
+	// 敵生成
+	for (int i = 0; i < 2; i++)
 	{
 		StEnemy* enemy;
 		enemy = (i % 2 == 0) ? new_ StEnemy(ENEMY_0) : new_ StEnemy(ENEMY_1);
-		enemy->SetPosition({ i * 3.0f - 10.5f, 10, 0 });
+		enemy->SetPosition({ i * 3 - 1.5f, 10, 0 });
 		// スポーン座標設定
 		enemy->spawnPosition = enemy->GetPosition();
 		SpinningTopEnemyManager::Instance().Register(enemy);
 	}
-	
+
+	// 障害物生成
 	for (int i = 0; i < 3; i++)
 	{
 		Obstacle* obstacle = new_ Obstacle("Data/FBX/cylinder/cylinder.fbx");
-		obstacle->SetPosition({ i * 10.0f - 15.0f, 0, -6.0f });
+		obstacle->SetPosition({ i * 10.0f - 10.0f, 0, -6.0f });
 		ObstacleManager::Instance().Register(obstacle);
 	}
-	
-
 
 	// ステージ初期化
 	StageManager& stageManager = StageManager::Instance();
 	StageContext* stageMain = new_ StageContext();
 	stageManager.Register(stageMain);
 
-#if 1
 	// ライト初期化
 	Light* directionLight = new Light(LightType::Directional);
 	directionLight->SetDirection(DirectX::XMFLOAT3(0.5, -1, -1));
 	directionLight->SetColor(DirectX::XMFLOAT4(1, 1, 1, 1));
 	LightManager::Instance().Register(directionLight);
-
-#else
-	{
-		// ライト初期化
-		Light* directionLight = new Light(LightType::Directional);
-		directionLight->SetDirection(DirectX::XMFLOAT3(0.5, -1, -1));
-		//directionLight->SetColor(DirectX::XMFLOAT4(1, 1, 1, 1));
-		directionLight->SetColor(DirectX::XMFLOAT4(0, 0, 0, 1));
-		LightManager::Instance().Register(directionLight);
-
-		// 点光源追加
-		{
-			Light* light = new Light(LightType::Point);
-			light->SetPosition(DirectX::XMFLOAT3(2, 1, 0));
-			light->SetColor(DirectX::XMFLOAT4(1, 1, 1, 1));
-			light->SetRange(30.0f);
-			LightManager::Instance().Register(light);
-
-			//Light* light2 = new Light(LightType::Point);
-			//light2->SetPosition(DirectX::XMFLOAT3(-2, 1, 0));
-			//light2->SetColor(DirectX::XMFLOAT4(1, 0, 1, 1));
-			//LightManager::Instance().Register(light2);
-		}
-		// スポットライトを追加
-		{
-			Light* light = new Light(LightType::Spot);
-			light->SetPosition(DirectX::XMFLOAT3(-3, 2, 0));
-			light->SetColor(DirectX::XMFLOAT4(1, 0, 0, 1));
-			light->SetDirection(DirectX::XMFLOAT3(+1, -1, 0));
-			light->SetRange(4.0f);
-			LightManager::Instance().Register(light);
-		}
-
-		LightManager::Instance().SetAmbientColor({ 0,0,0,1.0f });
-#endif
 
 	// スカイマップ
 	skyMap = std::make_unique<SkyMap>(L"Data/Texture/kloppenheim_05_puresky_4k.hdr");
@@ -97,12 +62,12 @@ void SceneSpinningTop::Initialize()
 		DirectX::XMFLOAT3(-90, 0, -30),		// ターゲット(設定しても意味ない)
 		DirectX::XMFLOAT3(0, 1, 0)			// 上方向ベクトル
 	);
-	Camera::Instance().SetAngle({ DirectX::XMConvertToRadians(60), DirectX::XMConvertToRadians(180), 0 });
+	Camera::Instance().SetAngle({ DirectX::XMConvertToRadians(60),DirectX::XMConvertToRadians(180), 0 });
 
-	Camera::Instance().cameraType = Camera::CAMERA::FREE;
+	Camera::Instance().cameraType = Camera::CAMERA::LOCK;
 }
 
-void SceneSpinningTop::Finalize()
+void SceneEnemyLevelEditor::Finalize()
 {
 	StageManager::Instance().Clear();
 
@@ -113,7 +78,7 @@ void SceneSpinningTop::Finalize()
 	ObstacleManager::Instance().Clear();
 }
 
-void SceneSpinningTop::Update()
+void SceneEnemyLevelEditor::Update()
 {
 	// カメラコントローラー更新処理
 	Camera::Instance().Update();
@@ -121,11 +86,14 @@ void SceneSpinningTop::Update()
 	StageManager::Instance().Update();
 
 	SpinningTopEnemyManager::Instance().Update();
+	SpinningTopEnemyManager::Instance().UpdateStatusValue(&subEnemyData);
 
 	ObstacleManager::Instance().Update();
+
+	UpdateGeneratePosition();
 }
 
-void SceneSpinningTop::Render()
+void SceneEnemyLevelEditor::Render()
 {
 	// --- Graphics 取得 ---
 	Graphics& gfx = Graphics::Instance();
@@ -214,7 +182,7 @@ void SceneSpinningTop::Render()
 }
 
 // デバッグ描画
-void SceneSpinningTop::DrawDebugGUI()
+void SceneEnemyLevelEditor::DrawDebugGUI()
 {
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu("File")) {
@@ -241,7 +209,7 @@ void SceneSpinningTop::DrawDebugGUI()
 				}
 				if (ImGui::MenuItem("SpinningTop"))
 				{
-					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneSpinningTop));
+					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneEnemyLevelEditor));
 				}
 				ImGui::EndMenu();
 			}
@@ -250,6 +218,154 @@ void SceneSpinningTop::DrawDebugGUI()
 		ImGui::EndMainMenuBar();
 	}
 
-	SpinningTopEnemyManager::Instance().DrawDebugGui();
-	ObstacleManager::Instance().DrawDebugGui();
+	// debugPrimitive
+	DebugPrimitive::Instance().AddSphere(generatePosition, 0.5f, { 0,1,0,1 });	// ターゲット座標
+
+
+	// 敵のレベルデザイン
+	static int selectEnemyKind = 0;
+
+	ImGui::Begin(u8"敵レベルデザイン");
+
+	if (ImGui::Button(u8"生成"))
+	{
+		StEnemy* enemy = new_ StEnemy(selectEnemyKind);
+		enemy->SetPosition({ generatePosition.x, 10.0f, generatePosition.z });
+		// スポーン座標設定
+		enemy->spawnPosition = { enemy->GetPosition().x, 0, enemy->GetPosition().z };
+		SpinningTopEnemyManager::Instance().Register(enemy);
+	}
+	if (ImGui::Button(u8"クリア"))
+	{
+		SpinningTopEnemyManager::Instance().Clear();
+	}
+
+	ImGui::Separator();
+
+	std::string enemyKindName[] = { "ENEMY0", "ENEMY1" };
+
+	if (ImGui::BeginCombo(u8"敵タイプ", enemyKindName[static_cast<int>(selectEnemyKind)].c_str()))
+	{
+		for (int i = 0; i < IM_ARRAYSIZE(enemyKindName); i++)
+		{
+			const bool isSelected = (selectEnemyKind == i);
+			if (ImGui::Selectable(enemyKindName[i].c_str(), isSelected))
+			{
+				SpinningTopEnemyManager::Instance().UpdateStatusValue(&enemyData[selectEnemyKind]);
+				selectEnemyKind = i;
+				subEnemyData = enemyData[selectEnemyKind];		// subEnemyDataを更新
+			}
+			if (isSelected)
+			{
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+		ImGui::EndCombo();
+	}
+
+	std::string behaivorTypeName[] = { u8"追撃", u8"追跡" };
+	if (ImGui::BeginCombo(u8"ビヘイビアタイプ", behaivorTypeName[static_cast<int>(subEnemyData.behaviorType)].c_str()))
+	{
+		for (int i = 0; i < IM_ARRAYSIZE(behaivorTypeName); i++)
+		{
+			const bool isSelected = (subEnemyData.behaviorType == i);
+			if (ImGui::Selectable(behaivorTypeName[i].c_str(), isSelected))
+			{
+				subEnemyData.behaviorType = i;
+			}
+			if (isSelected)
+			{
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+		ImGui::EndCombo();
+	}
+
+	ImGui::DragFloat(u8"半径", &subEnemyData.radius, 0.1f);
+	ImGui::DragFloat(u8"pursuit範囲", &subEnemyData.pursuitRadius, 0.1f);
+	ImGui::DragFloat(u8"索敵範囲", &subEnemyData.searchRadius, 0.1f);
+	ImGui::DragFloat(u8"非索敵範囲", &subEnemyData.notSearchRadius, 0.1f);
+
+	if (ImGui::Button(u8"保存"))
+	{
+		enemyData[selectEnemyKind] = subEnemyData;				// enemyData本体を subEnemyData だけ更新
+		DataManager::Instance().SaveEnemyData(enemyData);		// これで選択中の敵のみ更新できる
+		ConsoleData::Instance().logs.push_back(enemyKindName[selectEnemyKind] + u8" データ保存完了");
+	}
+
+
+	ImGui::End();
+}
+
+// 生成位置更新
+void SceneEnemyLevelEditor::UpdateGeneratePosition()
+{
+	// --- Graphics 取得 ---
+	Graphics& gfx = Graphics::Instance();
+
+	// ビューポート
+	D3D11_VIEWPORT viewport;
+	UINT numViewports = 1;
+	gfx.deviceContext->RSGetViewports(&numViewports, &viewport);
+
+	// 変換行列
+	DirectX::XMMATRIX View = DirectX::XMLoadFloat4x4(&Camera::Instance().GetView());
+	DirectX::XMMATRIX Projection = DirectX::XMLoadFloat4x4(&Camera::Instance().GetProjection());
+	DirectX::XMMATRIX World = DirectX::XMMatrixIdentity();
+	// エネミー配置処理
+	InputManager& input = InputManager::Instance();
+	if (input.GetMousePress(MOUSEBUTTON_STATE::rightButton))
+	{
+		// マウスカーソル座標を取得
+		DirectX::XMFLOAT3 screenPosition;
+		screenPosition.x = static_cast<int>(input.GetCursorPosX());
+		screenPosition.y = static_cast<int>(input.GetCursorPosY());
+
+		DirectX::XMVECTOR ScreenPosition, WorldPosition;
+
+		// レイの始点を算出
+		screenPosition.z = 0.0f;
+		ScreenPosition = DirectX::XMLoadFloat3(&screenPosition);
+
+		WorldPosition = DirectX::XMVector3Unproject(
+			ScreenPosition,
+			viewport.TopLeftX,
+			viewport.TopLeftY,
+			viewport.Width,
+			viewport.Height,
+			viewport.MinDepth,
+			viewport.MaxDepth,
+			Projection,
+			View,
+			World
+		);
+		DirectX::XMFLOAT3 rayStart;
+		DirectX::XMStoreFloat3(&rayStart, WorldPosition);
+
+		// レイの終点を算出
+		screenPosition.z = 1.0f;
+		ScreenPosition = DirectX::XMLoadFloat3(&screenPosition);
+
+		WorldPosition = DirectX::XMVector3Unproject(
+			ScreenPosition,
+			viewport.TopLeftX,
+			viewport.TopLeftY,
+			viewport.Width,
+			viewport.Height,
+			viewport.MinDepth,
+			viewport.MaxDepth,
+			Projection,
+			View,
+			World
+		);
+		DirectX::XMFLOAT3 rayEnd;
+		DirectX::XMStoreFloat3(&rayEnd, WorldPosition);
+
+		// レイキャスト
+		HitResult hit;
+		if (StageManager::Instance().RayCast(rayStart, rayEnd, hit))
+		{
+			generatePosition = hit.position;
+		}
+	}
 }

@@ -76,8 +76,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include\DirectXTK-main\Inc;C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.4\include;$(SolutionDir)Include\cereal-master\include;$(SolutionDir)Include\Effekseer170e\include;$(SolutionDir)Include\DirectXTex-main\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include\DirectXTK-main\Inc;C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.4\include;$(SolutionDir)Include\cereal-master\include;$(SolutionDir)Include\Effekseer170e\include;$(SolutionDir)Include\DirectXTex-main\DirectXTex;$(SolutionDir)Include\json-develop\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -101,8 +101,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include\DirectXTK-main\Inc;C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.4\include;$(SolutionDir)Include\cereal-master\include;$(SolutionDir)Include\Effekseer170e\include;$(SolutionDir)Include\DirectXTex-main\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include\DirectXTK-main\Inc;C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.4\include;$(SolutionDir)Include\cereal-master\include;$(SolutionDir)Include\Effekseer170e\include;$(SolutionDir)Include\DirectXTex-main\DirectXTex;$(SolutionDir)Include\json-develop\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -127,7 +127,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include\DirectXTK-main\Inc;C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.4\include;$(SolutionDir)Include\cereal-master\include;$(SolutionDir)Include\Effekseer170e\include;$(SolutionDir)Include\DirectXTex-main\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include\DirectXTK-main\Inc;C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.4\include;$(SolutionDir)Include\cereal-master\include;$(SolutionDir)Include\Effekseer170e\include;$(SolutionDir)Include\DirectXTex-main\DirectXTex;$(SolutionDir)Include\json-develop\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -151,8 +151,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include\DirectXTK-main\Inc;C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.4\include;$(SolutionDir)Include\cereal-master\include;$(SolutionDir)Include\Effekseer170e\include;$(SolutionDir)Include\DirectXTex-main\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include\DirectXTK-main\Inc;C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.4\include;$(SolutionDir)Include\cereal-master\include;$(SolutionDir)Include\Effekseer170e\include;$(SolutionDir)Include\DirectXTex-main\DirectXTex;$(SolutionDir)Include\json-develop\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -173,6 +173,7 @@
   <ItemGroup>
     <ClCompile Include="BehaviorTree.cpp" />
     <ClCompile Include="BehaviorTreeNode.cpp" />
+    <ClCompile Include="DataManager.cpp" />
     <ClCompile Include="Library\Easing.cpp" />
     <ClCompile Include="Library\Graphics\BloomBuffer.cpp" />
     <ClCompile Include="Character.cpp" />
@@ -232,6 +233,7 @@
     <ClCompile Include="Library\3D\ResourceManager.cpp" />
     <ClCompile Include="SceneAnimation.cpp" />
     <ClCompile Include="SceneContextBase.cpp" />
+    <ClCompile Include="SceneEnemyLevelEditor.cpp" />
     <ClCompile Include="SceneGame.cpp" />
     <ClCompile Include="SceneLoading.cpp" />
     <ClCompile Include="SceneManager.cpp" />
@@ -257,14 +259,23 @@
     <ClCompile Include="StageMain.cpp" />
     <ClCompile Include="StageManager.cpp" />
     <ClCompile Include="Library\2D\UVScrollSprite.cpp" />
+    <ClCompile Include="StEnemy.cpp" />
     <ClCompile Include="StEnemy01.cpp" />
+    <ClCompile Include="StEnemy02.cpp" />
+    <ClCompile Include="StEnemyData.cpp" />
     <ClCompile Include="StPlayer.cpp" />
+<<<<<<< HEAD
     <ClCompile Include="StPlayerOption.cpp" />
+=======
+    <ClCompile Include="Wave.cpp" />
+    <ClCompile Include="WaveData_1.cpp" />
+>>>>>>> feature-enemy
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BehaviorTree.h" />
     <ClInclude Include="BehaviorTreeIF.h" />
     <ClInclude Include="BehaviorTreeNode.h" />
+    <ClInclude Include="DataManager.h" />
     <ClInclude Include="Library\Easing.h" />
     <ClInclude Include="Library\Graphics\BloomBuffer.h" />
     <ClInclude Include="Character.h" />
@@ -330,6 +341,7 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneAnimation.h" />
     <ClInclude Include="SceneContextBase.h" />
+    <ClInclude Include="SceneEnemyLevelEditor.h" />
     <ClInclude Include="SceneGame.h" />
     <ClInclude Include="SceneLoading.h" />
     <ClInclude Include="SceneManager.h" />
@@ -356,9 +368,17 @@
     <ClInclude Include="StageMain.h" />
     <ClInclude Include="StageManager.h" />
     <ClInclude Include="Library\2D\UVScrollSprite.h" />
+    <ClInclude Include="StEnemy.h" />
     <ClInclude Include="StEnemy01.h" />
+    <ClInclude Include="StEnemy02.h" />
+    <ClInclude Include="StEnemyData.h" />
     <ClInclude Include="StPlayer.h" />
+<<<<<<< HEAD
     <ClInclude Include="StPlayerOption.h" />
+=======
+    <ClInclude Include="Wave.h" />
+    <ClInclude Include="WaveData_1.h" />
+>>>>>>> feature-enemy
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Library\Icon\Icon.rc" />

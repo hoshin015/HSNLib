@@ -158,6 +158,22 @@ bool SpinningTopEnemyManager::RayCast(const DirectX::XMFLOAT3& start, const Dire
 	return result;
 }
 
+// エネミーのステータス値を更新
+void SpinningTopEnemyManager::UpdateStatusValue(EnemyData* pData)
+{
+	for (SpinningTopEnemy* enemy : enemies)
+	{
+		if (pData->enemyKind != enemy->enemyKind) continue;
+
+		enemy->behaviorType = pData->behaviorType;
+		enemy->SetRadius(pData->radius);
+		enemy->searchRadius = pData->searchRadius;
+		enemy->notSearchRadius = pData->notSearchRadius;
+		enemy->pursuitRadius = pData->pursuitRadius;
+	}
+}
+
+
 // エネミー同士の衝突判定
 void SpinningTopEnemyManager::CollisionEnemyVsEnemeis()
 {
@@ -214,6 +230,8 @@ void SpinningTopEnemyManager::CollisionEnemyVsObstacle()
 		{
 			Obstacle* obs = obsM.GetObstacle(i);
 
+			if (!obs->isCollision) continue;
+
 			// 衝突処理
 			DirectX::XMFLOAT3 velocityA;
 			if (Collision::StaticRepulsionSphereVsSphere(
@@ -251,7 +269,6 @@ void SpinningTopEnemyManager::DrawDebugGui()
 		ImGui::Checkbox(("sync"), &Graphics::Instance().sync);
 		ImGui::Checkbox(("drawDebugPrimitive"), &drawDebugPrimitive);
 
-
 		uint32_t enemyCount = enemies.size();
 		for (int i = 0; i < enemyCount; i++)
 		{
@@ -265,6 +282,11 @@ void SpinningTopEnemyManager::DrawDebugGui()
 				ImGui::InputFloat3("velocity", &vel.x);
 				ImGui::DragFloat3("Target", &enemy->targetPosition.x, 0.1f);
 				ImGui::DragFloat("rotationSpeed", &enemy->rotationSpeed, 0.1f);
+
+				if (ImGui::Button("damage"))
+				{
+					enemy->ApplyDamage(1, 0.0f);
+				}
 			}
 		}
 	}

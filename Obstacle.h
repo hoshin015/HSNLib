@@ -6,7 +6,7 @@
 class Obstacle
 {
 public:
-	Obstacle(const char* name);
+	Obstacle(const char* name, bool isCol = true);
 	~Obstacle();
 
 	// 更新処理
@@ -31,7 +31,17 @@ public:
 	// スケール設定
 	void SetScale(const DirectX::XMFLOAT3& scale) { this->scale = scale; }
 
+	// 半径
 	float GetRadius() { return radius; }
+	void SetRadius(float radius) { this->radius = radius; }
+
+	// 回転角度
+	float GeRotationSpeed() { return rotationSpeed; }
+	void SetRotationSpeed(float rotationSpeed) { this->rotationSpeed = rotationSpeed; }
+
+	// 抵抗
+	float GetFriction() { return frictionPower; }
+	void SetFriction(float friction) { this->frictionPower = friction; }
 
 	// レイキャスト
 	bool RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit);
@@ -56,5 +66,12 @@ public:
 		0,0,0,1
 	};
 
+	DirectX::XMFLOAT3 velocity = { 0,0,0 };
+	float frictionPower = 5.0f;
+
+	float rotationSpeed = 0;	// 1秒に回転する角度
+
 	float radius = 1.1f;
+
+	bool isCollision = true;
 };

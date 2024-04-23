@@ -67,6 +67,12 @@
     <Filter Include="ソース ファイル\BehaviorTree">
       <UniqueIdentifier>{d7cc401f-fcd2-4e19-8acb-b3c0cc6db4d7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Wave">
+      <UniqueIdentifier>{776674ed-01ac-454e-af8c-f22b01009d7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Wave">
+      <UniqueIdentifier>{d692142a-2828-4453-a32a-32afacbe4e2e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Library\Graphics\Graphics.cpp">
@@ -333,9 +339,33 @@
     <ClCompile Include="SceneSTPlayer.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="StPlayerOption.cpp">
       <Filter>ソース ファイル\SpinningTopBase</Filter>
     </ClCompile>
+=======
+    <ClCompile Include="StEnemy02.cpp">
+      <Filter>ソース ファイル\SpinningTopBase</Filter>
+    </ClCompile>
+    <ClCompile Include="Wave.cpp">
+      <Filter>ソース ファイル\Wave</Filter>
+    </ClCompile>
+    <ClCompile Include="WaveData_1.cpp">
+      <Filter>ソース ファイル\Wave</Filter>
+    </ClCompile>
+    <ClCompile Include="StEnemy.cpp">
+      <Filter>ソース ファイル\SpinningTopBase</Filter>
+    </ClCompile>
+    <ClCompile Include="StEnemyData.cpp">
+      <Filter>ソース ファイル\SpinningTopBase</Filter>
+    </ClCompile>
+    <ClCompile Include="DataManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneEnemyLevelEditor.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+>>>>>>> feature-enemy
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\Graphics\Graphics.h">
@@ -626,9 +656,33 @@
     <ClInclude Include="SceneSTPlayer.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="StPlayerOption.h">
       <Filter>ヘッダー ファイル\SpinningTopBase</Filter>
     </ClInclude>
+=======
+    <ClInclude Include="StEnemy02.h">
+      <Filter>ヘッダー ファイル\SpinningTopBase</Filter>
+    </ClInclude>
+    <ClInclude Include="Wave.h">
+      <Filter>ヘッダー ファイル\Wave</Filter>
+    </ClInclude>
+    <ClInclude Include="WaveData_1.h">
+      <Filter>ヘッダー ファイル\Wave</Filter>
+    </ClInclude>
+    <ClInclude Include="StEnemy.h">
+      <Filter>ヘッダー ファイル\SpinningTopBase</Filter>
+    </ClInclude>
+    <ClInclude Include="StEnemyData.h">
+      <Filter>ヘッダー ファイル\SpinningTopBase</Filter>
+    </ClInclude>
+    <ClInclude Include="DataManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneEnemyLevelEditor.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+>>>>>>> feature-enemy
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Library\Icon\Icon.rc">

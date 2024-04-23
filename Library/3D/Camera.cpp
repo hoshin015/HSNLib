@@ -50,6 +50,9 @@ void Camera::Update()
 	case CAMERA::ANIMATION_EDITOR:
 		AnimationEditorCameraUpdate();
 		break;
+	case CAMERA::LOCK:
+		LockCameraUpdate();
+		break;
 	}
 }
 
@@ -248,6 +251,49 @@ void Camera::AnimationEditorCameraUpdate()
 
 	// カメラの視点と注視点を設定
 	SetLookAt(eye, target, DirectX::XMFLOAT3(0, 1, 0));
+}
+
+void Camera::LockCameraUpdate()
+{
+	// --- ターゲットの座標をカメラの回転から求める　---
+
+	// カメラ回転値を回転行列に変換
+	DirectX::XMMATRIX Transform = DirectX::XMMatrixRotationRollPitchYaw(angle.x, angle.y, angle.z);
+
+	// 回転行列から前方向ベクトルを取り出す
+	DirectX::XMVECTOR Front = Transform.r[2];
+	DirectX::XMFLOAT3 front;
+	DirectX::XMStoreFloat3(&front, Front);
+
+	// カメラ座標から前ベクトル方向に一定距離離れた注視点を求める
+	focus.x = eye.x + front.x * 10;
+	focus.y = eye.y + front.y * 10;
+	focus.z = eye.z + front.z * 10;
+
+	// --- カメラの移動ベクトル計算 ---
+
+	// カメラの方向を取得
+	DirectX::XMFLOAT3& cameraRight = right;
+	DirectX::XMFLOAT3& cameraFront = front;
+	DirectX::XMFLOAT3& cameraUp = up;
+
+	// カメラ右方向ベクトルを単位ベクトルに変換
+	DirectX::XMVECTOR cameraVectorRight = DirectX::XMLoadFloat3(&cameraRight);
+	DirectX::XMVector3Normalize(cameraVectorRight);
+	DirectX::XMStoreFloat3(&cameraRight, cameraVectorRight);
+
+	// カメラ前方向ベクトルを単位ベクトルに変換
+	DirectX::XMVECTOR cameraVectorFront = DirectX::XMLoadFloat3(&cameraFront);
+	DirectX::XMVector3Normalize(cameraVectorFront);
+	DirectX::XMStoreFloat3(&cameraFront, cameraVectorFront);
+
+	// カメラ上方向ベクトルを単位ベクトルに変換
+	DirectX::XMVECTOR cameraVectorUp = DirectX::XMLoadFloat3(&cameraUp);
+	DirectX::XMVector3Normalize(cameraVectorUp);
+	DirectX::XMStoreFloat3(&cameraUp, cameraVectorUp);
+
+	// --- view 設定 ---
+	SetLookAt(eye, focus, DirectX::XMFLOAT3(0, 1, 0));
 }
 
 // view 設定

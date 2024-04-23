@@ -92,6 +92,10 @@ void SceneTitle::DrawDebugGUI()
 				{
 					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneSTPlayer));
 				}
+				if (ImGui::MenuItem("EnemyLevelEditor"))
+				{
+					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneEnemyLevelEditor));
+				}
 				ImGui::EndMenu();
 			}
 			ImGui::EndMenu();

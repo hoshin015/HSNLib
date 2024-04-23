@@ -1,4 +1,4 @@
-#include "StEnemy01.h""
+#include "StEnemy02.h""
 #include "Library/Graphics/Graphics.h"
 #include "Library/MemoryLeak.h"
 #include "Library/Timer.h"
@@ -9,14 +9,12 @@
 #include "StageManager.h"
 #include "ObstacleManager.h"
 
-StEnemy01::StEnemy01()
+StEnemy02::StEnemy02()
 {
-	maxMoveSpeed = 20.0f;
-
-	model = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemy01/Main/StEnemy01Main.fbx");
-	topParts = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemy01/Top/StEnemy01Top.fbx");
-	middleParts = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemy01/Middle/StEnemy01Middle.fbx");
-	bottomParts = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemy01/Bottom/StEnemy01Bottom.fbx");
+	model = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemy02/Main/StEnemy02Main.fbx");
+	topParts = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemy02/Top/StEnemy02Top.fbx");
+	middleParts = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemy02/Middle/StEnemy02Middle.fbx");
+	bottomParts = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemy02/Bottom/StEnemy02Bottom.fbx");
 
 	paryEffect = ResourceManager::Instance().LoadModelResource("Data/Fbx/paryEffectTest/paryEffectTest.fbx");
 
@@ -27,23 +25,18 @@ StEnemy01::StEnemy01()
 	aiTree = std::make_unique <BTree>(this);
 
 	aiTree->AddNode((int)KIND::NONE, (int)KIND::ROOT, 0, IBTree::RULE::Priority, this);
-		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Generate, 0, IBTree::RULE::Non, this);
-		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Normal, 1, IBTree::RULE::Priority, this);
-			aiTree->AddNode((int)KIND::Normal, (int)KIND::PlayerPursuit, 0, IBTree::RULE::Sequence, this);
-				aiTree->AddNode((int)KIND::PlayerPursuit, (int)KIND::PlayerPositionGet, 0, IBTree::RULE::Non, this);
-				aiTree->AddNode((int)KIND::PlayerPursuit, (int)KIND::WaitChargeAttack, 1, IBTree::RULE::Non, this);
-				aiTree->AddNode((int)KIND::PlayerPursuit, (int)KIND::ChargeAttack, 2, IBTree::RULE::Non, this);
+	aiTree->AddNode((int)KIND::ROOT, (int)KIND::Generate, 0, IBTree::RULE::Non, this);
+	aiTree->AddNode((int)KIND::ROOT, (int)KIND::Normal, 1, IBTree::RULE::Priority, this);
 
-			aiTree->AddNode((int)KIND::Normal, (int)KIND::SeekPlayer, 1, IBTree::RULE::Non, this);
-			aiTree->AddNode((int)KIND::Normal, (int)KIND::WanderSpawnArea, 2, IBTree::RULE::Non, this);
-
+	aiTree->AddNode((int)KIND::Normal, (int)KIND::SeekPlayer, 1, IBTree::RULE::Non, this);
+	aiTree->AddNode((int)KIND::Normal, (int)KIND::WanderSpawnArea, 2, IBTree::RULE::Non, this);
 }
 
-StEnemy01::~StEnemy01()
+StEnemy02::~StEnemy02()
 {
 }
 
-void StEnemy01::Update()
+void StEnemy02::Update()
 {
 	// 回転
 	DirectX::XMFLOAT3 ang = GetAngle();
@@ -65,17 +58,17 @@ void StEnemy01::Update()
 	UpdateTransform();
 }
 
-void StEnemy01::Render(bool drawShadow)
+void StEnemy02::Render(bool drawShadow)
 {
 	model->Render(transform, { 1,1,1,1 }, &keyFrame);
 
 
-	if(!drawShadow)
+	if (!drawShadow)
 		paryEffect->Render(transform, { 1,1,1,1 }, &keyFrame);
 }
 
 // デバッグプリミティブ描画
-void StEnemy01::DrawDebugPrimitive()
+void StEnemy02::DrawDebugPrimitive()
 {
 	DebugPrimitive::Instance().AddSphere(plPosition, 0.5f, { 1,1,0,1 });		// スポーン地点
 
@@ -91,7 +84,7 @@ void StEnemy01::DrawDebugPrimitive()
 }
 
 // TargetPosition 更新
-void StEnemy01::UpdateTargetPosition()
+void StEnemy02::UpdateTargetPosition()
 {
 	// --- Graphics 取得 ---
 	Graphics& gfx = Graphics::Instance();
@@ -166,11 +159,30 @@ void StEnemy01::UpdateTargetPosition()
 }
 
 // 死亡処理
-void StEnemy01::OnDead()
+void StEnemy02::OnDead()
 {
 	Obstacle* obstacle = new Obstacle("Data/Fbx/StEnemy01/Top/StEnemy01Top.fbx", false);
 	obstacle->SetPosition(GetPosition());
+	obstacle->SetRadius(0.0f);
+	obstacle->velocity = { 40,0,0 };
+	obstacle->SetRotationSpeed(60);
+	obstacle->SetFriction(3);
 	ObstacleManager::Instance().Register(obstacle);
+
+	Obstacle* obstacle1 = new Obstacle("Data/Fbx/StEnemy01/Middle/StEnemy01Middle.fbx", false);
+	obstacle1->SetPosition(GetPosition());
+	obstacle1->SetRadius(0.0f);
+	obstacle1->velocity = { -5,0,10 };
+	obstacle1->SetRotationSpeed(30);
+	ObstacleManager::Instance().Register(obstacle1);
+
+	Obstacle* obstacle2 = new Obstacle("Data/Fbx/StEnemy01/Bottom/StEnemy01Bottom.fbx", false);
+	obstacle2->SetPosition(GetPosition());
+	obstacle2->SetRadius(0.0f);
+	obstacle2->velocity = { 3,0,-10 };
+	obstacle2->SetRotationSpeed(120);
+	obstacle2->SetAngle({90,0,0});
+	ObstacleManager::Instance().Register(obstacle2);
 
 	Destroy();
 }

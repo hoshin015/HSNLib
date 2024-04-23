@@ -1,4 +1,4 @@
-#include "StEnemy01.h""
+#include "StEnemy.h""
 #include "Library/Graphics/Graphics.h"
 #include "Library/MemoryLeak.h"
 #include "Library/Timer.h"
@@ -9,9 +9,9 @@
 #include "StageManager.h"
 #include "ObstacleManager.h"
 
-StEnemy01::StEnemy01()
-{
-	maxMoveSpeed = 20.0f;
+StEnemy::StEnemy(int enemyKind)
+{	
+	this->enemyKind = enemyKind;
 
 	model = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemy01/Main/StEnemy01Main.fbx");
 	topParts = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemy01/Top/StEnemy01Top.fbx");
@@ -20,30 +20,24 @@ StEnemy01::StEnemy01()
 
 	paryEffect = ResourceManager::Instance().LoadModelResource("Data/Fbx/paryEffectTest/paryEffectTest.fbx");
 
-	// アニメーション変更
-	PlayAnimation(5, true);
+	// 敵データの設定
+	EnemyData data = enemyData[enemyKind];
+	behaviorType = data.behaviorType;
+	radius = data.radius;
+	pursuitRadius = data.pursuitRadius;
+	searchRadius = data.searchRadius;
+	notSearchRadius = data.notSearchRadius;
+	
 
-	// BehaviorTreeを構築
-	aiTree = std::make_unique <BTree>(this);
-
-	aiTree->AddNode((int)KIND::NONE, (int)KIND::ROOT, 0, IBTree::RULE::Priority, this);
-		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Generate, 0, IBTree::RULE::Non, this);
-		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Normal, 1, IBTree::RULE::Priority, this);
-			aiTree->AddNode((int)KIND::Normal, (int)KIND::PlayerPursuit, 0, IBTree::RULE::Sequence, this);
-				aiTree->AddNode((int)KIND::PlayerPursuit, (int)KIND::PlayerPositionGet, 0, IBTree::RULE::Non, this);
-				aiTree->AddNode((int)KIND::PlayerPursuit, (int)KIND::WaitChargeAttack, 1, IBTree::RULE::Non, this);
-				aiTree->AddNode((int)KIND::PlayerPursuit, (int)KIND::ChargeAttack, 2, IBTree::RULE::Non, this);
-
-			aiTree->AddNode((int)KIND::Normal, (int)KIND::SeekPlayer, 1, IBTree::RULE::Non, this);
-			aiTree->AddNode((int)KIND::Normal, (int)KIND::WanderSpawnArea, 2, IBTree::RULE::Non, this);
-
+	// aiTree の構築
+	CreateAiTree();
 }
 
-StEnemy01::~StEnemy01()
+StEnemy::~StEnemy()
 {
 }
 
-void StEnemy01::Update()
+void StEnemy::Update()
 {
 	// 回転
 	DirectX::XMFLOAT3 ang = GetAngle();
@@ -65,17 +59,17 @@ void StEnemy01::Update()
 	UpdateTransform();
 }
 
-void StEnemy01::Render(bool drawShadow)
+void StEnemy::Render(bool drawShadow)
 {
 	model->Render(transform, { 1,1,1,1 }, &keyFrame);
 
 
-	if(!drawShadow)
+	if (!drawShadow)
 		paryEffect->Render(transform, { 1,1,1,1 }, &keyFrame);
 }
 
 // デバッグプリミティブ描画
-void StEnemy01::DrawDebugPrimitive()
+void StEnemy::DrawDebugPrimitive()
 {
 	DebugPrimitive::Instance().AddSphere(plPosition, 0.5f, { 1,1,0,1 });		// スポーン地点
 
@@ -91,7 +85,7 @@ void StEnemy01::DrawDebugPrimitive()
 }
 
 // TargetPosition 更新
-void StEnemy01::UpdateTargetPosition()
+void StEnemy::UpdateTargetPosition()
 {
 	// --- Graphics 取得 ---
 	Graphics& gfx = Graphics::Instance();
@@ -165,10 +159,47 @@ void StEnemy01::UpdateTargetPosition()
 	}
 }
 
-// 死亡処理
-void StEnemy01::OnDead()
+void StEnemy::CreateAiTree()
 {
-	Obstacle* obstacle = new Obstacle("Data/Fbx/StEnemy01/Top/StEnemy01Top.fbx", false);
+	switch (behaviorType)
+	{
+	case pursuit:
+	{
+		// BehaviorTreeを構築
+		aiTree = std::make_unique <BTree>(this);
+
+		aiTree->AddNode((int)KIND::NONE, (int)KIND::ROOT, 0, IBTree::RULE::Priority, this);
+		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Generate, 0, IBTree::RULE::Non, this);
+		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Normal, 1, IBTree::RULE::Priority, this);
+		aiTree->AddNode((int)KIND::Normal, (int)KIND::PlayerPursuit, 0, IBTree::RULE::Sequence, this);
+		aiTree->AddNode((int)KIND::PlayerPursuit, (int)KIND::PlayerPositionGet, 0, IBTree::RULE::Non, this);
+		aiTree->AddNode((int)KIND::PlayerPursuit, (int)KIND::WaitChargeAttack, 1, IBTree::RULE::Non, this);
+		aiTree->AddNode((int)KIND::PlayerPursuit, (int)KIND::ChargeAttack, 2, IBTree::RULE::Non, this);
+
+		aiTree->AddNode((int)KIND::Normal, (int)KIND::SeekPlayer, 1, IBTree::RULE::Non, this);
+		aiTree->AddNode((int)KIND::Normal, (int)KIND::WanderSpawnArea, 2, IBTree::RULE::Non, this);
+		break;
+	}
+	case chase:
+	{
+		// BehaviorTreeを構築
+		aiTree = std::make_unique <BTree>(this);
+
+		aiTree->AddNode((int)KIND::NONE, (int)KIND::ROOT, 0, IBTree::RULE::Priority, this);
+		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Generate, 0, IBTree::RULE::Non, this);
+		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Normal, 1, IBTree::RULE::Priority, this);
+
+		aiTree->AddNode((int)KIND::Normal, (int)KIND::SeekPlayer, 1, IBTree::RULE::Non, this);
+		aiTree->AddNode((int)KIND::Normal, (int)KIND::WanderSpawnArea, 2, IBTree::RULE::Non, this);
+		break;
+	}
+	}
+}
+
+// 死亡処理
+void StEnemy::OnDead()
+{
+	Obstacle* obstacle = new Obstacle("Data/Fbx/StEnemy/Top/StEnemyTop.fbx", false);
 	obstacle->SetPosition(GetPosition());
 	ObstacleManager::Instance().Register(obstacle);
 
