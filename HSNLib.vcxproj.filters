@@ -339,12 +339,9 @@
     <ClCompile Include="SceneSTPlayer.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
-<<<<<<< HEAD
     <ClCompile Include="StPlayerOption.cpp">
       <Filter>ソース ファイル\SpinningTopBase</Filter>
-    </ClCompile>
-=======
-    <ClCompile Include="StEnemy02.cpp">
+    </ClCompile>    <ClCompile Include="StEnemy02.cpp">
       <Filter>ソース ファイル\SpinningTopBase</Filter>
     </ClCompile>
     <ClCompile Include="Wave.cpp">
@@ -365,7 +362,6 @@
     <ClCompile Include="SceneEnemyLevelEditor.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
->>>>>>> feature-enemy
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\Graphics\Graphics.h">
@@ -656,11 +652,9 @@
     <ClInclude Include="SceneSTPlayer.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
-<<<<<<< HEAD
     <ClInclude Include="StPlayerOption.h">
       <Filter>ヘッダー ファイル\SpinningTopBase</Filter>
     </ClInclude>
-=======
     <ClInclude Include="StEnemy02.h">
       <Filter>ヘッダー ファイル\SpinningTopBase</Filter>
     </ClInclude>
@@ -682,7 +676,6 @@
     <ClInclude Include="SceneEnemyLevelEditor.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
->>>>>>> feature-enemy
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Library\Icon\Icon.rc">
