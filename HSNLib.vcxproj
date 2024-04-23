@@ -264,12 +264,9 @@
     <ClCompile Include="StEnemy02.cpp" />
     <ClCompile Include="StEnemyData.cpp" />
     <ClCompile Include="StPlayer.cpp" />
-<<<<<<< HEAD
     <ClCompile Include="StPlayerOption.cpp" />
-=======
     <ClCompile Include="Wave.cpp" />
     <ClCompile Include="WaveData_1.cpp" />
->>>>>>> feature-enemy
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BehaviorTree.h" />
@@ -373,12 +370,9 @@
     <ClInclude Include="StEnemy02.h" />
     <ClInclude Include="StEnemyData.h" />
     <ClInclude Include="StPlayer.h" />
-<<<<<<< HEAD
     <ClInclude Include="StPlayerOption.h" />
-=======
     <ClInclude Include="Wave.h" />
     <ClInclude Include="WaveData_1.h" />
->>>>>>> feature-enemy
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Library\Icon\Icon.rc" />
