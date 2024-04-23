@@ -6,8 +6,6 @@
 #include <nlohmann/json.hpp>
 
 
-
-
 // ÉçÅ[Éh
 void DataManager::LoadEnemyData(EnemyData* pData)
 {
@@ -22,10 +20,22 @@ void DataManager::LoadEnemyData(EnemyData* pData)
 		{
 			pData[index].enemyKind = jsonEnemy["Kind"];
 			pData[index].behaviorType = jsonEnemy["BehaviorType"];
+
 			pData[index].radius = jsonEnemy["Radius"];
+			pData[index].maxMoveSpeed = jsonEnemy["MaxMoveSpeed"];
+			pData[index].maxHealth = jsonEnemy["MaxHealth"];
+
 			pData[index].pursuitRadius = jsonEnemy["Pursuit"];
 			pData[index].searchRadius = jsonEnemy["Search"];
 			pData[index].notSearchRadius = jsonEnemy["NotSearch"];
+
+			pData[index].circleDistance = jsonEnemy["CircleDistance"];
+			pData[index].circleRadius = jsonEnemy["CircleRadius"];
+			pData[index].wanderAngleChange = jsonEnemy["WanderAngleChange"];
+			pData[index].wanderAngleChangeTime = jsonEnemy["WanderAngleChangeTime"];
+
+			pData[index].chargeAttackCoolTime = jsonEnemy["ChargeAttakCoolTime"];
+			pData[index].waitChargeAttackTime = jsonEnemy["WaitChargeAttakTime"];
 
 			index++;
 		}
@@ -45,10 +55,22 @@ void DataManager::SaveEnemyData(EnemyData* pData)
 		{
 			{ "Kind", pData[i].enemyKind },
 			{ "BehaviorType", pData[i].behaviorType },
+
 			{ "Radius", pData[i].radius },
+			{ "MaxMoveSpeed", pData[i].maxMoveSpeed },
+			{ "MaxHealth", pData[i].maxHealth },
+
 			{ "Pursuit", pData[i].pursuitRadius },
 			{ "Search", pData[i].searchRadius },
-			{ "NotSearch", pData[i].notSearchRadius }
+			{ "NotSearch", pData[i].notSearchRadius },
+
+			{ "CircleDistance", pData[i].circleDistance },
+			{ "CircleRadius", pData[i].circleRadius },
+			{ "WanderAngleChange", pData[i].wanderAngleChange },
+			{ "WanderAngleChangeTime", pData[i].wanderAngleChangeTime },
+
+			{ "ChargeAttakCoolTime", pData[i].chargeAttackCoolTime },
+			{ "WaitChargeAttakTime", pData[i].waitChargeAttackTime },
 		};
 	};
 	std::ofstream enemyFile("Data/Json/enemy.json");

@@ -166,10 +166,22 @@ void SpinningTopEnemyManager::UpdateStatusValue(EnemyData* pData)
 		if (pData->enemyKind != enemy->enemyKind) continue;
 
 		enemy->behaviorType = pData->behaviorType;
+
 		enemy->SetRadius(pData->radius);
+		enemy->SetMaxMoveSpeed(pData->maxMoveSpeed);
+		enemy->SetMaxHealth(pData->maxHealth);
+		
 		enemy->searchRadius = pData->searchRadius;
 		enemy->notSearchRadius = pData->notSearchRadius;
 		enemy->pursuitRadius = pData->pursuitRadius;
+
+		enemy->circleDistance = pData->circleDistance;
+		enemy->circleRadius = pData->circleRadius;
+		enemy->wanderAngleChange = pData->wanderAngleChange;
+		enemy->wanderAngleChangeTime = pData->wanderAngleChangeTime;
+
+		enemy->chargeAttackCoolTime = pData->chargeAttackCoolTime;
+		enemy->waitChargeAttackTime = pData->waitChargeAttackTime;
 	}
 }
 

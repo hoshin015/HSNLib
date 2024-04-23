@@ -209,6 +209,10 @@ void SceneEnemyLevelEditor::DrawDebugGUI()
 				}
 				if (ImGui::MenuItem("SpinningTop"))
 				{
+					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneSpinningTop));
+				}
+				if (ImGui::MenuItem("EnemyEditor"))
+				{
 					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneEnemyLevelEditor));
 				}
 				ImGui::EndMenu();
@@ -242,7 +246,7 @@ void SceneEnemyLevelEditor::DrawDebugGUI()
 
 	ImGui::Separator();
 
-	std::string enemyKindName[] = { "ENEMY0", "ENEMY1" };
+	std::string enemyKindName[] = { "ENEMY0", "ENEMY1", "ENEMY2", "ENEMY3" };
 
 	if (ImGui::BeginCombo(u8"“Gƒ^ƒCƒv", enemyKindName[static_cast<int>(selectEnemyKind)].c_str()))
 	{
@@ -280,11 +284,22 @@ void SceneEnemyLevelEditor::DrawDebugGUI()
 		}
 		ImGui::EndCombo();
 	}
-
+	ImGui::Separator();
+	ImGui::Text(u8"ƒXƒe[ƒ^ƒX");
 	ImGui::DragFloat(u8"”¼Œa", &subEnemyData.radius, 0.1f);
+	ImGui::DragFloat(u8"Å‘å‘¬“x", &subEnemyData.maxMoveSpeed, 0.1f);
+	ImGui::DragFloat(u8"Å‘åHP", &subEnemyData.maxHealth, 1.0f);
+	ImGui::Separator();
+	ImGui::Text(u8"SteeringBehavior");
 	ImGui::DragFloat(u8"pursuit”ÍˆÍ", &subEnemyData.pursuitRadius, 0.1f);
 	ImGui::DragFloat(u8"õ“G”ÍˆÍ", &subEnemyData.searchRadius, 0.1f);
 	ImGui::DragFloat(u8"”ñõ“G”ÍˆÍ", &subEnemyData.notSearchRadius, 0.1f);
+	ImGui::DragFloat(u8"wander‰~‚Æ‚Ì‹——£", &subEnemyData.circleDistance, 0.1f);
+	ImGui::DragFloat(u8"wander‰~‚Ì”¼Œa", &subEnemyData.circleRadius, 0.1f);
+	ImGui::SliderInt(u8"wander‰~‚Ì•ÏXŠp“x", &subEnemyData.wanderAngleChange, 0, 359);
+	ImGui::DragFloat(u8"wander‰~‚Ì•ÏX•b”", &subEnemyData.wanderAngleChangeTime, 0.1f);
+	ImGui::DragFloat(u8"chargeAttack‚ÌƒN[ƒ‹ƒ^ƒCƒ€[s]", &subEnemyData.chargeAttackCoolTime, 0.1f);
+	ImGui::DragFloat(u8"chargeAttack‚Ì‘Ò‚¿ŠÔ[s]", &subEnemyData.waitChargeAttackTime, 0.1f);
 
 	if (ImGui::Button(u8"•Û‘¶"))
 	{

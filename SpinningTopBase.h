@@ -36,6 +36,9 @@ public:
 	// velocityÝ’è
 	void SetVelocity(const DirectX::XMFLOAT3& velocity) { this->velocity = velocity; }
 
+	// Å‘å‘¬“xÝ’è
+	void SetMaxMoveSpeed(float ms) { this->maxMoveSpeed = ms; }
+
 	// Ú’n”»’èŽæ“¾
 	bool IsGround() const { return isGround; }
 
@@ -48,6 +51,7 @@ public:
 	int GetHealth() const { return health; }
 	// Å‘åŒ’Nó‘Ô‚ðŽæ“¾
 	int GetMaxHealth() const { return maxHealth; }
+	void SetMaxHealth(float mh) { this->maxHealth = mh; }
 
 
 
