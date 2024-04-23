@@ -7,6 +7,7 @@
 #include "Library/3D/Camera.h"
 
 #include "SpinningTopEnemyManager.h"
+#include "Obstacle.h"
 #include "Collision.h"
 
 #include <typeinfo>
@@ -21,7 +22,8 @@ static const char* u8cast(const char* x) { return x; }
 #endif
 
 StPlayer::StPlayer() {
-	model = ResourceManager::Instance().LoadModelResource("Data/Fbx/SpinningTopTest/SpinningTopTest.fbx");
+	model = ResourceManager::Instance().LoadModelResource("Data/Fbx/StPlayer/StPlayer.fbx");
+
 
 	//moveDirection = { 0,0 };
 	//speed = 0;
@@ -59,7 +61,7 @@ void StPlayer::Update() {
 	UpdateEDistance();
 	UpdateMove();
 	UpdateAttack();
-	UpdateDamage();
+	UpdateDamaged();
 
 	// 速力更新処理
 	UpdateVelocity();
@@ -90,25 +92,25 @@ void StPlayer::DrawDebugGui() {
 	if (ImGui::Begin("Player")) {
 		if (ImGui::CollapsingHeader(u8cast(u8"プロパティ"), ImGuiTreeNodeFlags_DefaultOpen)) {
 			if (ImGui::CollapsingHeader(u8cast(u8"移動"), ImGuiTreeNodeFlags_DefaultOpen)) {
-				ImGui::DragFloat("Mobility", &mobility, 0.01f);
-				ImGui::DragFloat("Accel", &accel, 0.1f);
+				ImGui::DragFloat(u8cast(u8"機動性"), &mobility, 0.01f);
+				ImGui::DragFloat(u8cast(u8"加速度"), &accel, 0.1f);
 				if (accel < 0)accel = 0;
-				ImGui::DragFloat("Slow", &slow, 0.1f);
-				ImGui::DragFloat("Radius", &radius, 0.1f);
+				ImGui::DragFloat(u8cast(u8"減速度"), &slow, 0.1f);
+				ImGui::DragFloat(u8cast(u8"自機の半径"), &radius, 0.1f);
 			}
 
 			if (ImGui::CollapsingHeader(u8cast(u8"回転"), ImGuiTreeNodeFlags_DefaultOpen)) {
 				XMFLOAT2 angleF2;
 				XMStoreFloat2(&angleF2, XMVector2Transform(XMVectorSet(0, 1, 0, 0), XMMatrixRotationZ(XMConvertToRadians(angle.y))));
 				ImguiVectorDirDraw(20, 10, 20, angleF2);
-				ImGui::DragFloat("RotateIncrementSpeed", &rotateSpeed, 0.01f);
-				ImGui::DragFloat("RotateMaxSpeed", &rotateMaxSpeed, 0.1f);
-				ImGui::DragFloat("angle.y", &angle.y);
+				ImGui::DragFloat(u8cast(u8"回転速度(ゲージ攻撃にも使う)"), &rotateSpeed, 0.01f);
+				ImGui::DragFloat(u8cast(u8"最大回転速度"), &rotateMaxSpeed, 0.1f);
+				ImGui::DragFloat(u8cast(u8"回転方向(デバッグ用)"), &angle.y);
 			}
 
 			if (ImGui::CollapsingHeader(u8cast(u8"パリィ"), ImGuiTreeNodeFlags_DefaultOpen)) {
-				ImGui::DragFloat("pKnockback", &parryKnockback, 0.1f);
-				ImGui::DragFloat("pRadius", &parryRadius, 0.1f);
+				ImGui::DragFloat(u8cast(u8"ノックバック"), &parryKnockback, 0.1f);
+				ImGui::DragFloat(u8cast(u8"半径"), &parryRadius, 0.1f);
 				ImGui::DragFloat("pDamageMaxRadius", &parryDamageMaxRadius, 0.1f);
 				ImGui::DragFloat("pDamageSpeed", &parryDamageIncrementSpeed, 0.1f);
 				ImGui::DragFloat("pCoolDown", &parryCooldown, 0.1f);
@@ -363,6 +365,7 @@ void StPlayer::UpdateAttack() {
 				XMStoreFloat3(&out2, XMVector3Normalize(XMLoadFloat3(&out2)) * parryKnockback);
 
 				enemy->SetVelocity(out2);
+				enemy->ApplyDamage(1, 0);
 #endif
 			}
 
@@ -409,7 +412,7 @@ void StPlayer::UpdateAttack() {
 	if (GetInputMap<bool>("Attack") && !parry) parryCooldownCount = parryCooldown;
 }
 
-void StPlayer::UpdateDamage() {
+void StPlayer::UpdateDamaged() {
 	for (SpinningTopEnemy* enemy : nearEnemy) {
 		XMVECTOR pPosVec = XMLoadFloat3(&position);
 		XMVECTOR ePosVec = XMLoadFloat3(&enemy->GetPosition());
@@ -423,7 +426,7 @@ void StPlayer::UpdateDamage() {
 			XMStoreFloat3(&out1, XMVector3Normalize(XMLoadFloat3(&out1)) * damagedKnockback);
 
 			velocity = out1;
-			health--;
+			ApplyDamage(1, 0);
 			break;
 		}
 	}
@@ -476,6 +479,10 @@ void StPlayer::RenderDebugPrimitive() {
 
 void StPlayer::OnLanding() {}
 
-void StPlayer::OnDamaged() {}
+void StPlayer::OnDamaged() {
 
-void StPlayer::OnDead() {}
+}
+
+void StPlayer::OnDead() {
+
+}

@@ -4,6 +4,7 @@
 
 #include "SpinningTopBase.h"
 #include "SpinningTopEnemyManager.h"
+#include "StPlayerOption.h"
 
 class StPlayer :public SpinningTopBase
 {
@@ -18,16 +19,16 @@ public:
 	bool IsCoolDown() { return parryCooldownCount <= 0; }
 
 private:
-	void Input();
 	void UpdateEDistance();
 	void UpdateRotate();
 	void UpdateMove();
 	void UpdateAttack();
-	void UpdateDamage();
+	void UpdateDamaged();
 
 	void RenderDebugPrimitive();
 
 protected:
+	void Input();
 	void OnLanding() override;
 	void OnDamaged() override;
 	void OnDead() override;
@@ -67,6 +68,7 @@ private:
 	float damagedKnockback;
 
 	//Žq‹@
+	//std::vector<std::shared_ptr<StPlayerOption>> option;
 
 	//“ü—Í
 	using InputVariant = std::variant<bool, int, float, DirectX::XMFLOAT2>;

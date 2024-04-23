@@ -16,7 +16,7 @@ StPlayerOption::StPlayerOption() {
 StPlayerOption::~StPlayerOption() {}
 
 void StPlayerOption::Update() {
-
+	
 }
 
 void StPlayerOption::Render() {}

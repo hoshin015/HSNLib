@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SpinningTopBase.h"
+#include "StPlayer.h"
 
 class StPlayerOption :public SpinningTopBase {
 public:
