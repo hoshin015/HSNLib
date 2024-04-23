@@ -1,5 +1,6 @@
 #pragma once
 #include "StEnemyData.h"
+#include "StPlayerData.h"
 
 class DataManager
 {
@@ -16,7 +17,9 @@ public:
 
 	// ロード
 	void LoadEnemyData(EnemyData* pData);
+	void LoadPlayerData(PlayerData* pData);
 
 	// セーブ
 	void SaveEnemyData(EnemyData* pData);
+	void SavePlayerData(PlayerData* pData);
 };

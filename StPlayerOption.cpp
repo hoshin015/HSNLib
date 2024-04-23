@@ -8,8 +8,8 @@
 
 #include "Collision.h"
 
-StPlayerOption::StPlayerOption() {
-	model = ResourceManager::Instance().LoadModelResource("Data/Fbx/SpinningTopTest/SpinningTopTest.fbx");
+StPlayerOption::StPlayerOption(std::shared_ptr<SkinnedMesh> model) {
+	this->model = model;
 
 }
 

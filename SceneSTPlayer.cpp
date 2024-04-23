@@ -16,7 +16,7 @@
 #include "StPlayer.h"
 
 void SceneSTPlayer::Initialize() {
-	for (size_t i = 0; i < 10; i++) {
+	for (size_t i = 0; i < 30; i++) {
 		StEnemy02* slime = new_ StEnemy02();
 		slime->SetPosition({ 0, 0, 0 });
 		SpinningTopEnemyManager::Instance().Register(slime);

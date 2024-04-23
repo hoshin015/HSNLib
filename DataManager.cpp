@@ -55,3 +55,65 @@ void DataManager::SaveEnemyData(EnemyData* pData)
 	enemyFile << std::setw(4) << enemyJson;
 	enemyFile.close();
 }
+
+void DataManager::LoadPlayerData(PlayerData* pData)
+{
+	// enemyData ‚Ìƒ[ƒh
+	std::ifstream playerFile("Data/Json/player.json");
+	if (playerFile.good()) {
+		nlohmann::json j;
+		playerFile >> j;
+
+		pData->radius = j["Radius"];
+
+		pData->mobility = j["Mobility"];
+		pData->accel = j["Accel"];
+		pData->slow = j["Slow"];
+
+		pData->rotateInitialSpeed = j["RotateInitialSpeed"];
+		pData->rotateMaxSpeed = j["RotateMaxSpeed"];
+
+		pData->parryRadius = j["ParryRadius"];
+		pData->parryDamageMaxRadius = j["ParryDamageMaxRadius"];
+		pData->parryDamageIncrementSpeed = j["ParryDamageIncrementSpeed"];
+		pData->parryCooldown = j["ParryCooldown"];
+		pData->parryKnockback = j["ParryKnockback"];
+		pData->parryGaugeRadius = j["ParryGaugeRadius"];
+		pData->parryGaugeConsumed = j["ParryGaugeConsumed"];
+		pData->parryGaugeDamageMaxRadius = j["ParryGaugeDamageMaxRadius"];
+
+		pData->damagedKnockback = j["DamagedKnockback"];
+	}
+	else {
+		*pData = PlayerData();
+	}
+	playerFile.close();
+}
+
+void DataManager::SavePlayerData(PlayerData* pData)
+{
+	using json = nlohmann::json;
+	json playerJson;
+
+	playerJson += {
+		{"Radius", pData->radius },
+		{"Mobility",pData->mobility},
+		{"Accel",pData->accel},
+		{"Slow",pData->slow},
+		{"RotateInitialSpeed",pData->rotateInitialSpeed },
+		{"RotateMaxSpeed",pData->rotateMaxSpeed },
+		{"ParryRadius",pData->parryRadius },
+		{"ParryDamageMaxRadius",pData->parryDamageMaxRadius },
+		{"ParryDamageIncrementSpeed",pData->parryDamageIncrementSpeed },
+		{"ParryCooldown",pData->parryCooldown },
+		{"ParryKnockback",pData->parryKnockback },
+		{"ParryGaugeRadius",pData->parryGaugeRadius },
+		{"ParryGaugeConsumed",pData->parryGaugeConsumed },
+		{"ParryGaugeDamageMaxRadius",pData->parryGaugeDamageMaxRadius },
+		{"DamagedKnockback",pData->damagedKnockback },
+	};
+	std::ofstream playerFile("Data/Json/player.json");
+	playerFile << std::setw(4) << playerJson;
+	playerFile.close();
+}
+

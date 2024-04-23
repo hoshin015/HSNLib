@@ -4,7 +4,7 @@
 
 class StPlayerOption :public SpinningTopBase {
 public:
-	StPlayerOption();
+	StPlayerOption(std::shared_ptr<SkinnedMesh> model);
 	~StPlayerOption() override;
 
 	void Update();

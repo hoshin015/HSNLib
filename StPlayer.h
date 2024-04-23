@@ -5,6 +5,7 @@
 #include "SpinningTopBase.h"
 #include "SpinningTopEnemyManager.h"
 #include "StPlayerOption.h"
+#include "StPlayerData.h"
 
 class StPlayer :public SpinningTopBase
 {
@@ -37,14 +38,16 @@ private:
 	//パラメータは上に,プロパティは下に書いてる
 	std::vector<SpinningTopEnemy*> nearEnemy;
 
+	PlayerData data;
+
 	//移動
-	float mobility;
-	float accel;
-	float slow;
+	//float mobility;
+	//float accel;
+	//float slow;
 
 	//回転
 	float rotateSpeed;
-	float rotateMaxSpeed;
+	//float rotateMaxSpeed;
 
 	//パリィ
 	bool parry = false;
@@ -54,20 +57,21 @@ private:
 	bool parryGauge = false;
 	float parryGaugeDamageRadius = 0;
 
-	float parryRadius;
-	float parryDamageMaxRadius;
-	float parryDamageIncrementSpeed;
-	float parryCooldown;
-	float parryKnockback;
+	//float parryRadius;
+	//float parryDamageMaxRadius;
+	//float parryDamageIncrementSpeed;
+	//float parryCooldown;
+	//float parryKnockback;
 
-	float parryGaugeRadius;
-	float parryGaugeConsumed;
-	float parryGaugeDamageMaxRadius;
+	//float parryGaugeRadius;
+	//float parryGaugeConsumed;
+	//float parryGaugeDamageMaxRadius;
 
 	//ダメージ
-	float damagedKnockback;
+	//float damagedKnockback;
 
 	//子機
+	std::shared_ptr<SkinnedMesh> childModel;
 	//std::vector<std::shared_ptr<StPlayerOption>> option;
 
 	//入力

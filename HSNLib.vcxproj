@@ -264,6 +264,7 @@
     <ClCompile Include="StEnemy02.cpp" />
     <ClCompile Include="StEnemyData.cpp" />
     <ClCompile Include="StPlayer.cpp" />
+    <ClCompile Include="StPlayerData.cpp" />
     <ClCompile Include="StPlayerOption.cpp" />
     <ClCompile Include="Wave.cpp" />
     <ClCompile Include="WaveData_1.cpp" />
@@ -370,6 +371,7 @@
     <ClInclude Include="StEnemy02.h" />
     <ClInclude Include="StEnemyData.h" />
     <ClInclude Include="StPlayer.h" />
+    <ClInclude Include="StPlayerData.h" />
     <ClInclude Include="StPlayerOption.h" />
     <ClInclude Include="Wave.h" />
     <ClInclude Include="WaveData_1.h" />

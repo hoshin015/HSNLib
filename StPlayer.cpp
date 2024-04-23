@@ -9,6 +9,7 @@
 #include "SpinningTopEnemyManager.h"
 #include "Obstacle.h"
 #include "Collision.h"
+#include "DataManager.h"
 
 #include <typeinfo>
 #include <algorithm>
@@ -23,31 +24,11 @@ static const char* u8cast(const char* x) { return x; }
 
 StPlayer::StPlayer() {
 	model = ResourceManager::Instance().LoadModelResource("Data/Fbx/StPlayer/StPlayer.fbx");
+	childModel = model;
+	DataManager::Instance().LoadPlayerData(&data);
 
-
-	//moveDirection = { 0,0 };
-	//speed = 0;
-
-	radius = .5f;
-	mobility = 1.f;
-	rotateSpeed = 2;
-	accel = 10;
-	slow = 1;
-
-	rotateMaxSpeed = 100;
-
-	parryRadius = 1;
-	parryKnockback = 30;
-	parryDamageMaxRadius = 10;
-	parryDamageIncrementSpeed = 100;
-	parryCooldown = 1;
-
-	parryGaugeRadius = 10;
-	parryGaugeDamageMaxRadius = 10;
-	parryGaugeConsumed = 1;
-
-	damagedKnockback = 15;
-
+	radius = data.radius;
+	rotateSpeed = data.rotateInitialSpeed;
 }
 
 StPlayer::~StPlayer() {}
@@ -89,13 +70,18 @@ void StPlayer::DrawDebugGui() {
 		ImGui::GetWindowDrawList()->AddLine(center, arrowEnd, IM_COL32(0, 255, 0, 255), 2.f);
 	};
 
-	if (ImGui::Begin("Player")) {
+	if (ImGui::Begin(u8cast(u8"プレイヤー"))) {
 		if (ImGui::CollapsingHeader(u8cast(u8"プロパティ"), ImGuiTreeNodeFlags_DefaultOpen)) {
+			if (ImGui::Button(u8cast(u8"保存"))) {
+				data.radius = radius;
+				DataManager::Instance().SavePlayerData(&data);
+			}
+
 			if (ImGui::CollapsingHeader(u8cast(u8"移動"), ImGuiTreeNodeFlags_DefaultOpen)) {
-				ImGui::DragFloat(u8cast(u8"機動性"), &mobility, 0.01f);
-				ImGui::DragFloat(u8cast(u8"加速度"), &accel, 0.1f);
-				if (accel < 0)accel = 0;
-				ImGui::DragFloat(u8cast(u8"減速度"), &slow, 0.1f);
+				ImGui::DragFloat(u8cast(u8"機動性"), &data.mobility, 0.01f);
+				ImGui::DragFloat(u8cast(u8"加速度"), &data.accel, 0.1f);
+				if (data.accel < 0)data.accel = 0;
+				ImGui::DragFloat(u8cast(u8"減速度"), &data.slow, 0.1f);
 				ImGui::DragFloat(u8cast(u8"自機の半径"), &radius, 0.1f);
 			}
 
@@ -103,25 +89,25 @@ void StPlayer::DrawDebugGui() {
 				XMFLOAT2 angleF2;
 				XMStoreFloat2(&angleF2, XMVector2Transform(XMVectorSet(0, 1, 0, 0), XMMatrixRotationZ(XMConvertToRadians(angle.y))));
 				ImguiVectorDirDraw(20, 10, 20, angleF2);
-				ImGui::DragFloat(u8cast(u8"回転速度(ゲージ攻撃にも使う)"), &rotateSpeed, 0.01f);
-				ImGui::DragFloat(u8cast(u8"最大回転速度"), &rotateMaxSpeed, 0.1f);
+				ImGui::DragFloat(u8cast(u8"初期回転速度(ゲージ攻撃にも使う)"), &data.rotateInitialSpeed, 0.01f);
+				ImGui::DragFloat(u8cast(u8"最大回転速度"), &data.rotateMaxSpeed, 0.1f);
 				ImGui::DragFloat(u8cast(u8"回転方向(デバッグ用)"), &angle.y);
 			}
 
 			if (ImGui::CollapsingHeader(u8cast(u8"パリィ"), ImGuiTreeNodeFlags_DefaultOpen)) {
-				ImGui::DragFloat(u8cast(u8"ノックバック"), &parryKnockback, 0.1f);
-				ImGui::DragFloat(u8cast(u8"半径"), &parryRadius, 0.1f);
-				ImGui::DragFloat("pDamageMaxRadius", &parryDamageMaxRadius, 0.1f);
-				ImGui::DragFloat("pDamageSpeed", &parryDamageIncrementSpeed, 0.1f);
-				ImGui::DragFloat("pCoolDown", &parryCooldown, 0.1f);
+				ImGui::DragFloat(u8cast(u8"ノックバック"), &data.parryKnockback, 0.1f);
+				ImGui::DragFloat(u8cast(u8"半径"), &data.parryRadius, 0.1f);
+				ImGui::DragFloat(u8cast(u8"最大半径"), &data.parryDamageMaxRadius, 0.1f);
+				ImGui::DragFloat(u8cast(u8"大きくなる速度"), &data.parryDamageIncrementSpeed, 0.1f);
+				ImGui::DragFloat(u8cast(u8"クールダウン"), &data.parryCooldown, 0.1f);
 
-				ImGui::DragFloat("pGaugeRadius", &parryGaugeRadius, 0.1f);
-				ImGui::DragFloat("pGaugeDamageMaxRadius", &parryGaugeDamageMaxRadius, 0.1f);
-				ImGui::DragFloat("pGaugeConsumed", &parryGaugeConsumed, 0.1f);
+				ImGui::DragFloat(u8cast(u8"ゲージ半径"), &data.parryGaugeRadius, 0.1f);
+				ImGui::DragFloat(u8cast(u8"ゲージ最大半径"), &data.parryGaugeDamageMaxRadius, 0.1f);
+				ImGui::DragFloat(u8cast(u8"ゲージ消費"), &data.parryGaugeConsumed, 0.1f);
 			}
 
 			if (ImGui::CollapsingHeader(u8cast(u8"ダメージ受け"), ImGuiTreeNodeFlags_DefaultOpen)) {
-				ImGui::DragFloat("Knockback", &damagedKnockback, 0.1f);
+				ImGui::DragFloat(u8cast(u8"ノックバック"), &data.damagedKnockback, 0.1f);
 			}
 		}
 
@@ -202,19 +188,19 @@ void StPlayer::DrawDebugGui() {
 				float ave = 0;
 				for (float& fps : averageFPS) ave += fps;
 				ave = ave / averageFPS.size();
-				ImGui::Text("averageFPS:%f", ave);
-				ImGui::Text("minFPS:%f", *std::min_element(averageFPS.begin(), averageFPS.end()));
-				ImGui::Text("maxFPS:%f", *std::max_element(averageFPS.begin(), averageFPS.end()));
+				ImGui::Text(u8cast(u8"平均FPS:%f"), ave);
+				ImGui::Text(u8cast(u8"最小FPS:%f"), *std::min_element(averageFPS.begin(), averageFPS.end()));
+				ImGui::Text(u8cast(u8"最大FPS:%f"), *std::max_element(averageFPS.begin(), averageFPS.end()));
 
 				static bool lowfps = false;
 				static int loopcount = 10000000;
-				ImGui::Checkbox("LowFPS", &lowfps);
-				ImGui::DragInt("LoopCount", &loopcount, 1000000);
+				ImGui::Checkbox(u8cast(u8"FPSを低くする"), &lowfps);
+				ImGui::DragInt(u8cast(u8"ループ回数"), &loopcount, 1000000);
 				if (loopcount < 1) loopcount = 1;
 				if (lowfps) for (size_t i = 0; i < loopcount; i++);
 
 				static bool drawPrimitive = true;
-				ImGui::Checkbox("DrawPrimitive", &drawPrimitive);
+				ImGui::Checkbox(u8cast(u8"デバック用当たり判定を表示"), &drawPrimitive);
 				if (drawPrimitive) RenderDebugPrimitive();
 
 			}
@@ -245,7 +231,7 @@ void StPlayer::Input() {
 	inputMap["Attack"] = attack;
 
 	bool subAttack = im.GetKeyPressed(Keyboard::K) || im.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::b);
-	subAttack = subAttack && (rotateSpeed > parryGaugeConsumed);
+	subAttack = subAttack && (rotateSpeed > data.parryGaugeConsumed);
 	inputMap["SubAttack"] = subAttack;
 }
 
@@ -267,18 +253,18 @@ void StPlayer::UpdateMove() {
 	if (fabsf(input.x) > 0.00001f || fabsf(input.y) > 0.00001f) {
 		float dot = XMVectorGetX(XMVector2Dot(direction, inputVec));
 		if (speed == 0) dot = 1;
-		speed += XMVectorGetX(XMVector2Length(inputVec) * dot) * accel * deltaTime;
+		speed += XMVectorGetX(XMVector2Length(inputVec) * dot) * data.accel * deltaTime;
 		speed = max(0.f, speed);
 	}
-	else speed = max(0.0f, speed - (slow * deltaTime));
+	else speed = max(0.0f, speed - (data.slow * deltaTime));
 
 	speed -= speed * 0.998f * deltaTime;
-	maxMoveSpeed = (accel + (accel * 0.002f));
+	maxMoveSpeed = (data.accel + (data.accel * 0.002f));
 	speed = min(speed, maxMoveSpeed);
 
 	//機動性の計算
 	if (speed < 0.0000001) direction = {};
-	float lerp = min(max(0, (speed / maxMoveSpeed * mobility) + (1 - mobility)), 0.95f);
+	float lerp = min(max(0, (speed / maxMoveSpeed * data.mobility) + (1 - data.mobility)), 0.95f);
 	direction = XMVectorLerp(direction, XMVectorLerp(inputVec, direction, lerp), 30 * deltaTime);
 	direction = XMVector2Normalize(direction);
 	XMStoreFloat2(&moveDirection, direction);
@@ -300,8 +286,8 @@ void StPlayer::UpdateAttack() {
 	static std::vector<SpinningTopEnemy*> hitEnemys;
 	float deltaTime = Timer::Instance().DeltaTime();
 	if (parry) {
-		parryDamageRadius += parryDamageIncrementSpeed * deltaTime;
-		if (parryDamageRadius > parryRadius) {
+		parryDamageRadius += data.parryDamageIncrementSpeed * deltaTime;
+		if (parryDamageRadius > data.parryRadius) {
 			parryDamageRadius = 0;
 			parry = false;
 			hitEnemys.clear();
@@ -309,8 +295,8 @@ void StPlayer::UpdateAttack() {
 	}
 
 	if (parryGauge) {
-		parryDamageRadius += parryDamageIncrementSpeed * deltaTime;
-		if (parryDamageRadius > parryGaugeRadius) {
+		parryDamageRadius += data.parryDamageIncrementSpeed * deltaTime;
+		if (parryDamageRadius > data.parryGaugeRadius) {
 			parryDamageRadius = 0;
 			parryGauge = false;
 			hitEnemys.clear();
@@ -341,7 +327,7 @@ void StPlayer::UpdateAttack() {
 			float eRadius = enemy->GetRadius();
 			float distance = XMVectorGetX(XMVector3Length(ePosVec - pPosVec));
 
-			if ((eRadius + parryRadius > distance) && !parry) {
+			if ((eRadius + data.parryRadius > distance) && !parry) {
 				parry = true;
 				break;
 			}
@@ -361,8 +347,8 @@ void StPlayer::UpdateAttack() {
 				XMFLOAT3 out1, out2;
 				XMFLOAT3 eVel(enemy->GetVelocity());
 
-				Collision::RepulsionSphereVsSphere(position, parryRadius, 1, enemy->GetPosition(), eRadius, 1, out1, out2);
-				XMStoreFloat3(&out2, XMVector3Normalize(XMLoadFloat3(&out2)) * parryKnockback);
+				Collision::RepulsionSphereVsSphere(position, data.parryRadius, 1, enemy->GetPosition(), eRadius, 1, out1, out2);
+				XMStoreFloat3(&out2, XMVector3Normalize(XMLoadFloat3(&out2)) * data.parryKnockback);
 
 				enemy->SetVelocity(out2);
 				enemy->ApplyDamage(1, 0);
@@ -390,7 +376,7 @@ void StPlayer::UpdateAttack() {
 			float eRadius = enemy->GetRadius();
 			float distance = XMVectorGetX(XMVector3Length(ePosVec - pPosVec));
 
-			if ((eRadius + parryGaugeRadius > distance) && !parryGauge) {
+			if ((eRadius + data.parryGaugeRadius > distance) && !parryGauge) {
 				parryGauge = true;
 				break;
 			}
@@ -401,15 +387,15 @@ void StPlayer::UpdateAttack() {
 				XMFLOAT3 out1, out2;
 				XMFLOAT3 eVel(enemy->GetVelocity());
 
-				Collision::RepulsionSphereVsSphere(position, parryGaugeRadius, 1, enemy->GetPosition(), eRadius, 1, out1, out2);
-				XMStoreFloat3(&out2, XMVector3Normalize(XMLoadFloat3(&out2)) * parryKnockback);
+				Collision::RepulsionSphereVsSphere(position, data.parryGaugeRadius, 1, enemy->GetPosition(), eRadius, 1, out1, out2);
+				XMStoreFloat3(&out2, XMVector3Normalize(XMLoadFloat3(&out2)) * data.parryKnockback);
 
 				enemy->SetVelocity(out2);
 			}
 
 		}
 	}
-	if (GetInputMap<bool>("Attack") && !parry) parryCooldownCount = parryCooldown;
+	if (GetInputMap<bool>("Attack") && !parry) parryCooldownCount = data.parryCooldown;
 }
 
 void StPlayer::UpdateDamaged() {
@@ -423,7 +409,7 @@ void StPlayer::UpdateDamaged() {
 			XMFLOAT3 out1, out2;
 
 			Collision::RepulsionSphereVsSphere(position, radius, 1, enemy->GetPosition(), eRadius, 1, out1, out2);
-			XMStoreFloat3(&out1, XMVector3Normalize(XMLoadFloat3(&out1)) * damagedKnockback);
+			XMStoreFloat3(&out1, XMVector3Normalize(XMLoadFloat3(&out1)) * data.damagedKnockback);
 
 			velocity = out1;
 			ApplyDamage(1, 0);
@@ -438,7 +424,7 @@ void StPlayer::UpdateEDistance() {
 	nearEnemy.clear();
 	SpinningTopEnemyManager& stEManager = SpinningTopEnemyManager::Instance();
 	XMVECTOR pPosVec = XMLoadFloat3(&position);
-	float highestRadius = max(max(max(radius, parryRadius), parryDamageRadius), parryGaugeRadius);
+	float highestRadius = max(max(max(radius, data.parryRadius), parryDamageRadius), data.parryGaugeRadius);
 	for (int i = 0; i < stEManager.GetEnemyCount(); i++) {
 		SpinningTopEnemy* enemy = stEManager.GetEnemy(i);
 		if (enemy->GetHealth() <= 0) continue;
@@ -461,20 +447,20 @@ void StPlayer::UpdateRotate() {
 	beforeStateGauge = parryGauge;
 
 	if (isParrySuccessed) rotateSpeed++;
-	if (isParryGaugeSuccessed) rotateSpeed -= parryGaugeConsumed;
-	rotateSpeed = min(rotateSpeed, rotateMaxSpeed);
+	if (isParryGaugeSuccessed) rotateSpeed -= data.parryGaugeConsumed;
+	rotateSpeed = min(rotateSpeed, data.rotateMaxSpeed);
 	angle.y += 360 * rotateSpeed * Timer::Instance().DeltaTime();
 	if (36000 < angle.y || angle.y < -36000)angle.y = 0;
 }
 
 void StPlayer::RenderDebugPrimitive() {
 	DebugPrimitive::Instance().AddSphere(position, radius, { 0,0,1,1 });
-	DebugPrimitive::Instance().AddSphere(position, parryRadius, { 1,1,1,1 });
-	if (rotateSpeed > parryGaugeConsumed)DebugPrimitive::Instance().AddSphere(position, parryGaugeRadius, { 1,0,1,1 });
+	DebugPrimitive::Instance().AddSphere(position, data.parryRadius, { 1,1,1,1 });
+	if (rotateSpeed > data.parryGaugeConsumed)DebugPrimitive::Instance().AddSphere(position, data.parryGaugeRadius, { 1,0,1,1 });
 
 	if(parry) DebugPrimitive::Instance().AddSphere(position, parryDamageRadius, { 0,1,0,1 });
 	if(parryGauge) DebugPrimitive::Instance().AddSphere(position, parryDamageRadius, { 0,1,1,1 });
-	if(parryCooldownCount > 0) DebugPrimitive::Instance().AddSphere(position, 1, { 1,0,0,1 });
+	if(parryCooldownCount > 0) DebugPrimitive::Instance().AddSphere(position, parryCooldownCount, { 1,0,0,1 });
 }
 
 void StPlayer::OnLanding() {}
