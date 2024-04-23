@@ -9,10 +9,10 @@
 #include "StageManager.h"
 #include "ObstacleManager.h"
 
-StEnemy::StEnemy(int enemyType)
-{
-	this->enemyType = enemyType;
-	
+StEnemy::StEnemy(int enemyKind)
+{	
+	this->enemyKind = enemyKind;
+
 	model = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemy01/Main/StEnemy01Main.fbx");
 	topParts = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemy01/Top/StEnemy01Top.fbx");
 	middleParts = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemy01/Middle/StEnemy01Middle.fbx");
@@ -20,15 +20,17 @@ StEnemy::StEnemy(int enemyType)
 
 	paryEffect = ResourceManager::Instance().LoadModelResource("Data/Fbx/paryEffectTest/paryEffectTest.fbx");
 
-	// aiTree ÇÃç\íz
-	CreateAiTree();
-
 	// ìGÉfÅ[É^ÇÃê›íË
-	EnemyData data = enemyData[enemyType];
+	EnemyData data = enemyData[enemyKind];
+	behaviorType = data.behaviorType;
 	radius = data.radius;
 	pursuitRadius = data.pursuitRadius;
 	searchRadius = data.searchRadius;
 	notSearchRadius = data.notSearchRadius;
+	
+
+	// aiTree ÇÃç\íz
+	CreateAiTree();
 }
 
 StEnemy::~StEnemy()
@@ -159,9 +161,9 @@ void StEnemy::UpdateTargetPosition()
 
 void StEnemy::CreateAiTree()
 {
-	switch (enemyType)
+	switch (behaviorType)
 	{
-	case ENEMY_0:
+	case pursuit:
 	{
 		// BehaviorTreeÇç\íz
 		aiTree = std::make_unique <BTree>(this);
@@ -176,8 +178,9 @@ void StEnemy::CreateAiTree()
 
 		aiTree->AddNode((int)KIND::Normal, (int)KIND::SeekPlayer, 1, IBTree::RULE::Non, this);
 		aiTree->AddNode((int)KIND::Normal, (int)KIND::WanderSpawnArea, 2, IBTree::RULE::Non, this);
+		break;
 	}
-	case ENEMY_1:
+	case chase:
 	{
 		// BehaviorTreeÇç\íz
 		aiTree = std::make_unique <BTree>(this);
@@ -188,6 +191,7 @@ void StEnemy::CreateAiTree()
 
 		aiTree->AddNode((int)KIND::Normal, (int)KIND::SeekPlayer, 1, IBTree::RULE::Non, this);
 		aiTree->AddNode((int)KIND::Normal, (int)KIND::WanderSpawnArea, 2, IBTree::RULE::Non, this);
+		break;
 	}
 	}
 }

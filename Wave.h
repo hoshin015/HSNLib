@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 #include "SpinningTopEnemyManager.h"
-#include "StEnemy01.h"
+#include "StEnemy.h"
 
 struct ScriptData
 {
@@ -19,10 +19,11 @@ struct ScriptEnemy : public ScriptData
 {
 	ScriptEnemy(DirectX::XMFLOAT3 p) : position(p) {}
 	DirectX::XMFLOAT3 position;
+	int type;
 
 	void Execute() override
 	{
-		StEnemy01* enemy = new StEnemy01();
+		StEnemy* enemy = new StEnemy(ENEMY_0);
 		enemy->SetPosition(position);
 		// スポーン座標設定(徘徊用)
 		enemy->spawnPosition = { enemy->GetPosition().x, 0.0f, enemy->GetPosition().z };

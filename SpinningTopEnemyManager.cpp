@@ -163,9 +163,9 @@ void SpinningTopEnemyManager::UpdateStatusValue(EnemyData* pData)
 {
 	for (SpinningTopEnemy* enemy : enemies)
 	{
-		if (pData->enemyType != enemy->enemyType) continue;
+		if (pData->enemyKind != enemy->enemyKind) continue;
 
-		enemy->enemyType = pData->enemyType;
+		enemy->behaviorType = pData->behaviorType;
 		enemy->SetRadius(pData->radius);
 		enemy->searchRadius = pData->searchRadius;
 		enemy->notSearchRadius = pData->notSearchRadius;

@@ -4,7 +4,7 @@
 class StEnemy : public SpinningTopEnemy
 {
 public:
-	StEnemy(int enemyType);
+	StEnemy(int enemyKind);
 	~StEnemy() override;
 
 	// XVˆ—

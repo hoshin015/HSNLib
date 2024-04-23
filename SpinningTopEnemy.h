@@ -56,7 +56,7 @@ public:
 	// enemies での index
 	int id;
 
-	int enemyType;	// 敵のタイプ
+	int enemyKind;
 
 	bool isGenerateFinish = false;	// 生成が終わってるかどうか
 	bool isPursuit = false;			// プレイヤーに突っ込んでいる最中かどうか
@@ -100,6 +100,7 @@ public:
 	float chargeAttackTime = 2.0f;
 
 	// ----- behaviorTree -----
+	int behaviorType;	// ビヘイビアツリーのタイプ
 	std::unique_ptr<BTree> aiTree;
 	bool GetBTreeJudge(const int kind) override;
 	IBTree::STATE ActBTree(const int kind) override;

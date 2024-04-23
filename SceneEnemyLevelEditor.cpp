@@ -22,24 +22,24 @@ void SceneEnemyLevelEditor::Initialize()
 	DataManager::Instance().LoadEnemyData(enemyData);
 	subEnemyData = enemyData[0];
 
+	// 敵生成
 	for (int i = 0; i < 2; i++)
 	{
 		StEnemy* enemy;
 		enemy = (i % 2 == 0) ? new_ StEnemy(ENEMY_0) : new_ StEnemy(ENEMY_1);
-		enemy->SetPosition({ i * 3.0f - 10.5f, 10, 0 });
+		enemy->SetPosition({ i * 3 - 1.5f, 10, 0 });
 		// スポーン座標設定
 		enemy->spawnPosition = enemy->GetPosition();
 		SpinningTopEnemyManager::Instance().Register(enemy);
 	}
 
+	// 障害物生成
 	for (int i = 0; i < 3; i++)
 	{
 		Obstacle* obstacle = new_ Obstacle("Data/FBX/cylinder/cylinder.fbx");
-		obstacle->SetPosition({ i * 10.0f - 15.0f, 0, -6.0f });
+		obstacle->SetPosition({ i * 10.0f - 10.0f, 0, -6.0f });
 		ObstacleManager::Instance().Register(obstacle);
 	}
-
-
 
 	// ステージ初期化
 	StageManager& stageManager = StageManager::Instance();
@@ -219,17 +219,17 @@ void SceneEnemyLevelEditor::DrawDebugGUI()
 	}
 
 	// debugPrimitive
-	DebugPrimitive::Instance().AddSphere(generatePosition, 0.2f, { 0,1,0,1 });	// ターゲット座標
+	DebugPrimitive::Instance().AddSphere(generatePosition, 0.5f, { 0,1,0,1 });	// ターゲット座標
 
 
 	// 敵のレベルデザイン
-	static int selectEnemyType = 0;
+	static int selectEnemyKind = 0;
 
 	ImGui::Begin(u8"敵レベルデザイン");
 
 	if (ImGui::Button(u8"生成"))
 	{
-		StEnemy* enemy = new_ StEnemy(selectEnemyType);
+		StEnemy* enemy = new_ StEnemy(selectEnemyKind);
 		enemy->SetPosition({ generatePosition.x, 10.0f, generatePosition.z });
 		// スポーン座標設定
 		enemy->spawnPosition = { enemy->GetPosition().x, 0, enemy->GetPosition().z };
@@ -242,18 +242,18 @@ void SceneEnemyLevelEditor::DrawDebugGUI()
 
 	ImGui::Separator();
 
-	std::string enemyTypeName[] = { "ENEMY0", "ENEMY1" };
+	std::string enemyKindName[] = { "ENEMY0", "ENEMY1" };
 
-	if (ImGui::BeginCombo(u8"敵タイプ", enemyTypeName[static_cast<int>(selectEnemyType)].c_str()))
+	if (ImGui::BeginCombo(u8"敵タイプ", enemyKindName[static_cast<int>(selectEnemyKind)].c_str()))
 	{
-		for (int i = 0; i < IM_ARRAYSIZE(enemyTypeName); i++)
+		for (int i = 0; i < IM_ARRAYSIZE(enemyKindName); i++)
 		{
-			const bool isSelected = (selectEnemyType == i);
-			if (ImGui::Selectable(enemyTypeName[i].c_str(), isSelected))
+			const bool isSelected = (selectEnemyKind == i);
+			if (ImGui::Selectable(enemyKindName[i].c_str(), isSelected))
 			{
-				SpinningTopEnemyManager::Instance().UpdateStatusValue(&enemyData[selectEnemyType]);
-				selectEnemyType = i;
-				subEnemyData = enemyData[selectEnemyType];		// subEnemyDataを更新
+				SpinningTopEnemyManager::Instance().UpdateStatusValue(&enemyData[selectEnemyKind]);
+				selectEnemyKind = i;
+				subEnemyData = enemyData[selectEnemyKind];		// subEnemyDataを更新
 			}
 			if (isSelected)
 			{
@@ -262,6 +262,25 @@ void SceneEnemyLevelEditor::DrawDebugGUI()
 		}
 		ImGui::EndCombo();
 	}
+
+	std::string behaivorTypeName[] = { u8"追撃", u8"追跡" };
+	if (ImGui::BeginCombo(u8"ビヘイビアタイプ", behaivorTypeName[static_cast<int>(subEnemyData.behaviorType)].c_str()))
+	{
+		for (int i = 0; i < IM_ARRAYSIZE(behaivorTypeName); i++)
+		{
+			const bool isSelected = (subEnemyData.behaviorType == i);
+			if (ImGui::Selectable(behaivorTypeName[i].c_str(), isSelected))
+			{
+				subEnemyData.behaviorType = i;
+			}
+			if (isSelected)
+			{
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+		ImGui::EndCombo();
+	}
+
 	ImGui::DragFloat(u8"半径", &subEnemyData.radius, 0.1f);
 	ImGui::DragFloat(u8"pursuit範囲", &subEnemyData.pursuitRadius, 0.1f);
 	ImGui::DragFloat(u8"索敵範囲", &subEnemyData.searchRadius, 0.1f);
@@ -269,9 +288,9 @@ void SceneEnemyLevelEditor::DrawDebugGUI()
 
 	if (ImGui::Button(u8"保存"))
 	{
-		enemyData[selectEnemyType] = subEnemyData;				// enemyData本体を subEnemyData だけ更新
+		enemyData[selectEnemyKind] = subEnemyData;				// enemyData本体を subEnemyData だけ更新
 		DataManager::Instance().SaveEnemyData(enemyData);		// これで選択中の敵のみ更新できる
-		ConsoleData::Instance().logs.push_back(enemyTypeName[selectEnemyType] + u8" データ保存完了");
+		ConsoleData::Instance().logs.push_back(enemyKindName[selectEnemyKind] + u8" データ保存完了");
 	}
 
 

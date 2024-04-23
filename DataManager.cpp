@@ -20,7 +20,8 @@ void DataManager::LoadEnemyData(EnemyData* pData)
 		int index = 0;
 		for (auto& jsonEnemy : j["EnemyData"])
 		{
-			pData[index].enemyType = jsonEnemy["Type"];
+			pData[index].enemyKind = jsonEnemy["Kind"];
+			pData[index].behaviorType = jsonEnemy["BehaviorType"];
 			pData[index].radius = jsonEnemy["Radius"];
 			pData[index].pursuitRadius = jsonEnemy["Pursuit"];
 			pData[index].searchRadius = jsonEnemy["Search"];
@@ -42,7 +43,8 @@ void DataManager::SaveEnemyData(EnemyData* pData)
 	{
 		enemyJson["EnemyData"] +=
 		{
-			{"Type", pData[i].enemyType},
+			{ "Kind", pData[i].enemyKind },
+			{ "BehaviorType", pData[i].behaviorType },
 			{ "Radius", pData[i].radius },
 			{ "Pursuit", pData[i].pursuitRadius },
 			{ "Search", pData[i].searchRadius },

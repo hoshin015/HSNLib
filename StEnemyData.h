@@ -1,6 +1,6 @@
 #pragma once
 
-enum ENEMY_TYPE
+enum ENEMY_KIND
 {
 	ENEMY_0,
 	ENEMY_1,
@@ -8,14 +8,21 @@ enum ENEMY_TYPE
 	ENEMY_NUM,
 };
 
+enum BEHAVIOR_TYPE
+{
+	pursuit,
+	chase,
+};
+
 struct EnemyData
 {
-	int enemyType;	// “G‚Ìí—Ş
-	float radius;	// “G‚Ì”¼Œa
+	int enemyKind;			// “G‚Ìí—Ş
+	int behaviorType;		// ƒrƒwƒCƒrƒA‚Ìí—Ş
+	float radius;			// “G‚Ì”¼Œa
 
-	float pursuitRadius;
-	float searchRadius;
-	float notSearchRadius;
+	float pursuitRadius;	// pursuit”ÍˆÍ
+	float searchRadius;		// õ“G”ÍˆÍ
+	float notSearchRadius;	// ”ñõ“G”ÍˆÍ
 };
 
 extern EnemyData enemyData[];
