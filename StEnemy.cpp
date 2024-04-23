@@ -199,9 +199,32 @@ void StEnemy::CreateAiTree()
 // Ž€–Sˆ—
 void StEnemy::OnDead()
 {
-	Obstacle* obstacle = new Obstacle("Data/Fbx/StEnemy/Top/StEnemyTop.fbx", false);
-	obstacle->SetPosition(GetPosition());
-	ObstacleManager::Instance().Register(obstacle);
+	Obstacle* top;
+	Obstacle* middle;
+	Obstacle* bottom;
+
+	top = new Obstacle("Data/Fbx/StEnemy01/Top/StEnemy01Top.fbx", false);
+	top->SetPosition(GetPosition());
+	top->SetRadius(0.0f);
+	top->velocity = { 40,0,0 };
+	top->SetRotationSpeed(60);
+	top->SetFriction(3);
+	ObstacleManager::Instance().Register(top);
+
+	middle = new Obstacle("Data/Fbx/StEnemy01/Middle/StEnemy01Middle.fbx", false);
+	middle->SetPosition(GetPosition());
+	middle->SetRadius(0.0f);
+	middle->velocity = { -5,0,10 };
+	middle->SetRotationSpeed(30);
+	ObstacleManager::Instance().Register(middle);
+
+	bottom = new Obstacle("Data/Fbx/StEnemy01/Bottom/StEnemy01Bottom.fbx", false);
+	bottom->SetPosition(GetPosition());
+	bottom->SetRadius(0.0f);
+	bottom->velocity = { 3,0,-10 };
+	bottom->SetRotationSpeed(120);
+	bottom->SetAngle({ 90,0,0 });
+	ObstacleManager::Instance().Register(bottom);
 
 	Destroy();
 }

@@ -21,7 +21,7 @@ void SceneSpinningTop::Initialize()
 {
 	DataManager::Instance().LoadEnemyData(enemyData);
 
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 1; i++)
 	{
 		StEnemy* enemy;
 		enemy = (i % 2 == 0) ? new_ StEnemy(ENEMY_0) : new_ StEnemy(ENEMY_1);
