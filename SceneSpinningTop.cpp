@@ -23,7 +23,7 @@ void SceneSpinningTop::Initialize()
 
 	float x = 0;
 	float z = 0;
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 1; i++)
 	{
 		StEnemy* enemy;
 		enemy = (i % 2 == 0) ? new_ StEnemy(ENEMY_0) : new_ StEnemy(ENEMY_1);
@@ -53,7 +53,7 @@ void SceneSpinningTop::Initialize()
 	StageContext* stageMain = new_ StageContext();
 	stageManager.Register(stageMain);
 
-#if 1
+#if 0
 	// ライト初期化
 	Light* directionLight = new Light(LightType::Directional);
 	directionLight->SetDirection(DirectX::XMFLOAT3(0.5, -1, -1));
@@ -261,17 +261,17 @@ void SceneSpinningTop::Render()
 	gfx.frameBuffers[4]->DeActivate();
 
 	// --- カラーフィルター ---
-	gfx.deviceContext->UpdateSubresource(gfx.constantBuffers[2].Get(), 0, 0, &gfx.colorFilterConstant, 0, 0);
-	gfx.deviceContext->PSSetConstantBuffers(3, 1, gfx.constantBuffers[2].GetAddressOf());
+	//gfx.deviceContext->UpdateSubresource(gfx.constantBuffers[2].Get(), 0, 0, &gfx.colorFilterConstant, 0, 0);
+	//gfx.deviceContext->PSSetConstantBuffers(3, 1, gfx.constantBuffers[2].GetAddressOf());
+	//
+	//gfx.frameBuffers[5]->Activate();
+	//gfx.bitBlockTransfer->blit(gfx.frameBuffers[4]->shaderResourceViews[0].GetAddressOf(), 0, 1, gfx.pixelShaders[static_cast<size_t>//(PS_TYPE::ColorFilter_PS)].Get());
+	//gfx.frameBuffers[5]->DeActivate();
 
-	gfx.frameBuffers[5]->Activate();
-	gfx.bitBlockTransfer->blit(gfx.frameBuffers[4]->shaderResourceViews[0].GetAddressOf(), 0, 1, gfx.pixelShaders[static_cast<size_t>(PS_TYPE::ColorFilter_PS)].Get());
-	gfx.frameBuffers[5]->DeActivate();
 
-
-	gfx.bitBlockTransfer->blit(gfx.frameBuffers[5]->shaderResourceViews[0].GetAddressOf(), 0, 1);
+	gfx.bitBlockTransfer->blit(gfx.frameBuffers[4]->shaderResourceViews[0].GetAddressOf(), 0, 1);
 #else
-	gfx.bitBlockTransfer->blit(gfx.frameBuffers[0]->shaderResourceViews[0].GetAddressOf(), 0, 1);
+	gfx.bitBlockTransfer->blit(gfx.bloomBuffer->shaderResourceViews[0].GetAddressOf(), 0, 1);
 #endif
 
 	// --- デバッグ描画 ---

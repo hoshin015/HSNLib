@@ -127,13 +127,12 @@ float4 main(VS_OUT pin) : SV_TARGET
     float3 lig = diffuseLig + specularLig + ambient;
     
     // 最終的なカラーを計算
-    float4 finalColor = float4(lig * diffuseColor.rgb, diffuseColor.a);
+    float4 finalColor;
     
-    if (emissive.a != 0)
-    {
-        finalColor.rgb = emissive.rgb;
-    }
+    finalColor.a = diffuseColor.a;
     
+    finalColor.rgb = (emissive.a) ? emissive.rgb : lig * diffuseColor.rgb;
+   
 #if 1
     PSOUT output = (PSOUT)0;
     output.color = finalColor;

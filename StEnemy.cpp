@@ -14,9 +14,6 @@ StEnemy::StEnemy(int enemyKind)
 	this->enemyKind = enemyKind;
 
 	model = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemy01/Main/StEnemy01Main.fbx");
-	topParts = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemy01/Top/StEnemy01Top.fbx");
-	middleParts = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemy01/Middle/StEnemy01Middle.fbx");
-	bottomParts = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemy01/Bottom/StEnemy01Bottom.fbx");
 
 	paryEffect = ResourceManager::Instance().LoadModelResource("Data/Fbx/paryEffectTest/paryEffectTest.fbx");
 
@@ -42,6 +39,7 @@ void StEnemy::Update()
 	// 回転
 	DirectX::XMFLOAT3 ang = GetAngle();
 	ang.y += rotationSpeed * Timer::Instance().DeltaTime();
+	//ang.x = 10;
 	SetAngle(ang);
 
 	UpdateTargetPosition();
@@ -64,8 +62,8 @@ void StEnemy::Render(bool drawShadow)
 	model->Render(transform, { 1,1,1,1 }, &keyFrame);
 
 
-	if (!drawShadow)
-		paryEffect->Render(transform, { 1,1,1,1 }, &keyFrame);
+	//if (!drawShadow)
+		//paryEffect->Render(transform, { 1,1,1,1 }, &keyFrame);
 }
 
 // デバッグプリミティブ描画
@@ -170,7 +168,8 @@ void StEnemy::CreateAiTree()
 
 		aiTree->AddNode((int)KIND::NONE, (int)KIND::ROOT, 0, IBTree::RULE::Priority, this);
 		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Generate, 0, IBTree::RULE::Non, this);
-		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Normal, 1, IBTree::RULE::Priority, this);
+		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Down, 1, IBTree::RULE::Non, this);
+		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Normal, 2, IBTree::RULE::Priority, this);
 		aiTree->AddNode((int)KIND::Normal, (int)KIND::PlayerPursuit, 0, IBTree::RULE::Sequence, this);
 		aiTree->AddNode((int)KIND::PlayerPursuit, (int)KIND::PlayerPositionGet, 0, IBTree::RULE::Non, this);
 		aiTree->AddNode((int)KIND::PlayerPursuit, (int)KIND::WaitChargeAttack, 1, IBTree::RULE::Non, this);
@@ -187,7 +186,8 @@ void StEnemy::CreateAiTree()
 
 		aiTree->AddNode((int)KIND::NONE, (int)KIND::ROOT, 0, IBTree::RULE::Priority, this);
 		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Generate, 0, IBTree::RULE::Non, this);
-		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Normal, 1, IBTree::RULE::Priority, this);
+		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Down, 1, IBTree::RULE::Non, this);
+		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Normal, 2, IBTree::RULE::Priority, this);
 
 		aiTree->AddNode((int)KIND::Normal, (int)KIND::SeekPlayer, 1, IBTree::RULE::Non, this);
 		aiTree->AddNode((int)KIND::Normal, (int)KIND::WanderSpawnArea, 2, IBTree::RULE::Non, this);
