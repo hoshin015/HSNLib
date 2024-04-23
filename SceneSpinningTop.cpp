@@ -21,14 +21,22 @@ void SceneSpinningTop::Initialize()
 {
 	DataManager::Instance().LoadEnemyData(enemyData);
 
-	for (int i = 0; i < 1; i++)
+	float x = 0;
+	float z = 0;
+	for (int i = 0; i < 4; i++)
 	{
 		StEnemy* enemy;
 		enemy = (i % 2 == 0) ? new_ StEnemy(ENEMY_0) : new_ StEnemy(ENEMY_1);
-		enemy->SetPosition({ i * 3.0f - 10.5f, 10, 0 });
+		enemy->SetPosition({ x, 10, z });
 		// スポーン座標設定
 		enemy->spawnPosition = enemy->GetPosition();
 		SpinningTopEnemyManager::Instance().Register(enemy);
+		x += 3;
+		if (i % 7 == 0)
+		{
+			z -= 3;
+			x = 0;
+		}
 	}
 	
 	for (int i = 0; i < 3; i++)
@@ -50,7 +58,9 @@ void SceneSpinningTop::Initialize()
 	Light* directionLight = new Light(LightType::Directional);
 	directionLight->SetDirection(DirectX::XMFLOAT3(0.5, -1, -1));
 	directionLight->SetColor(DirectX::XMFLOAT4(1, 1, 1, 1));
+	//directionLight->SetColor(DirectX::XMFLOAT4(0, 0, 0, 1));
 	LightManager::Instance().Register(directionLight);
+	//LightManager::Instance().SetAmbientColor({0,0,0,1});
 
 #else
 	{
@@ -85,6 +95,7 @@ void SceneSpinningTop::Initialize()
 		}
 
 		LightManager::Instance().SetAmbientColor({ 0,0,0,1.0f });
+	}
 #endif
 
 	// スカイマップ
@@ -170,8 +181,11 @@ void SceneSpinningTop::Render()
 		gfx.shadowBuffer->DeActivate();
 	}
 
-	skyMap->Render();
+	gfx.bloomBuffer->Clear();
 
+	gfx.bloomBuffer->Activate();
+
+	skyMap->Render();
 
 	gfx.SetDepthStencil(DEPTHSTENCIL_STATE::ZT_ON_ZW_ON);
 	gfx.SetRasterizer(static_cast<RASTERIZER_STATE>(RASTERIZER_STATE::CLOCK_FALSE_SOLID));
@@ -207,6 +221,58 @@ void SceneSpinningTop::Render()
 	// --- デバッグ描画 ---
 	DebugPrimitive::Instance().Render();
 	LineRenderer::Instance().Render();
+
+	gfx.bloomBuffer->DeActivate();
+
+	gfx.SetDepthStencil(DEPTHSTENCIL_STATE::ZT_OFF_ZW_OFF);
+
+#if 1
+	// --- 高輝度抽出 ---
+	gfx.frameBuffers[1]->Clear();
+
+	gfx.deviceContext->UpdateSubresource(gfx.constantBuffers[4].Get(), 0, 0, &gfx.luminanceExtractionConstant, 0, 0);
+	gfx.deviceContext->PSSetConstantBuffers(0, 1, gfx.constantBuffers[4].GetAddressOf());
+	gfx.frameBuffers[1]->Activate();
+	gfx.bitBlockTransfer->blit(gfx.bloomBuffer->shaderResourceViews[0].GetAddressOf(), 0, 2, gfx.pixelShaders[static_cast<size_t>(PS_TYPE::LuminanceExtraction_PS)].Get());
+	gfx.frameBuffers[1]->DeActivate();
+	gfx.bitBlockTransfer->blit(gfx.frameBuffers[0]->shaderResourceViews[0].GetAddressOf(), 0, 1);
+
+	// --- ガウシアンフィルタ ---
+	gfx.CalcWeightsTableFromGaussian(gaussianPower);
+	gfx.deviceContext->UpdateSubresource(gfx.constantBuffers[3].Get(), 0, 0, &gfx.gaussianConstant, 0, 0);
+	gfx.deviceContext->PSSetConstantBuffers(0, 1, gfx.constantBuffers[3].GetAddressOf());
+
+	gfx.frameBuffers[2]->Activate();
+	gfx.bitBlockTransfer->blit(gfx.frameBuffers[1]->shaderResourceViews[0].GetAddressOf(), 0, 1, gfx.pixelShaders[static_cast<size_t>(PS_TYPE::GaussianBlur_PS)].Get(), gfx.vertexShaders[static_cast<size_t>(VS_TYPE::GaussianBlurX_VS)].Get());
+	gfx.frameBuffers[2]->DeActivate();
+
+	gfx.frameBuffers[3]->Activate();
+	gfx.bitBlockTransfer->blit(gfx.frameBuffers[2]->shaderResourceViews[0].GetAddressOf(), 0, 1, gfx.pixelShaders[static_cast<size_t>(PS_TYPE::GaussianBlur_PS)].Get(), gfx.vertexShaders[static_cast<size_t>(VS_TYPE::GaussianBlurY_VS)].Get());
+	gfx.frameBuffers[3]->DeActivate();
+
+	// --- ブルーム加算 ---
+	ID3D11ShaderResourceView* shvs[2] =
+	{
+		gfx.bloomBuffer->shaderResourceViews[0].Get(),
+		gfx.frameBuffers[3]->shaderResourceViews[0].Get()
+	};
+	gfx.frameBuffers[4]->Activate();
+	gfx.bitBlockTransfer->blit(shvs, 0, 2, gfx.pixelShaders[static_cast<size_t>(PS_TYPE::BloomFinalPass_PS)].Get());
+	gfx.frameBuffers[4]->DeActivate();
+
+	// --- カラーフィルター ---
+	gfx.deviceContext->UpdateSubresource(gfx.constantBuffers[2].Get(), 0, 0, &gfx.colorFilterConstant, 0, 0);
+	gfx.deviceContext->PSSetConstantBuffers(3, 1, gfx.constantBuffers[2].GetAddressOf());
+
+	gfx.frameBuffers[5]->Activate();
+	gfx.bitBlockTransfer->blit(gfx.frameBuffers[4]->shaderResourceViews[0].GetAddressOf(), 0, 1, gfx.pixelShaders[static_cast<size_t>(PS_TYPE::ColorFilter_PS)].Get());
+	gfx.frameBuffers[5]->DeActivate();
+
+
+	gfx.bitBlockTransfer->blit(gfx.frameBuffers[5]->shaderResourceViews[0].GetAddressOf(), 0, 1);
+#else
+	gfx.bitBlockTransfer->blit(gfx.frameBuffers[0]->shaderResourceViews[0].GetAddressOf(), 0, 1);
+#endif
 
 	// --- デバッグ描画 ---
 	DrawDebugGUI();
@@ -252,4 +318,31 @@ void SceneSpinningTop::DrawDebugGUI()
 
 	SpinningTopEnemyManager::Instance().DrawDebugGui();
 	ObstacleManager::Instance().DrawDebugGui();
+
+	Graphics* gfx = &Graphics::Instance();
+	ImGui::Begin("ColorFilter");
+	{
+		ImGui::SliderFloat("threshould", &gfx->luminanceExtractionConstant.threshould, 0.0f, 1.0f);
+		ImGui::SliderFloat("intensity", &gfx->luminanceExtractionConstant.intensity, 0.0f, 10.0f);
+		ImGui::SliderFloat("HueShift", &gfx->colorFilterConstant.hueShift, 0.0f, 360.0f);
+		ImGui::SliderFloat("saturation", &gfx->colorFilterConstant.saturation, 0.0f, 2.0f);
+		ImGui::SliderFloat("brightness", &gfx->colorFilterConstant.brightness, 0.0f, 2.0f);
+
+		ImGui::DragFloat("gaussianPower", &gaussianPower, 0.1f, 0.1f, 16.0f);
+
+		ImGui::SliderFloat("DrawRect", &gfx->shadowDrawRect, 1.0f, 2048.0f);
+		ImGui::ColorEdit3("Color", &gfx->shadowMapData.shadowColor.x);
+		ImGui::SliderFloat("Bias", &gfx->shadowMapData.shadowBias, 0.0f, 0.1f);
+
+
+		ImGui::Image(gfx->shadowBuffer->shaderResourceView.Get(), { 256, 256 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });
+		ImGui::Image(gfx->bloomBuffer->shaderResourceViews[0].Get(), { 256, 144 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });
+		ImGui::Image(gfx->bloomBuffer->shaderResourceViews[1].Get(), { 256, 144 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });
+		ImGui::Image(gfx->frameBuffers[1]->shaderResourceViews[0].Get(), { 256, 144 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });
+		ImGui::Image(gfx->frameBuffers[2]->shaderResourceViews[0].Get(), { 256, 144 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });
+		ImGui::Image(gfx->frameBuffers[3]->shaderResourceViews[0].Get(), { 256, 144 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });
+		ImGui::Image(gfx->frameBuffers[4]->shaderResourceViews[0].Get(), { 256, 144 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });
+		ImGui::Image(gfx->frameBuffers[5]->shaderResourceViews[0].Get(), { 256, 144 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });
+	}
+	ImGui::End();
 }

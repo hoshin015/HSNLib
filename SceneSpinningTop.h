@@ -28,4 +28,7 @@ public:
 
 private:
 	std::unique_ptr<SkyMap> skyMap;
+
+
+	float gaussianPower = 16.0f;
 };

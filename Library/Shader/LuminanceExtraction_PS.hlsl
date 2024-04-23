@@ -18,8 +18,8 @@ Texture2D bloomFilterMap : register(t1);
 
 float4 main(VS_OUT pin) : SV_TARGET
 {
-    float4 color = textureMaps.Sample(samplerStates[LINEAR], pin.texcoord);
-    float4 flag = bloomFilterMap.Sample(samplerStates[LINEAR], pin.texcoord);
+    float4 color = textureMaps.Sample(samplerStates[POINT], pin.texcoord);
+    float4 flag = bloomFilterMap.Sample(samplerStates[POINT], pin.texcoord);
     
     // RGB > ‹P“x’l‚É•ÏŠ·
     float luminance = RGB2Luminance(color.rgb);
@@ -32,6 +32,6 @@ float4 main(VS_OUT pin) : SV_TARGET
     contribution /= luminance;
     color.rgb *= contribution * intensity;
     
-    return (flag.r == 0) ? color : 0;
+    return (flag.r != 0) ? color : 0;
     //return flag;
 }
