@@ -237,14 +237,19 @@ void SceneSpawnEditor::DrawDebugGUI()
 	{
 		if (ImGui::CollapsingHeader(("EREA - " + std::to_string(i)).c_str(), ImGuiTreeNodeFlags_None))
 		{
+			ImGui::PushID((u8"EREA" + std::to_string(i)).c_str());
+
 			// 位置
 			ImGui::InputFloat3(u8"ポジション", &enemySpawnErea[i].position.x);
 			ImGui::DragFloat(u8"半径", &enemySpawnErea[i].radius, 0.1f);
+			
 			if(ImGui::Button(u8"ポジション更新"))
 			{
 				enemySpawnErea[i].position = targetPosition;
 			}
+
 			ImGui::SameLine();
+
 			if (ImGui::Button(u8"敵生成"))
 			{
 				// 乱数生成器の設定
@@ -275,6 +280,7 @@ void SceneSpawnEditor::DrawDebugGUI()
 					SpinningTopEnemyManager::Instance().Register(enemy);
 				}
 			}
+			ImGui::PopID();
 
 			DebugPrimitive::Instance().AddCylinder(enemySpawnErea[i].position, enemySpawnErea[i].radius, 0.4f, { 1,0,0,1 });
 		}
