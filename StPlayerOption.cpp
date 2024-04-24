@@ -10,6 +10,7 @@
 
 StPlayerOption::StPlayerOption(std::shared_ptr<SkinnedMesh> model) {
 	this->model = model;
+	isPlayer = false;
 
 }
 

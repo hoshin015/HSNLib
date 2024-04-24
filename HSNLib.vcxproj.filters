@@ -366,6 +366,9 @@
     <ClCompile Include="StPlayerData.cpp">
       <Filter>ソース ファイル\SpinningTopBase</Filter>
     </ClCompile>
+    <ClCompile Include="StPlayerBase.cpp">
+      <Filter>ソース ファイル\SpinningTopBase</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\Graphics\Graphics.h">
@@ -681,6 +684,9 @@
       <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
     <ClInclude Include="StPlayerData.h">
+      <Filter>ヘッダー ファイル\SpinningTopBase</Filter>
+    </ClInclude>
+    <ClInclude Include="StPlayerBase.h">
       <Filter>ヘッダー ファイル\SpinningTopBase</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "StPlayer.h"
+#include "StPlayerBase.h"
 
-class StPlayerOption :public SpinningTopBase {
+class StPlayerOption :public StPlayerBase {
 public:
 	StPlayerOption(std::shared_ptr<SkinnedMesh> model);
 	~StPlayerOption() override;

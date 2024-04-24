@@ -2,25 +2,22 @@
 #include <variant>
 #include <map>
 
-#include "SpinningTopBase.h"
+#include "StPlayerBase.h"
 #include "SpinningTopEnemyManager.h"
 #include "StPlayerOption.h"
 #include "StPlayerData.h"
 
-class StPlayer :public SpinningTopBase
+class StPlayer :public StPlayerBase
 {
 public:
 	StPlayer();
 	~StPlayer() override;
 
-	void Update();
-	void Render();
-	void DrawDebugGui();
-
-	bool IsCoolDown() { return parryCooldownCount <= 0; }
+	void Update() override;
+	void Render() override;
+	void DrawDebugGui() override;
 
 private:
-	void UpdateEDistance();
 	void UpdateRotate();
 	void UpdateMove();
 	void UpdateAttack();
@@ -29,16 +26,16 @@ private:
 	void RenderDebugPrimitive();
 
 protected:
-	void Input();
+	void Input() override;
 	void OnLanding() override;
 	void OnDamaged() override;
 	void OnDead() override;
 
 private:
 	//パラメータは上に,プロパティは下に書いてる
-	std::vector<SpinningTopEnemy*> nearEnemy;
+	//std::vector<SpinningTopEnemy*> nearEnemy;
 
-	PlayerData data;
+	//PlayerData data;
 
 	//移動
 	//float mobility;
@@ -46,16 +43,16 @@ private:
 	//float slow;
 
 	//回転
-	float rotateSpeed;
+	//float rotateSpeed;
 	//float rotateMaxSpeed;
 
 	//パリィ
-	bool parry = false;
-	float parryDamageRadius = 0;
-	float parryCooldownCount = 0;
+	//bool parry = false;
+	//float parryDamageRadius = 0;
+	//float parryCooldownCount = 0;
 
-	bool parryGauge = false;
-	float parryGaugeDamageRadius = 0;
+	//bool parryGauge = false;
+	//float parryGaugeDamageRadius = 0;
 
 	//float parryRadius;
 	//float parryDamageMaxRadius;
@@ -75,23 +72,23 @@ private:
 	//std::vector<std::shared_ptr<StPlayerOption>> option;
 
 	//入力
-	using InputVariant = std::variant<bool, int, float, DirectX::XMFLOAT2>;
-	std::map<std::string, InputVariant> inputMap;
+	//using InputVariant = std::variant<bool, int, float, DirectX::XMFLOAT2>;
+	//std::map<std::string, InputVariant> inputMap;
 
-	template<typename T>
-	const T& GetInputMap(std::string str) {
-		T* result = std::get_if<T>(&inputMap[str]);
-		return result ? *result : T();
-	}
+	//template<typename T>
+	//const T& GetInputMap(std::string str) {
+	//	T* result = std::get_if<T>(&inputMap[str]);
+	//	return result ? *result : T();
+	//}
 
 	//デバッグ用
-	using debugVariant = std::variant<bool, int, float ,DirectX::XMFLOAT2>;
-	std::map<std::string, debugVariant> debugValue;
+	//using debugVariant = std::variant<bool, int, float ,DirectX::XMFLOAT2>;
+	//std::map<std::string, debugVariant> debugValue;
 
-	template<typename T>
-	T GetDebugValue(std::string str) {
-		return std::get<T>(debugValue[str]);
-	}
+	//template<typename T>
+	//T GetDebugValue(std::string str) {
+	//	return std::get<T>(debugValue[str]);
+	//}
 
 
 };

@@ -29,6 +29,8 @@ StPlayer::StPlayer() {
 
 	radius = data.radius;
 	rotateSpeed = data.rotateInitialSpeed;
+
+	isPlayer = true;
 }
 
 StPlayer::~StPlayer() {}
@@ -38,8 +40,8 @@ void StPlayer::Update() {
 
 	Camera::Instance().SetTarget(position);
 
+	//UpdateEDistance(max(max(max(radius, data.parryRadius), parryDamageRadius), data.parryGaugeRadius));
 	UpdateRotate();
-	UpdateEDistance();
 	UpdateMove();
 	UpdateAttack();
 	UpdateDamaged();
@@ -419,24 +421,6 @@ void StPlayer::UpdateDamaged() {
 
 }
 
-//TODO::ˆê”Ô‘å‚«‚¢”»’è‚Ì’†‚É‚¢‚éEnemy‚ðŽæ“¾‚·‚é ‚à‚Á‚Æ‚¢‚¢•û–@‚ ‚é‚©‚à‚µ‚ê‚È‚¢
-void StPlayer::UpdateEDistance() {
-	nearEnemy.clear();
-	SpinningTopEnemyManager& stEManager = SpinningTopEnemyManager::Instance();
-	XMVECTOR pPosVec = XMLoadFloat3(&position);
-	float highestRadius = max(max(max(radius, data.parryRadius), parryDamageRadius), data.parryGaugeRadius);
-	for (int i = 0; i < stEManager.GetEnemyCount(); i++) {
-		SpinningTopEnemy* enemy = stEManager.GetEnemy(i);
-		if (enemy->GetHealth() <= 0) continue;
-		XMVECTOR ePosVec = XMLoadFloat3(&enemy->GetPosition());
-		float eRadius = enemy->GetRadius();
-		float distance = XMVectorGetX(XMVector3Length(ePosVec - pPosVec));
-
-		if (highestRadius + eRadius > distance) {
-			nearEnemy.push_back(enemy);
-		}
-	}
-}
 
 void StPlayer::UpdateRotate() {
 	static bool beforeState = false;
