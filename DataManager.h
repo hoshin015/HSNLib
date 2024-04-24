@@ -14,9 +14,14 @@ public:
 		return instance;
 	}
 
-	// ロード
+	// 敵ロード
 	void LoadEnemyData(EnemyData* pData);
 
-	// セーブ
+	// 敵セーブ
 	void SaveEnemyData(EnemyData* pData);
+
+	// スポーンエリアロード
+	void LoadSpawnEreaData();
+	// スポーンエリアセーブ
+	void SaveSpawnEreaData();
 };

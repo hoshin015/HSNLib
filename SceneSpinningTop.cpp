@@ -23,7 +23,7 @@ void SceneSpinningTop::Initialize()
 
 	float x = 0;
 	float z = 0;
-	for (int i = 0; i < 1; i++)
+	for (int i = 0; i < 10; i++)
 	{
 		StEnemy* enemy;
 		enemy = (i % 2 == 0) ? new_ StEnemy(ENEMY_0) : new_ StEnemy(ENEMY_1);

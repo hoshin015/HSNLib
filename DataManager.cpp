@@ -6,7 +6,7 @@
 #include <nlohmann/json.hpp>
 
 
-// ロード
+// 敵ロード
 void DataManager::LoadEnemyData(EnemyData* pData)
 {
 	// enemyData のロード
@@ -42,7 +42,7 @@ void DataManager::LoadEnemyData(EnemyData* pData)
 	}
 }
 
-// セーブ
+// 敵セーブ
 void DataManager::SaveEnemyData(EnemyData* pData)
 {
 	// enemyData のセーブ
@@ -76,4 +76,48 @@ void DataManager::SaveEnemyData(EnemyData* pData)
 	std::ofstream enemyFile("Data/Json/enemy.json");
 	enemyFile << std::setw(4) << enemyJson;
 	enemyFile.close();
+}
+
+// スポーンエリアロード
+void DataManager::LoadSpawnEreaData()
+{
+	// spawnEreaData のロード
+	std::ifstream spawnEreaFile("Data/Json/spawnErea.json");
+	if (spawnEreaFile.good())
+	{
+		nlohmann::json j;
+		spawnEreaFile >> j;
+		int index = 0;
+		for (auto& jsonSpawnErea : j["SpawnEreaData"])
+		{
+			enemySpawnErea[index].position.x = jsonSpawnErea["PositionX"];
+			enemySpawnErea[index].position.y = jsonSpawnErea["PositionY"];
+			enemySpawnErea[index].position.z = jsonSpawnErea["PositionZ"];
+			enemySpawnErea[index].radius = jsonSpawnErea["Radius"];
+
+			index++;
+		}
+	}
+}
+
+// スポーンエリアセーブ
+void DataManager::SaveSpawnEreaData()
+{
+	// spawnEreaData のセーブ
+	using json = nlohmann::json;
+	json spawnJson;
+
+	for (int i = 0; i < EREA_NUM; i++)
+	{
+		spawnJson["SpawnEreaData"] +=
+		{
+			{ "PositionX", enemySpawnErea[i].position.x },
+			{ "PositionY", enemySpawnErea[i].position.y },
+			{ "PositionZ", enemySpawnErea[i].position.z },
+			{ "Radius", enemySpawnErea[i].radius },
+		};
+	};
+	std::ofstream spawnEreaFile("Data/Json/spawnErea.json");
+	spawnEreaFile << std::setw(4) << spawnJson;
+	spawnEreaFile.close();
 }

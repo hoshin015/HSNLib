@@ -1,4 +1,5 @@
 #pragma once
+#include <DirectXMath.h>
 
 enum ENEMY_KIND
 {
@@ -14,6 +15,17 @@ enum BEHAVIOR_TYPE
 {
 	pursuit,
 	chase,
+};
+
+enum ENEMY_SPAWN_EREA
+{
+	EREA0,
+	EREA1,
+	EREA2,
+	EREA3,
+	EREA4,
+
+	EREA_NUM,
 };
 
 struct EnemyData
@@ -40,3 +52,11 @@ struct EnemyData
 };
 
 extern EnemyData enemyData[];
+
+struct EnemySpawnErea
+{
+	DirectX::XMFLOAT3 position;
+	float radius = 3;
+};
+
+extern EnemySpawnErea enemySpawnErea[];
