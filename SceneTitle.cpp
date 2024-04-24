@@ -100,6 +100,10 @@ void SceneTitle::DrawDebugGUI()
 				{
 					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneSpawnEditor));
 				}
+				if (ImGui::MenuItem("SceneWave"))
+				{
+					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneWave));
+				}
 				ImGui::EndMenu();
 			}
 			ImGui::EndMenu();

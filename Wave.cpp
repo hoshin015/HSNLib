@@ -4,14 +4,17 @@
 #include "WaveData_1.h"
 
 // ウェーブデータ
-WaveScript* waveScript[] = {
-	wave1Script, // ステージ1
-	nullptr,      // 終了コード
+WaveScript* waveScript[] =
+{
+	wave1Script,
+	nullptr,
 };
+
 
 void Wave::Init()
 {
 	state = 0;
+
 	ppScript = waveScript;
 }
 
@@ -39,6 +42,14 @@ void Wave::Update()
 
 			pScript++;
 		}
+
+		// ウェーブクリアチェック(全部のデータを出し切ってnullptrにたどりついたら次のウェーブへ)
+		if (pScript->data == nullptr)
+		{
+			ppScript++;
+			state = *ppScript ? 0 : 2;
+		}
+
 		break;
 	}
 	case 2:	// 全ウェーブ終了

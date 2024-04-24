@@ -251,6 +251,7 @@
     <ClCompile Include="Library\3D\Sprite3D.cpp" />
     <ClCompile Include="Library\3D\SkyMap.cpp" />
     <ClCompile Include="Library\Graphics\ShadowBuffer.cpp" />
+    <ClCompile Include="SceneWave.cpp" />
     <ClCompile Include="SpinningTopBase.cpp" />
     <ClCompile Include="SpinningTopEnemy.cpp" />
     <ClCompile Include="SpinningTopEnemyManager.cpp" />
@@ -357,6 +358,7 @@
     <ClInclude Include="Library\3D\Sprite3D.h" />
     <ClInclude Include="Library\3D\SkyMap.h" />
     <ClInclude Include="Library\Graphics\ShadowBuffer.h" />
+    <ClInclude Include="SceneWave.h" />
     <ClInclude Include="SpinningTopBase.h" />
     <ClInclude Include="SpinningTopEnemy.h" />
     <ClInclude Include="SpinningTopEnemyManager.h" />

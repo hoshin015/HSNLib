@@ -10,6 +10,7 @@
 #include "SceneSTPlayer.h"
 #include "SceneEnemyLevelEditor.h"
 #include "SceneSpawnEditor.h"
+#include "SceneWave.h"
 #include "Library/MemoryLeak.h"
 
 // シーンマネージャー

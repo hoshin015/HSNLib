@@ -1,6 +1,5 @@
 #include "StEnemyData.h"
 
-
 EnemyData enemyData[] =
 {
 	// Enemy0
