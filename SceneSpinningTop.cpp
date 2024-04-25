@@ -26,7 +26,7 @@ void SceneSpinningTop::Initialize()
 	for (int i = 0; i < 1; i++)
 	{
 		StEnemy* enemy;
-		enemy = (i % 2 == 0) ? new_ StEnemy(ENEMY_0) : new_ StEnemy(ENEMY_1);
+		enemy = (i % 2 == 0) ? new_ StEnemy(ENEMY_1) : new_ StEnemy(ENEMY_0);
 		enemy->SetPosition({ x, 10, z });
 		// スポーン座標設定
 		enemy->spawnPosition = enemy->GetPosition();
@@ -51,7 +51,7 @@ void SceneSpinningTop::Initialize()
 	StageContext* stageMain = new_ StageContext();
 	stageManager.Register(stageMain);
 
-#if 1
+#if 0
 	// ライト初期化
 	Light* directionLight = new Light(LightType::Directional);
 	directionLight->SetDirection(DirectX::XMFLOAT3(0.5, -1, -1));
@@ -211,13 +211,16 @@ void SceneSpinningTop::Render()
 
 	StageManager::Instance().Render();
 
-	SpinningTopEnemyManager::Instance().Render();
+
+
 
 	ObstacleManager::Instance().Render();
 
+	SpinningTopEnemyManager::Instance().Render();
 	// --- デバッグ描画 ---
 	DebugPrimitive::Instance().Render();
 	LineRenderer::Instance().Render();
+
 
 	gfx.bloomBuffer->DeActivate();
 

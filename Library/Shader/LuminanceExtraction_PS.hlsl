@@ -18,7 +18,10 @@ Texture2D bloomFilterMap : register(t1);
 
 float4 main(VS_OUT pin) : SV_TARGET
 {
+    // 普通に描画されたテクスチャ
     float4 color = textureMaps.Sample(samplerStates[POINT], pin.texcoord);
+    
+    // r が 1 なら次のテクスチャに色を書きこむ
     float4 flag = bloomFilterMap.Sample(samplerStates[POINT], pin.texcoord);
     
     // RGB > 輝度値に変換
@@ -32,6 +35,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     contribution /= luminance;
     color.rgb *= contribution * intensity;
     
-    return (flag.r != 0) ? color : 0;
+    //return (flag.r != 0) ? color : 0;
+    return flag.r * color;
     //return flag;
 }

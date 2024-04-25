@@ -25,21 +25,28 @@ float4 main(VS_OUT pin) : SV_TARGET
     float4 diffuseColor = texture_maps[0].Sample(sampler_states[ANISOTROPIC], pin.texcoord);
      // エミッシブカラーの取得
     float4 emissive = texture_maps[3].Sample(sampler_states[POINT], pin.texcoord);
+   
+    
     
     // 最終的なカラーを計算
     float4 finalColor;
     
-    finalColor.a = diffuseColor.a;
+    //finalColor.a = diffuseColor.a;
     
+    //finalColor.rgb = diffuseColor.rgb * pin.color.rgb;
+    finalColor.rgb = pin.color.rgb;
+    finalColor.a = length(diffuseColor.rgb);
     
-    finalColor.rgb = diffuseColor.rgb * pin.color.rgb;
+    //if (length(finalColor.rgb) < 0.5)
+    //    clip(-1);
    
 #if 1
     PSOUT output = (PSOUT) 0;
-    output.color = finalColor * pin.color;
+    output.color = finalColor;
     
     output.flag = float4(0, 0, 0, 1);
-    output.flag.r = (finalColor.a != 0) ? 1 : 0;
+    //output.flag.r = (finalColor.a != 0) ? 1 : 0;
+    output.flag.r = finalColor.a;
     
     return output;
 #else

@@ -74,13 +74,13 @@ void ParryEffect::Render()
 	gfx.deviceContext->PSSetShader(pixelShader.Get(), nullptr, 0);
 
 
-	gfx.SetBlend(BLEND_STATE::ADD);
-	//gfx.SetRasterizer(static_cast<RASTERIZER_STATE>(RASTERIZER_STATE::CLOCK_FALSE_CULL_NONE));
+	//gfx.SetBlend(BLEND_STATE::ADD);
+	gfx.SetRasterizer(static_cast<RASTERIZER_STATE>(RASTERIZER_STATE::CLOCK_FALSE_CULL_NONE));
 	model->Render(transform, { 0.62,1,1,1 }, NULL);
 
 	// Œ³‚É–ß‚·
 	gfx.SetBlend(BLEND_STATE::ALPHA);
-	gfx.SetRasterizer(static_cast<RASTERIZER_STATE>(RASTERIZER_STATE::CLOCK_FALSE_SOLID));
+	gfx.SetRasterizer(static_cast<RASTERIZER_STATE>(RASTERIZER_STATE::CLOCK_FALSE_CULL_NONE));
 	gfx.deviceContext->VSSetShader(gfx.vertexShaders[static_cast<size_t>(VS_TYPE::SkinnedMesh_VS)].Get(), nullptr, 0);
 	gfx.deviceContext->PSSetShader(gfx.pixelShaders[static_cast<size_t>(PS_TYPE::SkinnedMesh_PS)].Get(), nullptr, 0);
 

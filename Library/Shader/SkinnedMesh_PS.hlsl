@@ -131,14 +131,19 @@ float4 main(VS_OUT pin) : SV_TARGET
     
     finalColor.a = diffuseColor.a;
     
-    finalColor.rgb = (emissive.a) ? emissive.rgb : lig * diffuseColor.rgb;
+    //finalColor.rgb = (emissive.a) ? emissive.rgb : lig * diffuseColor.rgb;
+    finalColor.rgb = lerp(lig * diffuseColor.rgb, emissive.rgb*5, emissive.a);
+    
+    //finalColor.rgb = emissive.rgb + diffuseColor.rgb * lig;
    
 #if 1
     PSOUT output = (PSOUT)0;
     output.color = finalColor;
     
     output.flag = float4(0,0,0,1);
-    output.flag.r = emissive.a;
+    output.flag = emissive.a;
+    //output.flag.r = length(emissive.rgb);
+    //output.flag.r = max(max(emissive.r, emissive.g), emissive.b);
     
     return output;
 #else

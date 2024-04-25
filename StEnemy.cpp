@@ -63,7 +63,6 @@ void StEnemy::Render(bool drawShadow)
 {
 	Graphics& gfx = Graphics::Instance();
 
-	gfx.SetRasterizer(static_cast<RASTERIZER_STATE>(RASTERIZER_STATE::CLOCK_FALSE_SOLID));
 	model->Render(transform, { 1,1,1,1 }, &keyFrame);
 
 	//gfx.SetBlend(BLEND_STATE::ADD);
