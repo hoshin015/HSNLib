@@ -17,9 +17,9 @@ public:
 
 	// ロード
 	void LoadEnemyData(EnemyData* pData);
-	void LoadPlayerData(PlayerData* pData);
+	void LoadPlayerData(PlayerData* pData ,size_t arraySize);
 
 	// セーブ
 	void SaveEnemyData(EnemyData* pData);
-	void SavePlayerData(PlayerData* pData);
+	void SavePlayerData(PlayerData* pData ,size_t arraySize);
 };

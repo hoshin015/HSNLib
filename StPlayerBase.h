@@ -21,16 +21,19 @@ public:
 private:
 	//void UpdateRotate();
 	//void UpdateMove();
-	//void UpdateAttack();
 	//void UpdateDamaged();
 	//void RenderDebugPrimitive();
 
 protected:
+	void UpdateAttack();
+	void RenderDebugPrimitive();
+
 
 	//パラメータは上に,プロパティは下に書いてる
 	inline static std::vector<SpinningTopEnemy*> nearEnemy;
 
 	PlayerData data;
+	PlayerData optionData;
 	bool isPlayer;
 
 	//移動

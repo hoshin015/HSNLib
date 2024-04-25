@@ -1,5 +1,7 @@
 #include "StPlayerBase.h"
 #include "Library/Input/InputManager.h"
+#include "Library/Timer.h"
+#include "Library/3D/DebugPrimitive.h"
 using namespace DirectX;
 
 //TODO::一番大きい判定の中にいるEnemyを取得する もっといい方法あるかもしれない
@@ -47,4 +49,131 @@ void StPlayerBase::Input() {
 	bool subAttack = im.GetKeyPressed(Keyboard::K) || im.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::b);
 	subAttack = subAttack && (rotateSpeed > data.parryGaugeConsumed);
 	inputMap["SubAttack"] = subAttack;
+}
+
+void StPlayerBase::UpdateAttack() {
+	//パルス状のUpdate
+	static std::vector<SpinningTopEnemy*> hitEnemys;
+	float deltaTime = Timer::Instance().DeltaTime();
+	if (parry) {
+		parryDamageRadius += data.parryDamageIncrementSpeed * deltaTime;
+		if (parryDamageRadius > data.parryRadius) {
+			parryDamageRadius = 0;
+			parry = false;
+			hitEnemys.clear();
+		}
+	}
+
+	if (parryGauge) {
+		parryDamageRadius += data.parryDamageIncrementSpeed * deltaTime;
+		if (parryDamageRadius > data.parryGaugeRadius) {
+			parryDamageRadius = 0;
+			parryGauge = false;
+			hitEnemys.clear();
+		}
+	}
+
+	if (parryCooldownCount > 0) {
+		parryCooldownCount -= deltaTime;
+	}
+	debugValue["CooldownCount"] = parryCooldownCount;
+
+	//パリィ成功,失敗&パルス内の判定 分けないとやばい気がする
+	if (GetInputMap<bool>("Attack") || parry) {
+		for (SpinningTopEnemy* enemy : nearEnemy) {
+			if (hitEnemys.size() > 0) {
+				bool hit = false;
+				for (SpinningTopEnemy* hitEnemy : hitEnemys) {
+					if (hitEnemy == enemy) {
+						hit = true;
+						break;
+					}
+				}
+				if (hit) continue;
+			}
+
+			XMVECTOR pPosVec = XMLoadFloat3(&position);
+			XMVECTOR ePosVec = XMLoadFloat3(&enemy->GetPosition());
+			float eRadius = enemy->GetRadius();
+			float distance = XMVectorGetX(XMVector3Length(ePosVec - pPosVec));
+
+			if ((eRadius + data.parryRadius > distance) && !parry) {
+				parry = true;
+				break;
+			}
+
+			if (parry && eRadius + parryDamageRadius > distance) {
+				hitEnemys.push_back(enemy);
+#if 0
+				XMVECTOR knockbackVec = XMVector3Normalize(pPosVec - ePosVec);
+				XMFLOAT3 result;
+
+				XMStoreFloat3(&result, (-knockbackVec) * parryKnockback);
+				enemy->SetVelocity(result);
+
+				XMStoreFloat3(&result, (knockbackVec)*parryKnockback);
+				velocity = result;
+#else
+				XMFLOAT3 out1, out2;
+				XMFLOAT3 eVel(enemy->GetVelocity());
+
+				Collision::RepulsionSphereVsSphere(position, data.parryRadius, 1, enemy->GetPosition(), eRadius, 1, out1, out2);
+				XMStoreFloat3(&out2, XMVector3Normalize(XMLoadFloat3(&out2)) * data.parryKnockback);
+
+				enemy->SetVelocity(out2);
+				enemy->ApplyDamage(1, 0);
+#endif
+			}
+
+		}
+	}
+
+	if (GetInputMap<bool>("SubAttack") || parryGauge) {
+		for (SpinningTopEnemy* enemy : nearEnemy) {
+			if (hitEnemys.size() > 0) {
+				bool hit = false;
+				for (SpinningTopEnemy* hitEnemy : hitEnemys) {
+					if (hitEnemy == enemy) {
+						hit = true;
+						break;
+					}
+				}
+				if (hit) continue;
+			}
+
+			XMVECTOR pPosVec = XMLoadFloat3(&position);
+			XMVECTOR ePosVec = XMLoadFloat3(&enemy->GetPosition());
+			float eRadius = enemy->GetRadius();
+			float distance = XMVectorGetX(XMVector3Length(ePosVec - pPosVec));
+
+			if ((eRadius + data.parryGaugeRadius > distance) && !parryGauge) {
+				parryGauge = true;
+				break;
+			}
+
+			if (parryGauge && eRadius + parryDamageRadius > distance) {
+				hitEnemys.push_back(enemy);
+
+				XMFLOAT3 out1, out2;
+				XMFLOAT3 eVel(enemy->GetVelocity());
+
+				Collision::RepulsionSphereVsSphere(position, data.parryGaugeRadius, 1, enemy->GetPosition(), eRadius, 1, out1, out2);
+				XMStoreFloat3(&out2, XMVector3Normalize(XMLoadFloat3(&out2)) * data.parryKnockback);
+
+				enemy->SetVelocity(out2);
+			}
+
+		}
+	}
+	if (GetInputMap<bool>("Attack") && !parry) parryCooldownCount = data.parryCooldown;
+}
+
+void StPlayerBase::RenderDebugPrimitive() {
+	DebugPrimitive::Instance().AddSphere(position, radius, { 0,0,1,1 });
+	DebugPrimitive::Instance().AddSphere(position, data.parryRadius, { 1,1,1,1 });
+	if (rotateSpeed > data.parryGaugeConsumed)DebugPrimitive::Instance().AddSphere(position, data.parryGaugeRadius, { 1,0,1,1 });
+
+	if (parry) DebugPrimitive::Instance().AddSphere(position, parryDamageRadius, { 0,1,0,1 });
+	if (parryGauge) DebugPrimitive::Instance().AddSphere(position, parryDamageRadius, { 0,1,1,1 });
+	if (parryCooldownCount > 0) DebugPrimitive::Instance().AddSphere(position, parryCooldownCount, { 1,0,0,1 });
 }

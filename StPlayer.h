@@ -20,15 +20,11 @@ public:
 private:
 	void UpdateRotate();
 	void UpdateMove();
-	void UpdateAttack();
 	void UpdateDamaged();
 
 	void UpdateOption();
 	void AddOption();
 	void EraseOption();
-
-	void RenderDebugPrimitive();
-
 protected:
 	void OnLanding() override;
 	void OnDamaged() override;

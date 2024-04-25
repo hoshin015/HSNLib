@@ -1,10 +1,11 @@
 #pragma once
 
 #include "StPlayerBase.h"
+#include "StPlayerData.h"
 
 class StPlayerOption :public StPlayerBase {
 public:
-	StPlayerOption(std::shared_ptr<SkinnedMesh> model);
+	StPlayerOption(std::shared_ptr<SkinnedMesh> model, PlayerData& data);
 	~StPlayerOption() override;
 
 	void Update() override;

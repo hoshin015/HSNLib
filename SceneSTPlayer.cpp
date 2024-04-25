@@ -9,15 +9,15 @@
 
 #include "LightManager.h"
 #include "SpinningTopEnemyManager.h"
-#include "StEnemy02.h"
+#include "StEnemy01.h"
 #include "ObstacleManager.h"
 
 #include "SpinningTopPlayerManager.h"
 #include "StPlayer.h"
 
 void SceneSTPlayer::Initialize() {
-	for (size_t i = 0; i < 0; i++) {
-		StEnemy02* slime = new_ StEnemy02();
+	for (size_t i = 0; i < 20; i++) {
+		StEnemy01* slime = new_ StEnemy01();
 		slime->SetPosition({ 0, 0, 0 });
 		SpinningTopEnemyManager::Instance().Register(slime);
 	}

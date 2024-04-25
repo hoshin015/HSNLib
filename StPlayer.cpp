@@ -26,7 +26,10 @@ static const char* u8cast(const char* x) { return x; }
 StPlayer::StPlayer() {
 	model = ResourceManager::Instance().LoadModelResource("Data/Fbx/StPlayer/StPlayer.fbx");
 	childModel = ResourceManager::Instance().LoadModelResource("Data/Fbx/StPlayerOption/koki_all.fbx");
-	DataManager::Instance().LoadPlayerData(&data);
+	PlayerData dataArray[2];
+	DataManager::Instance().LoadPlayerData(dataArray,ARRAYSIZE(dataArray));
+	data = dataArray[0];
+	optionData = dataArray[1];
 
 	radius = data.radius;
 	rotateSpeed = data.rotateInitialSpeed;
@@ -77,7 +80,9 @@ void StPlayer::DrawDebugGui() {
 		if (ImGui::CollapsingHeader(u8cast(u8"プロパティ"), ImGuiTreeNodeFlags_DefaultOpen)) {
 			if (ImGui::Button(u8cast(u8"保存"))) {
 				data.radius = radius;
-				DataManager::Instance().SavePlayerData(&data);
+				optionData.radius;
+				PlayerData array[] = { data,optionData };
+				DataManager::Instance().SavePlayerData(array,ARRAYSIZE(array));
 			}
 
 			if (ImGui::CollapsingHeader(u8cast(u8"移動"), ImGuiTreeNodeFlags_DefaultOpen)) {
@@ -114,11 +119,36 @@ void StPlayer::DrawDebugGui() {
 			}
 		}
 
-		if (ImGui::CollapsingHeader(u8cast(u8"子機プロパティ"), ImGuiTreeNodeFlags_DefaultOpen)) {
+		if (ImGui::CollapsingHeader(u8cast(u8"子機"), ImGuiTreeNodeFlags_DefaultOpen)) {
 			if (ImGui::Button(u8cast(u8"追加"))) AddOption();
 			if (ImGui::Button(u8cast(u8"削除"))) EraseOption();
 
 			ImGui::DragFloat(u8cast(u8"距離"), &data.optionRange, 0.1f);
+
+			if (ImGui::CollapsingHeader(u8cast(u8"プロパティ子機"), ImGuiTreeNodeFlags_DefaultOpen)) {
+				if (ImGui::CollapsingHeader(u8cast(u8"移動子機"), ImGuiTreeNodeFlags_DefaultOpen)) {
+					ImGui::DragFloat(u8cast(u8"子機の半径子機"), &radius, 0.1f);
+				}
+
+				if (ImGui::CollapsingHeader(u8cast(u8"回転子機"), ImGuiTreeNodeFlags_DefaultOpen)) {
+					XMFLOAT2 angleF2;
+					XMStoreFloat2(&angleF2, XMVector2Transform(XMVectorSet(0, 1, 0, 0), XMMatrixRotationZ(XMConvertToRadians(angle.y))));
+					ImguiVectorDirDraw(20, 10, 20, angleF2);
+					ImGui::DragFloat(u8cast(u8"初期回転速度子機"), &optionData.rotateInitialSpeed, 0.01f);
+				}
+
+				if (ImGui::CollapsingHeader(u8cast(u8"パリィ子機"), ImGuiTreeNodeFlags_DefaultOpen)) {
+					ImGui::DragFloat(u8cast(u8"ノックバック子機"), &optionData.parryKnockback, 0.1f);
+					ImGui::DragFloat(u8cast(u8"半径子機"), &optionData.parryRadius, 0.1f);
+					ImGui::DragFloat(u8cast(u8"最大半径子機"), &optionData.parryDamageMaxRadius, 0.1f);
+					ImGui::DragFloat(u8cast(u8"大きくなる速度子機"), &optionData.parryDamageIncrementSpeed, 0.1f);
+					ImGui::DragFloat(u8cast(u8"クールダウン子機"), &optionData.parryCooldown, 0.1f);
+
+					ImGui::DragFloat(u8cast(u8"ゲージ半径子機"), &optionData.parryGaugeRadius, 0.1f);
+					ImGui::DragFloat(u8cast(u8"ゲージ最大半径子機"), &optionData.parryGaugeDamageMaxRadius, 0.1f);
+					ImGui::DragFloat(u8cast(u8"ゲージ消費子機"), &optionData.parryGaugeConsumed, 0.1f);
+				}
+			}
 		}
 
 		if (ImGui::CollapsingHeader(u8cast(u8"デバック"), ImGuiTreeNodeFlags_DefaultOpen)) {
@@ -218,6 +248,8 @@ void StPlayer::DrawDebugGui() {
 		}
 		ImGui::End();
 	}
+
+
 }
 
 void StPlayer::UpdateMove() {
@@ -266,123 +298,6 @@ void StPlayer::UpdateMove() {
 
 }
 
-void StPlayer::UpdateAttack() {
-	//パルス状のUpdate
-	static std::vector<SpinningTopEnemy*> hitEnemys;
-	float deltaTime = Timer::Instance().DeltaTime();
-	if (parry) {
-		parryDamageRadius += data.parryDamageIncrementSpeed * deltaTime;
-		if (parryDamageRadius > data.parryRadius) {
-			parryDamageRadius = 0;
-			parry = false;
-			hitEnemys.clear();
-		}
-	}
-
-	if (parryGauge) {
-		parryDamageRadius += data.parryDamageIncrementSpeed * deltaTime;
-		if (parryDamageRadius > data.parryGaugeRadius) {
-			parryDamageRadius = 0;
-			parryGauge = false;
-			hitEnemys.clear();
-		}
-	}
-
-	if (parryCooldownCount > 0) {
-		parryCooldownCount -= deltaTime;
-	}
-	debugValue["CooldownCount"] = parryCooldownCount;
-
-	//パリィ成功,失敗&パルス内の判定 分けないとやばい気がする
-	if (GetInputMap<bool>("Attack") || parry) {
-		for (SpinningTopEnemy* enemy : nearEnemy) {
-			if (hitEnemys.size() > 0) {
-				bool hit = false;
-				for (SpinningTopEnemy* hitEnemy : hitEnemys) {
-					if (hitEnemy == enemy) {
-						hit = true;
-						break;
-					}
-				}
-				if (hit) continue;
-			}
-
-			XMVECTOR pPosVec = XMLoadFloat3(&position);
-			XMVECTOR ePosVec = XMLoadFloat3(&enemy->GetPosition());
-			float eRadius = enemy->GetRadius();
-			float distance = XMVectorGetX(XMVector3Length(ePosVec - pPosVec));
-
-			if ((eRadius + data.parryRadius > distance) && !parry) {
-				parry = true;
-				break;
-			}
-
-			if (parry && eRadius + parryDamageRadius > distance) {
-				hitEnemys.push_back(enemy);
-#if 0
-				XMVECTOR knockbackVec = XMVector3Normalize(pPosVec - ePosVec);
-				XMFLOAT3 result;
-
-				XMStoreFloat3(&result, (-knockbackVec) * parryKnockback);
-				enemy->SetVelocity(result);
-
-				XMStoreFloat3(&result, (knockbackVec)*parryKnockback);
-				velocity = result;
-#else
-				XMFLOAT3 out1, out2;
-				XMFLOAT3 eVel(enemy->GetVelocity());
-
-				Collision::RepulsionSphereVsSphere(position, data.parryRadius, 1, enemy->GetPosition(), eRadius, 1, out1, out2);
-				XMStoreFloat3(&out2, XMVector3Normalize(XMLoadFloat3(&out2)) * data.parryKnockback);
-
-				enemy->SetVelocity(out2);
-				enemy->ApplyDamage(1, 0);
-#endif
-			}
-
-		}
-	}
-
-	if (GetInputMap<bool>("SubAttack") || parryGauge) {
-		for (SpinningTopEnemy* enemy : nearEnemy) {
-			if (hitEnemys.size() > 0) {
-				bool hit = false;
-				for (SpinningTopEnemy* hitEnemy : hitEnemys) {
-					if (hitEnemy == enemy) {
-						hit = true;
-						break;
-					}
-				}
-				if (hit) continue;
-			}
-
-			XMVECTOR pPosVec = XMLoadFloat3(&position);
-			XMVECTOR ePosVec = XMLoadFloat3(&enemy->GetPosition());
-			float eRadius = enemy->GetRadius();
-			float distance = XMVectorGetX(XMVector3Length(ePosVec - pPosVec));
-
-			if ((eRadius + data.parryGaugeRadius > distance) && !parryGauge) {
-				parryGauge = true;
-				break;
-			}
-
-			if (parryGauge && eRadius + parryDamageRadius > distance) {
-				hitEnemys.push_back(enemy);
-
-				XMFLOAT3 out1, out2;
-				XMFLOAT3 eVel(enemy->GetVelocity());
-
-				Collision::RepulsionSphereVsSphere(position, data.parryGaugeRadius, 1, enemy->GetPosition(), eRadius, 1, out1, out2);
-				XMStoreFloat3(&out2, XMVector3Normalize(XMLoadFloat3(&out2)) * data.parryKnockback);
-
-				enemy->SetVelocity(out2);
-			}
-
-		}
-	}
-	if (GetInputMap<bool>("Attack") && !parry) parryCooldownCount = data.parryCooldown;
-}
-
 void StPlayer::UpdateDamaged() {
 	for (SpinningTopEnemy* enemy : nearEnemy) {
 		XMVECTOR pPosVec = XMLoadFloat3(&position);
@@ -416,28 +331,17 @@ void StPlayer::UpdateRotate() {
 	if (isParryGaugeSuccessed) rotateSpeed -= data.parryGaugeConsumed;
 	rotateSpeed = min(rotateSpeed, data.rotateMaxSpeed);
 	angle.y += 360 * rotateSpeed * Timer::Instance().DeltaTime();
-	if (36000 < angle.y || angle.y < -36000)angle.y = 0;
-}
-
-void StPlayer::RenderDebugPrimitive() {
-	DebugPrimitive::Instance().AddSphere(position, radius, { 0,0,1,1 });
-	DebugPrimitive::Instance().AddSphere(position, data.parryRadius, { 1,1,1,1 });
-	if (rotateSpeed > data.parryGaugeConsumed)DebugPrimitive::Instance().AddSphere(position, data.parryGaugeRadius, { 1,0,1,1 });
-
-	if(parry) DebugPrimitive::Instance().AddSphere(position, parryDamageRadius, { 0,1,0,1 });
-	if(parryGauge) DebugPrimitive::Instance().AddSphere(position, parryDamageRadius, { 0,1,1,1 });
-	if(parryCooldownCount > 0) DebugPrimitive::Instance().AddSphere(position, parryCooldownCount, { 1,0,0,1 });
+	if (360 < angle.y || angle.y < -360)angle.y += angle.y > 0 ? -360 : 360;
 }
 
 void StPlayer::UpdateOption() {
-	//optionAngle += Timer::Instance().DeltaTime();
+	optionAngle += Timer::Instance().DeltaTime();
 
 	for (int i = 0; i < option.size(); i++) {
 		XMVECTOR playerPosVec = XMLoadFloat3(&position);
 		XMFLOAT3 optionPos = option[i]->GetPosition();
 		float angle = optionAngle + (XM_2PI / option.size() * i);
 
-		//optionAngle += Timer::Instance().DeltaTime();
 		XMStoreFloat3(&optionPos, (playerPosVec + XMVector3Transform(XMVectorSet(0, 0, 1, 0), XMMatrixRotationY(angle)) * data.optionRange));
 
 		option[i]->SetPosition(optionPos);
@@ -445,7 +349,7 @@ void StPlayer::UpdateOption() {
 }
 
 void StPlayer::AddOption() {
-	StPlayerOption* o = new StPlayerOption(childModel);
+	StPlayerOption* o = new StPlayerOption(childModel,optionData);
 	option.emplace_back(o);
 	SpinningTopPlayerManager::Instance().Register(o);
 }

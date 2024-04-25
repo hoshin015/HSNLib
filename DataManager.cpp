@@ -56,7 +56,7 @@ void DataManager::SaveEnemyData(EnemyData* pData)
 	enemyFile.close();
 }
 
-void DataManager::LoadPlayerData(PlayerData* pData)
+void DataManager::LoadPlayerData(PlayerData* pData, size_t arraySize)
 {
 	// enemyData ‚Ìƒ[ƒh
 	std::ifstream playerFile("Data/Json/player.json");
@@ -64,57 +64,62 @@ void DataManager::LoadPlayerData(PlayerData* pData)
 		nlohmann::json j;
 		playerFile >> j;
 
-		pData->radius = j["Radius"];
+		for (size_t i = 0; i < arraySize; i++) {
 
-		pData->mobility = j["Mobility"];
-		pData->accel = j["Accel"];
-		pData->slow = j["Slow"];
+			pData[i].radius = j[i]["Radius"];
 
-		pData->rotateInitialSpeed = j["RotateInitialSpeed"];
-		pData->rotateMaxSpeed = j["RotateMaxSpeed"];
+			pData[i].mobility = j[i]["Mobility"];
+			pData[i].accel = j[i]["Accel"];
+			pData[i].slow = j[i]["Slow"];
 
-		pData->parryRadius = j["ParryRadius"];
-		pData->parryDamageMaxRadius = j["ParryDamageMaxRadius"];
-		pData->parryDamageIncrementSpeed = j["ParryDamageIncrementSpeed"];
-		pData->parryCooldown = j["ParryCooldown"];
-		pData->parryKnockback = j["ParryKnockback"];
-		pData->parryGaugeRadius = j["ParryGaugeRadius"];
-		pData->parryGaugeConsumed = j["ParryGaugeConsumed"];
-		pData->parryGaugeDamageMaxRadius = j["ParryGaugeDamageMaxRadius"];
+			pData[i].rotateInitialSpeed = j[i]["RotateInitialSpeed"];
+			pData[i].rotateMaxSpeed = j[i]["RotateMaxSpeed"];
 
-		pData->damagedKnockback = j["DamagedKnockback"];
+			pData[i].parryRadius = j[i]["ParryRadius"];
+			pData[i].parryDamageMaxRadius = j[i]["ParryDamageMaxRadius"];
+			pData[i].parryDamageIncrementSpeed = j[i]["ParryDamageIncrementSpeed"];
+			pData[i].parryCooldown = j[i]["ParryCooldown"];
+			pData[i].parryKnockback = j[i]["ParryKnockback"];
+			pData[i].parryGaugeRadius = j[i]["ParryGaugeRadius"];
+			pData[i].parryGaugeConsumed = j[i]["ParryGaugeConsumed"];
+			pData[i].parryGaugeDamageMaxRadius = j[i]["ParryGaugeDamageMaxRadius"];
 
-		pData->optionRange = j["OptionRange"];
+			pData[i].damagedKnockback = j[i]["DamagedKnockback"];
+
+			pData[i].optionRange = j[i]["OptionRange"];
+		}
 	}
 	else {
-		*pData = PlayerData();
+		for (size_t i = 0; i < arraySize; i++) pData[i] = PlayerData();
 	}
 	playerFile.close();
 }
 
-void DataManager::SavePlayerData(PlayerData* pData)
-{
+void DataManager::SavePlayerData(PlayerData* pData, size_t arraySize) {
 	using json = nlohmann::json;
 	json playerJson;
 
-	playerJson += {
-		{"Radius", pData->radius },
-		{"Mobility",pData->mobility},
-		{"Accel",pData->accel},
-		{"Slow",pData->slow},
-		{"RotateInitialSpeed",pData->rotateInitialSpeed },
-		{"RotateMaxSpeed",pData->rotateMaxSpeed },
-		{"ParryRadius",pData->parryRadius },
-		{"ParryDamageMaxRadius",pData->parryDamageMaxRadius },
-		{"ParryDamageIncrementSpeed",pData->parryDamageIncrementSpeed },
-		{"ParryCooldown",pData->parryCooldown },
-		{"ParryKnockback",pData->parryKnockback },
-		{"ParryGaugeRadius",pData->parryGaugeRadius },
-		{"ParryGaugeConsumed",pData->parryGaugeConsumed },
-		{"ParryGaugeDamageMaxRadius",pData->parryGaugeDamageMaxRadius },
-		{"DamagedKnockback",pData->damagedKnockback },
-		{"OptionRange",pData->optionRange },
-	};
+	for (size_t i = 0; i < arraySize; i++) {
+
+		playerJson += {
+			{"Radius", pData[i].radius },
+			{ "Mobility",pData[i].mobility },
+			{ "Accel",pData[i].accel },
+			{ "Slow",pData[i].slow },
+			{ "RotateInitialSpeed",pData[i].rotateInitialSpeed },
+			{ "RotateMaxSpeed",pData[i].rotateMaxSpeed },
+			{ "ParryRadius",pData[i].parryRadius },
+			{ "ParryDamageMaxRadius",pData[i].parryDamageMaxRadius },
+			{ "ParryDamageIncrementSpeed",pData[i].parryDamageIncrementSpeed },
+			{ "ParryCooldown",pData[i].parryCooldown },
+			{ "ParryKnockback",pData[i].parryKnockback },
+			{ "ParryGaugeRadius",pData[i].parryGaugeRadius },
+			{ "ParryGaugeConsumed",pData[i].parryGaugeConsumed },
+			{ "ParryGaugeDamageMaxRadius",pData[i].parryGaugeDamageMaxRadius },
+			{ "DamagedKnockback",pData[i].damagedKnockback },
+			{ "OptionRange",pData[i].optionRange },
+		};
+	}
 
 	std::ofstream playerFile("Data/Json/player.json");
 	playerFile << std::setw(4) << playerJson;

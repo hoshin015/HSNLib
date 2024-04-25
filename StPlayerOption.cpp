@@ -9,8 +9,9 @@
 #include "Collision.h"
 #include "SpinningTopPlayerManager.h"
 
-StPlayerOption::StPlayerOption(std::shared_ptr<SkinnedMesh> model) {
+StPlayerOption::StPlayerOption(std::shared_ptr<SkinnedMesh> model, PlayerData& data) {
 	this->model = model;
+	this->data = data;
 	isPlayer = false;
 	SetScale({ .5f,.5f,.5f });
 
@@ -27,7 +28,8 @@ StPlayerOption::~StPlayerOption() {}
 
 void StPlayerOption::Update() {
 	if (!parent) return;
-	//angle.y += 360 * Timer::Instance().DeltaTime();
+	angle.y += 360 * Timer::Instance().DeltaTime();
+	UpdateAttack();
 
 	// ‘¬—ÍXVˆ—
 	UpdateVelocity();
@@ -44,4 +46,6 @@ void StPlayerOption::Render() {
 	model->Render(transform, { 0,1,0,1 }, &keyFrame);
 }
 
-void StPlayerOption::DrawDebugGui() {}
+void StPlayerOption::DrawDebugGui() {
+	RenderDebugPrimitive();
+}
