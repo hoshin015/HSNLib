@@ -7,6 +7,7 @@
 WaveScript* waveScript[] =
 {
 	wave1Script,
+	wave2Script,
 	nullptr,
 };
 

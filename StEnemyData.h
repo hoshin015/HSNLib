@@ -51,7 +51,7 @@ struct EnemyData
 	float waitChargeAttackTime;		// chargeAttack‚Ì‘Ò‚¿ŽžŠÔ
 };
 
-extern EnemyData enemyData[];
+extern EnemyData enemyData[ENEMY_NUM];
 
 struct EnemySpawnErea
 {
@@ -59,4 +59,4 @@ struct EnemySpawnErea
 	float radius = 3;
 };
 
-extern EnemySpawnErea enemySpawnErea[];
+extern EnemySpawnErea enemySpawnErea[EREA_NUM];

@@ -23,7 +23,7 @@ void SceneSpinningTop::Initialize()
 
 	float x = 0;
 	float z = 0;
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 1; i++)
 	{
 		StEnemy* enemy;
 		enemy = (i % 2 == 0) ? new_ StEnemy(ENEMY_0) : new_ StEnemy(ENEMY_1);
@@ -53,7 +53,7 @@ void SceneSpinningTop::Initialize()
 	StageContext* stageMain = new_ StageContext();
 	stageManager.Register(stageMain);
 
-#if 0
+#if 1
 	// ƒ‰ƒCƒg‰Šú‰»
 	Light* directionLight = new Light(LightType::Directional);
 	directionLight->SetDirection(DirectX::XMFLOAT3(0.5, -1, -1));
@@ -188,7 +188,7 @@ void SceneSpinningTop::Render()
 	skyMap->Render();
 
 	gfx.SetDepthStencil(DEPTHSTENCIL_STATE::ZT_ON_ZW_ON);
-	gfx.SetRasterizer(static_cast<RASTERIZER_STATE>(RASTERIZER_STATE::CLOCK_FALSE_SOLID));
+	gfx.SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);
 
 	Graphics::SceneConstants data{};
 	XMMATRIX viewProjection = XMLoadFloat4x4(&Camera::Instance().GetView()) * XMLoadFloat4x4(&Camera::Instance().GetProjection());

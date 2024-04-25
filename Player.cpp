@@ -455,7 +455,7 @@ void Player::CollisionNodeVsEnemies()
 		if (currentKeyFrame < startFrame || currentKeyFrame > endFrame) continue;
 
 		DirectX::XMFLOAT4 color = model->animationClips.at(currentAnimationIndex).spheres.at(i).color;
-
+		
 		DirectX::XMFLOAT3 playerCollisionPosition = { 0,0,0 };
 		float playerRadius = model->animationClips.at(currentAnimationIndex).spheres.at(i).radius;
 
