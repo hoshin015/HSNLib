@@ -73,6 +73,12 @@
     <Filter Include="ヘッダー ファイル\Wave">
       <UniqueIdentifier>{d692142a-2828-4453-a32a-32afacbe4e2e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\MeshEffect">
+      <UniqueIdentifier>{fee7ce04-6d0f-4eeb-9c26-e23b80bf2213}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\MeshEffect">
+      <UniqueIdentifier>{3601d1cc-9052-4417-b252-bd8863c0424a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Library\Graphics\Graphics.cpp">
@@ -368,6 +374,12 @@
     </ClCompile>
     <ClCompile Include="SceneWave.cpp">
       <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshEffect.cpp">
+      <Filter>ソース ファイル\MeshEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="ParryEffect.cpp">
+      <Filter>ソース ファイル\MeshEffect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -689,6 +701,12 @@
     <ClInclude Include="SceneWave.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="MeshEffect.h">
+      <Filter>ヘッダー ファイル\MeshEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="ParryEffect.h">
+      <Filter>ヘッダー ファイル\MeshEffect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Library\Icon\Icon.rc">
@@ -792,6 +810,12 @@
     <FxCompile Include="Library\Shader\BloomFinalPass_PS.hlsl">
       <Filter>シェーダーファイル</Filter>
     </FxCompile>
+    <FxCompile Include="Library\Shader\ParryEffect_PS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\ParryEffect_VS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Library\Shader\Primitive2D.hlsli">
@@ -843,6 +867,9 @@
       <Filter>シェーダーファイル</Filter>
     </None>
     <None Include="Library\Shader\ShadowmapFunctions.hlsli">
+      <Filter>シェーダーファイル</Filter>
+    </None>
+    <None Include="Library\Shader\ParryEffect.hlsli">
       <Filter>シェーダーファイル</Filter>
     </None>
   </ItemGroup>

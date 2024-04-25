@@ -185,7 +185,7 @@ void UVScrollSprite::Render(DirectX::XMFLOAT2 uvScrollValue, float dx, float dy,
 	// --- < 定数バッファの更新バインド > ---
 	Constants data = { uvScrollValue };
 	gfx->deviceContext->UpdateSubresource(constantBuffer.Get(), 0, 0, &data, 0, 0);
-	gfx->deviceContext->VSSetConstantBuffers(0, 1, constantBuffer.GetAddressOf());
+	gfx->deviceContext->VSSetConstantBuffers(7, 1, constantBuffer.GetAddressOf());
 
 	//--- < プリミティブの描画 > ---
 	gfx->deviceContext->Draw(4, 0);

@@ -2,6 +2,8 @@
 #include "SpinningTopEnemy.h"
 #include "StEnemyData.h"
 
+#include "ParryEffect.h"
+
 class StEnemy : public SpinningTopEnemy
 {
 public:
@@ -31,4 +33,6 @@ protected:
 private:
 	float radius = 0.5f;
 	float height = 1.0f;
+
+	std::unique_ptr<ParryEffect> pF;
 };

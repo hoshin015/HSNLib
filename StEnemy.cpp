@@ -11,6 +11,8 @@
 
 StEnemy::StEnemy(int enemyKind)
 {	
+	pF = std::make_unique<ParryEffect>();
+
 	this->enemyKind = enemyKind;
 
 	model = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemy01/Main/StEnemy01Main.fbx");
@@ -64,13 +66,20 @@ void StEnemy::Render(bool drawShadow)
 	gfx.SetRasterizer(static_cast<RASTERIZER_STATE>(RASTERIZER_STATE::CLOCK_FALSE_SOLID));
 	model->Render(transform, { 1,1,1,1 }, &keyFrame);
 
-	gfx.SetBlend(BLEND_STATE::ADD);
-	gfx.SetRasterizer(static_cast<RASTERIZER_STATE>(RASTERIZER_STATE::CLOCK_FALSE_CULL_NONE));
-	if (!drawShadow)
-		paryEffect->Render(transform, { 1,1,1,1 }, &keyFrame);
+	//gfx.SetBlend(BLEND_STATE::ADD);
+	//gfx.SetRasterizer(static_cast<RASTERIZER_STATE>(RASTERIZER_STATE::CLOCK_FALSE_CULL_NONE));
+	//if (!drawShadow)
+	//	paryEffect->Render(transform, { 1,1,1,1 }, &keyFrame);
+	//
+	//gfx.SetBlend(BLEND_STATE::ALPHA	);
+	//gfx.SetRasterizer(static_cast<RASTERIZER_STATE>(RASTERIZER_STATE::CLOCK_FALSE_SOLID));
 
-	gfx.SetBlend(BLEND_STATE::ALPHA	);
-	gfx.SetRasterizer(static_cast<RASTERIZER_STATE>(RASTERIZER_STATE::CLOCK_FALSE_SOLID));
+	if (!drawShadow)
+	{
+		pF->SetPosition({ GetPosition().x, 0.2f, GetPosition().z });
+		pF->Update();
+		pF->Render();
+	}
 }
 
 // デバッグプリミティブ描画

@@ -61,7 +61,6 @@ void SceneSpinningTop::Initialize()
 	//directionLight->SetColor(DirectX::XMFLOAT4(0, 0, 0, 1));
 	LightManager::Instance().Register(directionLight);
 	//LightManager::Instance().SetAmbientColor({0,0,0,1});
-
 #else
 	{
 		// ƒ‰ƒCƒg‰Šú‰»
