@@ -2,11 +2,15 @@
 
 void SpinningTopPlayerManager::Update() {
 	// 更新処理
-	for (StPlayerBase* player : players) {
-		if (player->IsPlayer()) {
-			auto option = std::find_if(players.begin(), players.end(), [](StPlayerBase* option) {return !option->IsPlayer(); });
 
-		}
+	if (!adds.empty()) {
+		players.insert(players.end(), adds.begin(), adds.end());
+		adds.clear();
+	}
+
+	//当たり判定に入っている敵をリストに入れている
+	StPlayerBase::UpdateEDistance(players);
+	for (StPlayerBase* player : players) {
 		player->Update();
 	}
 
@@ -33,7 +37,8 @@ void SpinningTopPlayerManager::Render() {
 
 // プレイヤー登録
 void SpinningTopPlayerManager::Register(StPlayerBase* player) {
-	players.emplace_back(player);
+	adds.emplace_back(player);
+	//players.emplace_back(player);
 }
 
 

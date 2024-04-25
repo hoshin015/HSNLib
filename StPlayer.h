@@ -23,10 +23,13 @@ private:
 	void UpdateAttack();
 	void UpdateDamaged();
 
+	void UpdateOption();
+	void AddOption();
+	void EraseOption();
+
 	void RenderDebugPrimitive();
 
 protected:
-	void Input() override;
 	void OnLanding() override;
 	void OnDamaged() override;
 	void OnDead() override;
@@ -69,7 +72,9 @@ private:
 
 	//Žq‹@
 	std::shared_ptr<SkinnedMesh> childModel;
-	//std::vector<std::shared_ptr<StPlayerOption>> option;
+	std::vector<StPlayerOption*> option;
+
+	float optionAngle = 0;
 
 	//“ü—Í
 	//using InputVariant = std::variant<bool, int, float, DirectX::XMFLOAT2>;

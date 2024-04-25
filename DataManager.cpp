@@ -83,6 +83,8 @@ void DataManager::LoadPlayerData(PlayerData* pData)
 		pData->parryGaugeDamageMaxRadius = j["ParryGaugeDamageMaxRadius"];
 
 		pData->damagedKnockback = j["DamagedKnockback"];
+
+		pData->optionRange = j["OptionRange"];
 	}
 	else {
 		*pData = PlayerData();
@@ -111,7 +113,9 @@ void DataManager::SavePlayerData(PlayerData* pData)
 		{"ParryGaugeConsumed",pData->parryGaugeConsumed },
 		{"ParryGaugeDamageMaxRadius",pData->parryGaugeDamageMaxRadius },
 		{"DamagedKnockback",pData->damagedKnockback },
+		{"OptionRange",pData->optionRange },
 	};
+
 	std::ofstream playerFile("Data/Json/player.json");
 	playerFile << std::setw(4) << playerJson;
 	playerFile.close();

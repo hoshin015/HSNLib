@@ -7,10 +7,13 @@ public:
 	StPlayerOption(std::shared_ptr<SkinnedMesh> model);
 	~StPlayerOption() override;
 
-	void Update();
-	void Render();
-	void DrawDebugGui();
+	void Update() override;
+	void Render() override;
+	void DrawDebugGui() override;
 
 private:
+
+private:
+	StPlayerBase* parent;
 
 };

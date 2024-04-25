@@ -42,6 +42,7 @@ public:
 
 private:
 	std::vector<StPlayerBase*> players;
+	std::vector<StPlayerBase*> adds;
 	std::set<StPlayerBase*> removes;
 };
 

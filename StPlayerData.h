@@ -25,4 +25,7 @@ struct PlayerData {
 
 	//ダメージ
 	float damagedKnockback = 15;
+
+	//子機
+	float optionRange = 1;
 };

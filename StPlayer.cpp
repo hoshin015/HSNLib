@@ -7,6 +7,7 @@
 #include "Library/3D/Camera.h"
 
 #include "SpinningTopEnemyManager.h"
+#include "SpinningTopPlayerManager.h"
 #include "Obstacle.h"
 #include "Collision.h"
 #include "DataManager.h"
@@ -24,7 +25,7 @@ static const char* u8cast(const char* x) { return x; }
 
 StPlayer::StPlayer() {
 	model = ResourceManager::Instance().LoadModelResource("Data/Fbx/StPlayer/StPlayer.fbx");
-	childModel = model;
+	childModel = ResourceManager::Instance().LoadModelResource("Data/Fbx/StPlayerOption/koki_all.fbx");
 	DataManager::Instance().LoadPlayerData(&data);
 
 	radius = data.radius;
@@ -40,11 +41,11 @@ void StPlayer::Update() {
 
 	Camera::Instance().SetTarget(position);
 
-	//UpdateEDistance(max(max(max(radius, data.parryRadius), parryDamageRadius), data.parryGaugeRadius));
 	UpdateRotate();
 	UpdateMove();
 	UpdateAttack();
 	UpdateDamaged();
+	UpdateOption();
 
 	// 速力更新処理
 	UpdateVelocity();
@@ -58,7 +59,7 @@ void StPlayer::Update() {
 }
 
 void StPlayer::Render() {
-	model->Render(transform, { 0,1,0,1 }, &keyFrame);
+	model->Render(transform, { 1,1,1,1 }, &keyFrame);
 }
 
 void StPlayer::DrawDebugGui() {
@@ -113,7 +114,15 @@ void StPlayer::DrawDebugGui() {
 			}
 		}
 
+		if (ImGui::CollapsingHeader(u8cast(u8"子機プロパティ"), ImGuiTreeNodeFlags_DefaultOpen)) {
+			if (ImGui::Button(u8cast(u8"追加"))) AddOption();
+			if (ImGui::Button(u8cast(u8"削除"))) EraseOption();
+
+			ImGui::DragFloat(u8cast(u8"距離"), &data.optionRange, 0.1f);
+		}
+
 		if (ImGui::CollapsingHeader(u8cast(u8"デバック"), ImGuiTreeNodeFlags_DefaultOpen)) {
+			ImGui::DragFloat("speed", &rotateSpeed, .1f);
 			if (ImGui::CollapsingHeader(u8cast(u8"入力"), ImGuiTreeNodeFlags_DefaultOpen)) {
 				XMFLOAT2 outDebugFloat2;
 				float outDebugFloat;
@@ -209,32 +218,6 @@ void StPlayer::DrawDebugGui() {
 		}
 		ImGui::End();
 	}
-}
-
-void StPlayer::Input() {
-	InputManager& im = InputManager::Instance();
-
-	//Move
-	XMFLOAT2 movefloat2;
-	movefloat2.x = im.GetKeyPress(Keyboard::A) - im.GetKeyPress(Keyboard::D);
-	movefloat2.y = im.GetKeyPress(Keyboard::S) - im.GetKeyPress(Keyboard::W);
-	XMStoreFloat2(&movefloat2, XMVector2Normalize(XMLoadFloat2(&movefloat2)));
-
-	if (im.IsGamePadConnected()) {
-		movefloat2.x = -im.GetThumSticksLeftX();
-		movefloat2.y = -im.GetThumSticksLeftY();
-	}
-
-	inputMap["Move"] = movefloat2;
-
-	//Attack
-	bool attack = im.GetKeyPressed(Keyboard::J) || im.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a);
-	attack = attack && parryCooldownCount <= 0;
-	inputMap["Attack"] = attack;
-
-	bool subAttack = im.GetKeyPressed(Keyboard::K) || im.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::b);
-	subAttack = subAttack && (rotateSpeed > data.parryGaugeConsumed);
-	inputMap["SubAttack"] = subAttack;
 }
 
 void StPlayer::UpdateMove() {
@@ -421,7 +404,6 @@ void StPlayer::UpdateDamaged() {
 
 }
 
-
 void StPlayer::UpdateRotate() {
 	static bool beforeState = false;
 	static bool beforeStateGauge = false;
@@ -445,6 +427,33 @@ void StPlayer::RenderDebugPrimitive() {
 	if(parry) DebugPrimitive::Instance().AddSphere(position, parryDamageRadius, { 0,1,0,1 });
 	if(parryGauge) DebugPrimitive::Instance().AddSphere(position, parryDamageRadius, { 0,1,1,1 });
 	if(parryCooldownCount > 0) DebugPrimitive::Instance().AddSphere(position, parryCooldownCount, { 1,0,0,1 });
+}
+
+void StPlayer::UpdateOption() {
+	//optionAngle += Timer::Instance().DeltaTime();
+
+	for (int i = 0; i < option.size(); i++) {
+		XMVECTOR playerPosVec = XMLoadFloat3(&position);
+		XMFLOAT3 optionPos = option[i]->GetPosition();
+		float angle = optionAngle + (XM_2PI / option.size() * i);
+
+		//optionAngle += Timer::Instance().DeltaTime();
+		XMStoreFloat3(&optionPos, (playerPosVec + XMVector3Transform(XMVectorSet(0, 0, 1, 0), XMMatrixRotationY(angle)) * data.optionRange));
+
+		option[i]->SetPosition(optionPos);
+	}
+}
+
+void StPlayer::AddOption() {
+	StPlayerOption* o = new StPlayerOption(childModel);
+	option.emplace_back(o);
+	SpinningTopPlayerManager::Instance().Register(o);
+}
+
+void StPlayer::EraseOption() {
+	if (option.empty())return;
+	SpinningTopPlayerManager::Instance().Remove(option.back());
+	option.pop_back();
 }
 
 void StPlayer::OnLanding() {}

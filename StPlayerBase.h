@@ -1,6 +1,7 @@
 #pragma once
 #include <variant>
 #include <map>
+#include <vector>
 
 #include "SpinningTopBase.h"
 #include "SpinningTopEnemyManager.h"
@@ -11,10 +12,11 @@ public:
 	virtual void Update() = 0;
 	virtual void Render() = 0;
 	virtual void DrawDebugGui() {}
-	static void UpdateEDistance(const float& radius ,DirectX::XMFLOAT3& position);
+	static void UpdateEDistance(const std::vector<StPlayerBase*>& players);
 
 	bool IsCoolDown() { return parryCooldownCount <= 0; }
 	bool IsPlayer() { return isPlayer; }
+	void Input();
 
 private:
 	//void UpdateRotate();
@@ -24,7 +26,6 @@ private:
 	//void RenderDebugPrimitive();
 
 protected:
-	virtual void Input() {}
 
 	//パラメータは上に,プロパティは下に書いてる
 	inline static std::vector<SpinningTopEnemy*> nearEnemy;
@@ -33,13 +34,9 @@ protected:
 	bool isPlayer;
 
 	//移動
-	//float mobility;
-	//float accel;
-	//float slow;
 
 	//回転
 	float rotateSpeed;
-	//float rotateMaxSpeed;
 
 	//パリィ
 	bool parry = false;
@@ -49,18 +46,8 @@ protected:
 	bool parryGauge = false;
 	float parryGaugeDamageRadius = 0;
 
-	//float parryRadius;
-	//float parryDamageMaxRadius;
-	//float parryDamageIncrementSpeed;
-	//float parryCooldown;
-	//float parryKnockback;
-
-	//float parryGaugeRadius;
-	//float parryGaugeConsumed;
-	//float parryGaugeDamageMaxRadius;
-
 	//ダメージ
-	//float damagedKnockback;
+
 
 
 	//入力
