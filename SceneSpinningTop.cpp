@@ -46,8 +46,6 @@ void SceneSpinningTop::Initialize()
 		ObstacleManager::Instance().Register(obstacle);
 	}
 	
-
-
 	// ステージ初期化
 	StageManager& stageManager = StageManager::Instance();
 	StageContext* stageMain = new_ StageContext();

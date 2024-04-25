@@ -20,8 +20,8 @@ public:
 	}
 
 public:
-	int windowWidth = 1280;
-	int windowHeight = 720;
+	int windowWidth = 1280;	//1280
+	int windowHeight = 720;	//720
 
 private:
 	HWND hwnd;
