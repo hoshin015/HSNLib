@@ -45,8 +45,6 @@ public:
 
 	// レイキャスト
 	bool RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit);
-	
-
 
 private:
 	// 行列更新関数
