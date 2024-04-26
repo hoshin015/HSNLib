@@ -709,6 +709,7 @@
     </ClInclude>
     <ClInclude Include="StPlayerBase.h">
       <Filter>ヘッダー ファイル\SpinningTopBase</Filter>
+    </ClInclude>
     <ClInclude Include="SceneSpawnEditor.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
