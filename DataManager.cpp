@@ -6,10 +6,10 @@
 #include <nlohmann/json.hpp>
 
 
-// “Gƒ[ƒh
+// æ•µãƒ­ãƒ¼ãƒ‰
 void DataManager::LoadEnemyData(EnemyData* pData)
 {
-	// enemyData ‚Ìƒ[ƒh
+	// enemyData ã®ãƒ­ãƒ¼ãƒ‰
 	std::ifstream enemyFile("Data/Json/enemy.json");
 	if (enemyFile.good())
 	{
@@ -42,10 +42,10 @@ void DataManager::LoadEnemyData(EnemyData* pData)
 	}
 }
 
-// “GƒZ[ƒu
+// æ•µã‚»ãƒ¼ãƒ–
 void DataManager::SaveEnemyData(EnemyData* pData)
 {
-	// enemyData ‚ÌƒZ[ƒu
+	// enemyData ã®ã‚»ãƒ¼ãƒ–
 	using json = nlohmann::json;
 	json enemyJson;
 
@@ -78,10 +78,80 @@ void DataManager::SaveEnemyData(EnemyData* pData)
 	enemyFile.close();
 }
 
-// ƒXƒ|[ƒ“ƒGƒŠƒAƒ[ƒh
+void DataManager::LoadPlayerData(PlayerData* pData, size_t arraySize)
+{
+	// enemyData ã®ãƒ­ãƒ¼ãƒ‰
+	std::ifstream playerFile("Data/Json/player.json");
+	if (playerFile.good()) {
+		nlohmann::json j;
+		playerFile >> j;
+
+		for (size_t i = 0; i < arraySize; i++) {
+
+			pData[i].radius = j[i]["Radius"];
+
+			pData[i].mobility = j[i]["Mobility"];
+			pData[i].accel = j[i]["Accel"];
+			pData[i].slow = j[i]["Slow"];
+
+			pData[i].rotateInitialSpeed = j[i]["RotateInitialSpeed"];
+			pData[i].rotateMaxSpeed = j[i]["RotateMaxSpeed"];
+
+			pData[i].parryRadius = j[i]["ParryRadius"];
+			pData[i].parryDamageMaxRadius = j[i]["ParryDamageMaxRadius"];
+			pData[i].parryDamageIncrementSpeed = j[i]["ParryDamageIncrementSpeed"];
+			pData[i].parryCooldown = j[i]["ParryCooldown"];
+			pData[i].parryKnockback = j[i]["ParryKnockback"];
+			pData[i].parryGaugeRadius = j[i]["ParryGaugeRadius"];
+			pData[i].parryGaugeConsumed = j[i]["ParryGaugeConsumed"];
+			pData[i].parryGaugeDamageMaxRadius = j[i]["ParryGaugeDamageMaxRadius"];
+
+			pData[i].damagedKnockback = j[i]["DamagedKnockback"];
+
+			pData[i].optionRange = j[i]["OptionRange"];
+		}
+	}
+	else {
+		for (size_t i = 0; i < arraySize; i++) pData[i] = PlayerData();
+	}
+	playerFile.close();
+}
+
+void DataManager::SavePlayerData(PlayerData* pData, size_t arraySize) {
+	using json = nlohmann::json;
+	json playerJson;
+
+	for (size_t i = 0; i < arraySize; i++) {
+
+		playerJson += {
+			{"Radius", pData[i].radius },
+			{ "Mobility",pData[i].mobility },
+			{ "Accel",pData[i].accel },
+			{ "Slow",pData[i].slow },
+			{ "RotateInitialSpeed",pData[i].rotateInitialSpeed },
+			{ "RotateMaxSpeed",pData[i].rotateMaxSpeed },
+			{ "ParryRadius",pData[i].parryRadius },
+			{ "ParryDamageMaxRadius",pData[i].parryDamageMaxRadius },
+			{ "ParryDamageIncrementSpeed",pData[i].parryDamageIncrementSpeed },
+			{ "ParryCooldown",pData[i].parryCooldown },
+			{ "ParryKnockback",pData[i].parryKnockback },
+			{ "ParryGaugeRadius",pData[i].parryGaugeRadius },
+			{ "ParryGaugeConsumed",pData[i].parryGaugeConsumed },
+			{ "ParryGaugeDamageMaxRadius",pData[i].parryGaugeDamageMaxRadius },
+			{ "DamagedKnockback",pData[i].damagedKnockback },
+			{ "OptionRange",pData[i].optionRange },
+		};
+	}
+
+	std::ofstream playerFile("Data/Json/player.json");
+	playerFile << std::setw(4) << playerJson;
+	playerFile.close();
+}
+
+// ã‚¹ãƒãƒ¼ãƒ³ã‚¨ãƒªã‚¢ãƒ­ãƒ¼ãƒ‰
 void DataManager::LoadSpawnEreaData()
 {
-	// spawnEreaData ‚Ìƒ[ƒh
+	// spawnEreaData ã®ãƒ­ãƒ¼ãƒ‰
 	std::ifstream spawnEreaFile("Data/Json/spawnErea.json");
 	if (spawnEreaFile.good())
 	{
@@ -100,10 +170,10 @@ void DataManager::LoadSpawnEreaData()
 	}
 }
 
-// ƒXƒ|[ƒ“ƒGƒŠƒAƒZ[ƒu
+// ã‚¹ãƒãƒ¼ãƒ³ã‚¨ãƒªã‚¢ã‚»ãƒ¼ãƒ–
 void DataManager::SaveSpawnEreaData()
 {
-	// spawnEreaData ‚ÌƒZ[ƒu
+	// spawnEreaData ã®ã‚»ãƒ¼ãƒ–
 	using json = nlohmann::json;
 	json spawnJson;
 

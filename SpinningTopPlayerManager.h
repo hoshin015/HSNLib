@@ -23,10 +23,10 @@ public:
 	void Render();
 
 	// プレイヤー登録
-	void Register(StPlayer* player);
+	void Register(StPlayerBase* player);
 
 	// プレイヤー削除
-	void Remove(StPlayer* player);
+	void Remove(StPlayerBase* player);
 
 	// プレイヤー全削除
 	void Clear();
@@ -35,13 +35,14 @@ public:
 	int GetPlayerCount() const { return static_cast<int>(players.size()); }
 
 	// プレイヤー取得
-	StPlayer* GetPlayer(int index) { return players.at(index); }
+	StPlayerBase* GetPlayer(int index) { return players.at(index); }
 
 	// デバッグ用GUI描画
 	void DrawDebugGui();
 
 private:
-	std::vector<StPlayer*> players;
-	std::set<StPlayer*> removes;
+	std::vector<StPlayerBase*> players;
+	std::vector<StPlayerBase*> adds;
+	std::set<StPlayerBase*> removes;
 };
 

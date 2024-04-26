@@ -1,5 +1,6 @@
 #pragma once
 #include "StEnemyData.h"
+#include "StPlayerData.h"
 
 class DataManager
 {
@@ -14,14 +15,16 @@ public:
 		return instance;
 	}
 
-	// 揋儘乕僪
+	// 鏁点儹銉笺儔
 	void LoadEnemyData(EnemyData* pData);
+	void LoadPlayerData(PlayerData* pData ,size_t arraySize);
 
-	// 揋僙乕僽
+	// 鏁点偦銉笺儢
 	void SaveEnemyData(EnemyData* pData);
+	void SavePlayerData(PlayerData* pData ,size_t arraySize);
 
-	// 僗億乕儞僄儕傾儘乕僪
+	// 銈广儩銉笺兂銈ㄣ儶銈€儹銉笺儔
 	void LoadSpawnEreaData();
-	// 僗億乕儞僄儕傾僙乕僽
+	// 銈广儩銉笺兂銈ㄣ儶銈€偦銉笺儢
 	void SaveSpawnEreaData();
 };

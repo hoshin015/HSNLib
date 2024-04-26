@@ -2,85 +2,94 @@
 #include <variant>
 #include <map>
 
-#include "SpinningTopBase.h"
+#include "StPlayerBase.h"
 #include "SpinningTopEnemyManager.h"
+#include "StPlayerOption.h"
+#include "StPlayerData.h"
 
-class StPlayer :public SpinningTopBase
+class StPlayer :public StPlayerBase
 {
 public:
 	StPlayer();
 	~StPlayer() override;
 
-	void Update();
-	void Render();
-	void DrawDebugGui();
-
-	bool IsCoolDown() { return parryCooldownCount <= 0; }
+	void Update() override;
+	void Render() override;
+	void DrawDebugGui() override;
 
 private:
-	void Input();
-	void UpdateEDistance();
 	void UpdateRotate();
 	void UpdateMove();
-	void UpdateAttack();
-	void UpdateDamage();
+	void UpdateDamaged();
 
-	void RenderDebugPrimitive();
-
+	void UpdateOption();
+	void AddOption();
+	void EraseOption();
 protected:
 	void OnLanding() override;
 	void OnDamaged() override;
 	void OnDead() override;
 
 private:
-	//ƒpƒ‰ƒ[ƒ^‚Íã‚É,ƒvƒƒpƒeƒB‚Í‰º‚É‘‚¢‚Ä‚é
-	std::vector<SpinningTopEnemy*> nearEnemy;
+	//ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã¯ä¸Šã«,ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã¯ä¸‹ã«æ›¸ã„ã¦ã‚‹
+	//std::vector<SpinningTopEnemy*> nearEnemy;
 
-	//ˆÚ“®
-	float mobility;
-	float accel;
-	float slow;
+	//PlayerData data;
 
-	//‰ñ“]
-	float rotateSpeed;
-	float rotateMaxSpeed;
+	//ç§»å‹•
+	//float mobility;
+	//float accel;
+	//float slow;
 
-	//ƒpƒŠƒB
-	bool parry = false;
-	float parryDamageRadius = 0;
-	float parryCooldownCount = 0;
+	//å›è»¢
+	//float rotateSpeed;
+	//float rotateMaxSpeed;
 
-	bool parryGauge = false;
-	float parryGaugeDamageRadius = 0;
+	//ãƒ‘ãƒªã‚£
+	//bool parry = false;
+	//float parryDamageRadius = 0;
+	//float parryCooldownCount = 0;
 
-	float parryRadius;
-	float parryDamageMaxRadius;
-	float parryDamageIncrementSpeed;
-	float parryCooldown;
-	float parryKnockback;
+	//bool parryGauge = false;
+	//float parryGaugeDamageRadius = 0;
 
-	float parryGaugeRadius;
-	float parryGaugeConsumed;
-	float parryGaugeDamageMaxRadius;
+	//float parryRadius;
+	//float parryDamageMaxRadius;
+	//float parryDamageIncrementSpeed;
+	//float parryCooldown;
+	//float parryKnockback;
 
-	//ƒ_ƒ[ƒW
-	float damagedKnockback;
+	//float parryGaugeRadius;
+	//float parryGaugeConsumed;
+	//float parryGaugeDamageMaxRadius;
 
-	//q‹@
+	//ãƒ€ãƒ¡ãƒ¼ã‚¸
+	//float damagedKnockback;
 
-	//“ü—Í
-	using InputVariant = std::variant<bool, int, float, DirectX::XMFLOAT2>;
-	std::map<std::string, InputVariant> inputMap;
+	//å­æ©Ÿ
+	std::shared_ptr<SkinnedMesh> childModel;
+	std::vector<StPlayerOption*> option;
 
-	template<typename T>
-	const T& GetInputMap(std::string str) {
-		T* result = std::get_if<T>(&inputMap[str]);
-		return result ? *result : T();
-	}
+	float optionAngle = 0;
 
-	//ƒfƒoƒbƒO—p
-	using debugVariant = std::variant<bool, int, float ,DirectX::XMFLOAT2>;
-	std::map<std::string, debugVariant> debugValue;
+	//å…¥åŠ›
+	//using InputVariant = std::variant<bool, int, float, DirectX::XMFLOAT2>;
+	//std::map<std::string, InputVariant> inputMap;
+
+	//template<typename T>
+	//const T& GetInputMap(std::string str) {
+	//	T* result = std::get_if<T>(&inputMap[str]);
+	//	return result ? *result : T();
+	//}
+
+	//ãƒ‡ãƒãƒƒã‚°ç”¨
+	//using debugVariant = std::variant<bool, int, float ,DirectX::XMFLOAT2>;
+	//std::map<std::string, debugVariant> debugValue;
+
+	//template<typename T>
+	//T GetDebugValue(std::string str) {
+	//	return std::get<T>(debugValue[str]);
+	//}
 
 	template<typename T>
 	T GetDebugValue(std::string str) {

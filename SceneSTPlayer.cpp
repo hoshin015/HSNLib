@@ -10,12 +10,13 @@
 #include "LightManager.h"
 #include "SpinningTopEnemyManager.h"
 #include "StEnemy01.h"
+#include "ObstacleManager.h"
 
 #include "SpinningTopPlayerManager.h"
 #include "StPlayer.h"
 
 void SceneSTPlayer::Initialize() {
-	for (size_t i = 0; i < 10; i++) {
+	for (size_t i = 0; i < 1; i++) {
 		StEnemy01* slime = new_ StEnemy01();
 		slime->SetPosition({ 0, 0, 0 });
 		SpinningTopEnemyManager::Instance().Register(slime);
@@ -51,8 +52,8 @@ void SceneSTPlayer::Finalize() {
 	LightManager::Instance().Clear();
 
 	SpinningTopEnemyManager::Instance().Clear();
-
 	SpinningTopPlayerManager::Instance().Clear();
+	ObstacleManager::Instance().Clear();
 }
 
 void SceneSTPlayer::Update() {
@@ -66,6 +67,7 @@ void SceneSTPlayer::Update() {
 
 	SpinningTopEnemyManager::Instance().Update();
 	SpinningTopPlayerManager::Instance().Update();
+	ObstacleManager::Instance().Update();
 }
 
 void SceneSTPlayer::Render() {
@@ -107,6 +109,7 @@ void SceneSTPlayer::Render() {
 
 		SpinningTopEnemyManager::Instance().Render();
 		SpinningTopPlayerManager::Instance().Render();
+		ObstacleManager::Instance().Render();
 
 		gfx.shadowBuffer->DeActivate();
 	}
@@ -141,6 +144,7 @@ void SceneSTPlayer::Render() {
 
 	SpinningTopEnemyManager::Instance().Render();
 	SpinningTopPlayerManager::Instance().Render();
+	ObstacleManager::Instance().Render();
 	DebugPrimitive::Instance().Render();
 
 	// --- デバッグ描画 ---

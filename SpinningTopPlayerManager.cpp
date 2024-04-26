@@ -2,13 +2,21 @@
 
 void SpinningTopPlayerManager::Update() {
 	// 更新処理
-	for (StPlayer* player : players) {
+
+	if (!adds.empty()) {
+		players.insert(players.end(), adds.begin(), adds.end());
+		adds.clear();
+	}
+
+	//当たり判定に入っている敵をリストに入れている
+	StPlayerBase::UpdateEDistance(players);
+	for (StPlayerBase* player : players) {
 		player->Update();
 	}
 
 	// 破棄処理
-	for (StPlayer* player : removes) {
-		std::vector<StPlayer*>::iterator it = std::find(players.begin(), players.end(), player);
+	for (StPlayerBase* player : removes) {
+		std::vector<StPlayerBase*>::iterator it = std::find(players.begin(), players.end(), player);
 
 		if (it != players.end()) {
 			players.erase(it);
@@ -22,26 +30,27 @@ void SpinningTopPlayerManager::Update() {
 
 //　描画処理
 void SpinningTopPlayerManager::Render() {
-	for (StPlayer* player : players) {
+	for (StPlayerBase* player : players) {
 		player->Render();
 	}
 }
 
 // プレイヤー登録
-void SpinningTopPlayerManager::Register(StPlayer* player) {
-	players.emplace_back(player);
+void SpinningTopPlayerManager::Register(StPlayerBase* player) {
+	adds.emplace_back(player);
+	//players.emplace_back(player);
 }
 
 
 // プレイヤー削除
-void SpinningTopPlayerManager::Remove(StPlayer* player) {
+void SpinningTopPlayerManager::Remove(StPlayerBase* player) {
 	// 破棄リストに追加
 	removes.insert(player);
 }
 
 // プレイヤー全削除
 void SpinningTopPlayerManager::Clear() {
-	for (StPlayer* player : players) {
+	for (StPlayerBase* player : players) {
 		delete player;
 	}
 	players.clear();
@@ -49,7 +58,7 @@ void SpinningTopPlayerManager::Clear() {
 
 // デバッグ用GUI描画
 void SpinningTopPlayerManager::DrawDebugGui() {
-	for (StPlayer* player : players) {
+	for (StPlayerBase* player : players) {
 		player->DrawDebugGui();
 	}
 }

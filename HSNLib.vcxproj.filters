@@ -369,6 +369,11 @@
     <ClCompile Include="SceneEnemyLevelEditor.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="StPlayerData.cpp">
+      <Filter>ソース ファイル\SpinningTopBase</Filter>
+    </ClCompile>
+    <ClCompile Include="StPlayerBase.cpp">
+      <Filter>ソース ファイル\SpinningTopBase</Filter>
     <ClCompile Include="SceneSpawnEditor.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
@@ -698,6 +703,11 @@
     <ClInclude Include="SceneEnemyLevelEditor.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="StPlayerData.h">
+      <Filter>ヘッダー ファイル\SpinningTopBase</Filter>
+    </ClInclude>
+    <ClInclude Include="StPlayerBase.h">
+      <Filter>ヘッダー ファイル\SpinningTopBase</Filter>
     <ClInclude Include="SceneSpawnEditor.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
