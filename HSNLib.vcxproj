@@ -272,6 +272,7 @@
     <ClCompile Include="StPlayerBase.cpp" />
     <ClCompile Include="StPlayerData.cpp" />
     <ClCompile Include="StPlayerOption.cpp" />
+    <ClCompile Include="Video.cpp" />
     <ClCompile Include="Wave.cpp" />
     <ClCompile Include="WaveData_1.cpp" />
   </ItemGroup>
@@ -385,6 +386,7 @@
     <ClInclude Include="StPlayerBase.h" />
     <ClInclude Include="StPlayerData.h" />
     <ClInclude Include="StPlayerOption.h" />
+    <ClInclude Include="Video.h" />
     <ClInclude Include="Wave.h" />
     <ClInclude Include="WaveData_1.h" />
   </ItemGroup>
