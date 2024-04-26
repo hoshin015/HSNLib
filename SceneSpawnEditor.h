@@ -3,13 +3,14 @@
 #include "Scene.h"
 #include "Library/3D/SkinnedMesh.h"
 #include "Library/3D/SkyMap.h"
+#include "StEnemyData.h"
 
-// テストシーン
-class SceneSpinningTop : public Scene
+// スポーンエディター
+class SceneSpawnEditor : public Scene
 {
 public:
-	SceneSpinningTop() {}
-	~SceneSpinningTop() override {};
+	SceneSpawnEditor() {}
+	~SceneSpawnEditor() override {};
 
 	// 初期化
 	void Initialize() override;
@@ -26,10 +27,14 @@ public:
 	// デバッグ描画
 	void DrawDebugGUI();
 
+private:
+	// 生成位置更新
+	void UpdateGeneratePosition();
 
 private:
 	std::unique_ptr<SkyMap> skyMap;
 
+	DirectX::XMFLOAT3 targetPosition = { 0,0,0 };
 
-	float gaussianPower = 16.0f;
+	int enemyNum = 1;
 };

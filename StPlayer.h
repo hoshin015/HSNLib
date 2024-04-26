@@ -31,21 +31,21 @@ protected:
 	void OnDead() override;
 
 private:
-	//ƒpƒ‰ƒ[ƒ^‚Íã‚É,ƒvƒƒpƒeƒB‚Í‰º‚É‘‚¢‚Ä‚é
+	//ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã¯ä¸Šã«,ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã¯ä¸‹ã«æ›¸ã„ã¦ã‚‹
 	//std::vector<SpinningTopEnemy*> nearEnemy;
 
 	//PlayerData data;
 
-	//ˆÚ“®
+	//ç§»å‹•
 	//float mobility;
 	//float accel;
 	//float slow;
 
-	//‰ñ“]
+	//å›è»¢
 	//float rotateSpeed;
 	//float rotateMaxSpeed;
 
-	//ƒpƒŠƒB
+	//ãƒ‘ãƒªã‚£
 	//bool parry = false;
 	//float parryDamageRadius = 0;
 	//float parryCooldownCount = 0;
@@ -63,16 +63,16 @@ private:
 	//float parryGaugeConsumed;
 	//float parryGaugeDamageMaxRadius;
 
-	//ƒ_ƒ[ƒW
+	//ãƒ€ãƒ¡ãƒ¼ã‚¸
 	//float damagedKnockback;
 
-	//q‹@
+	//å­æ©Ÿ
 	std::shared_ptr<SkinnedMesh> childModel;
 	std::vector<StPlayerOption*> option;
 
 	float optionAngle = 0;
 
-	//“ü—Í
+	//å…¥åŠ›
 	//using InputVariant = std::variant<bool, int, float, DirectX::XMFLOAT2>;
 	//std::map<std::string, InputVariant> inputMap;
 
@@ -82,7 +82,7 @@ private:
 	//	return result ? *result : T();
 	//}
 
-	//ƒfƒoƒbƒO—p
+	//ãƒ‡ãƒãƒƒã‚°ç”¨
 	//using debugVariant = std::variant<bool, int, float ,DirectX::XMFLOAT2>;
 	//std::map<std::string, debugVariant> debugValue;
 
@@ -91,6 +91,9 @@ private:
 	//	return std::get<T>(debugValue[str]);
 	//}
 
-
+	template<typename T>
+	T GetDebugValue(std::string str) {
+		return std::get<T>(debugValue[str]);
+	}
 };
 

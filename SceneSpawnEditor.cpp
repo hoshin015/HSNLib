@@ -1,5 +1,5 @@
 #include <tchar.h>
-#include "SceneEnemyLevelEditor.h"
+#include "SceneSpawnEditor.h"
 #include "SceneManager.h"
 #include "Library/Input/InputManager.h"
 #include "Library/ImGui/Include/imgui.h"
@@ -15,23 +15,12 @@
 #include "Library/ImGui/ConsoleData.h"
 
 #include "DataManager.h"
+#include <random>
 
-void SceneEnemyLevelEditor::Initialize()
+void SceneSpawnEditor::Initialize()
 {
-	// json のデータを enemyData に読みこむ
-	DataManager::Instance().LoadEnemyData(enemyData);
-	subEnemyData = enemyData[0];
-
-	// 敵生成
-	for (int i = 0; i < 2; i++)
-	{
-		StEnemy* enemy;
-		enemy = (i % 2 == 0) ? new_ StEnemy(ENEMY_0) : new_ StEnemy(ENEMY_1);
-		enemy->SetPosition({ i * 3 - 1.5f, 10, 0 });
-		// スポーン座標設定
-		enemy->spawnPosition = enemy->GetPosition();
-		SpinningTopEnemyManager::Instance().Register(enemy);
-	}
+	// json のデータを spawnEreaData に読みこむ
+	DataManager::Instance().LoadSpawnEreaData();
 
 	// 障害物生成
 	for (int i = 0; i < 3; i++)
@@ -67,7 +56,7 @@ void SceneEnemyLevelEditor::Initialize()
 	Camera::Instance().cameraType = Camera::CAMERA::LOCK;
 }
 
-void SceneEnemyLevelEditor::Finalize()
+void SceneSpawnEditor::Finalize()
 {
 	StageManager::Instance().Clear();
 
@@ -78,7 +67,7 @@ void SceneEnemyLevelEditor::Finalize()
 	ObstacleManager::Instance().Clear();
 }
 
-void SceneEnemyLevelEditor::Update()
+void SceneSpawnEditor::Update()
 {
 	// カメラコントローラー更新処理
 	Camera::Instance().Update();
@@ -86,14 +75,13 @@ void SceneEnemyLevelEditor::Update()
 	StageManager::Instance().Update();
 
 	SpinningTopEnemyManager::Instance().Update();
-	SpinningTopEnemyManager::Instance().UpdateStatusValue(&subEnemyData);
 
 	ObstacleManager::Instance().Update();
 
 	UpdateGeneratePosition();
 }
 
-void SceneEnemyLevelEditor::Render()
+void SceneSpawnEditor::Render()
 {
 	// --- Graphics 取得 ---
 	Graphics& gfx = Graphics::Instance();
@@ -182,7 +170,7 @@ void SceneEnemyLevelEditor::Render()
 }
 
 // デバッグ描画
-void SceneEnemyLevelEditor::DrawDebugGUI()
+void SceneSpawnEditor::DrawDebugGUI()
 {
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu("File")) {
@@ -213,7 +201,7 @@ void SceneEnemyLevelEditor::DrawDebugGUI()
 				}
 				if (ImGui::MenuItem("EnemyEditor"))
 				{
-					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneEnemyLevelEditor));
+					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneSpawnEditor));
 				}
 				ImGui::EndMenu();
 			}
@@ -223,22 +211,15 @@ void SceneEnemyLevelEditor::DrawDebugGUI()
 	}
 
 	// debugPrimitive
-	DebugPrimitive::Instance().AddSphere(generatePosition, 0.5f, { 0,1,0,1 });	// ターゲット座標
+	DebugPrimitive::Instance().AddSphere(targetPosition, 0.5f, { 0,1,0,1 });	// ターゲット座標
 
-
-	// 敵のレベルデザイン
+	// スポーンエリアのレベルデザイン
 	static int selectEnemyKind = 0;
 
-	ImGui::Begin(u8"敵レベルデザイン");
+	ImGui::Begin(u8"スポーンエリアレベルデザイン");
 
-	if (ImGui::Button(u8"生成"))
-	{
-		StEnemy* enemy = new_ StEnemy(selectEnemyKind);
-		enemy->SetPosition({ generatePosition.x, 10.0f, generatePosition.z });
-		// スポーン座標設定
-		enemy->spawnPosition = { enemy->GetPosition().x, 0, enemy->GetPosition().z };
-		SpinningTopEnemyManager::Instance().Register(enemy);
-	}
+	ImGui::InputInt(u8"敵生成数", &enemyNum);
+	
 	if (ImGui::Button(u8"クリア"))
 	{
 		SpinningTopEnemyManager::Instance().Clear();
@@ -246,74 +227,71 @@ void SceneEnemyLevelEditor::DrawDebugGUI()
 
 	ImGui::Separator();
 
-	std::string enemyKindName[] = { "ENEMY0", "ENEMY1", "ENEMY2", "ENEMY3" };
-
-	if (ImGui::BeginCombo(u8"敵タイプ", enemyKindName[static_cast<int>(selectEnemyKind)].c_str()))
-	{
-		for (int i = 0; i < IM_ARRAYSIZE(enemyKindName); i++)
-		{
-			const bool isSelected = (selectEnemyKind == i);
-			if (ImGui::Selectable(enemyKindName[i].c_str(), isSelected))
-			{
-				SpinningTopEnemyManager::Instance().UpdateStatusValue(&enemyData[selectEnemyKind]);
-				selectEnemyKind = i;
-				subEnemyData = enemyData[selectEnemyKind];		// subEnemyDataを更新
-			}
-			if (isSelected)
-			{
-				ImGui::SetItemDefaultFocus();
-			}
-		}
-		ImGui::EndCombo();
-	}
-
-	std::string behaivorTypeName[] = { u8"追撃", u8"追跡" };
-	if (ImGui::BeginCombo(u8"ビヘイビアタイプ", behaivorTypeName[static_cast<int>(subEnemyData.behaviorType)].c_str()))
-	{
-		for (int i = 0; i < IM_ARRAYSIZE(behaivorTypeName); i++)
-		{
-			const bool isSelected = (subEnemyData.behaviorType == i);
-			if (ImGui::Selectable(behaivorTypeName[i].c_str(), isSelected))
-			{
-				subEnemyData.behaviorType = i;
-			}
-			if (isSelected)
-			{
-				ImGui::SetItemDefaultFocus();
-			}
-		}
-		ImGui::EndCombo();
-	}
-	ImGui::Separator();
-	ImGui::Text(u8"ステータス");
-	ImGui::DragFloat(u8"半径", &subEnemyData.radius, 0.1f);
-	ImGui::DragFloat(u8"最大速度", &subEnemyData.maxMoveSpeed, 0.1f);
-	ImGui::DragFloat(u8"最大HP", &subEnemyData.maxHealth, 1.0f);
-	ImGui::Separator();
-	ImGui::Text(u8"SteeringBehavior");
-	ImGui::DragFloat(u8"pursuit範囲", &subEnemyData.pursuitRadius, 0.1f);
-	ImGui::DragFloat(u8"索敵範囲", &subEnemyData.searchRadius, 0.1f);
-	ImGui::DragFloat(u8"非索敵範囲", &subEnemyData.notSearchRadius, 0.1f);
-	ImGui::DragFloat(u8"wander円との距離", &subEnemyData.circleDistance, 0.1f);
-	ImGui::DragFloat(u8"wander円の半径", &subEnemyData.circleRadius, 0.1f);
-	ImGui::SliderInt(u8"wander円の変更角度", &subEnemyData.wanderAngleChange, 0, 359);
-	ImGui::DragFloat(u8"wander円の変更秒数", &subEnemyData.wanderAngleChangeTime, 0.1f);
-	ImGui::DragFloat(u8"chargeAttackのクールタイム[s]", &subEnemyData.chargeAttackCoolTime, 0.1f);
-	ImGui::DragFloat(u8"chargeAttackの待ち時間[s]", &subEnemyData.waitChargeAttackTime, 0.1f);
-
 	if (ImGui::Button(u8"保存"))
 	{
-		enemyData[selectEnemyKind] = subEnemyData;				// enemyData本体を subEnemyData だけ更新
-		DataManager::Instance().SaveEnemyData(enemyData);		// これで選択中の敵のみ更新できる
-		ConsoleData::Instance().logs.push_back(enemyKindName[selectEnemyKind] + u8" データ保存完了");
+		DataManager::Instance().SaveSpawnEreaData();
+		ConsoleData::Instance().logs.push_back(u8"スポーンエリアデータ保存完了");
 	}
 
+	for (int i = 0; i < EREA_NUM; i++)
+	{
+		if (ImGui::CollapsingHeader(("EREA - " + std::to_string(i)).c_str(), ImGuiTreeNodeFlags_None))
+		{
+			ImGui::PushID((u8"EREA" + std::to_string(i)).c_str());
+
+			// 位置
+			ImGui::InputFloat3(u8"ポジション", &enemySpawnErea[i].position.x);
+			ImGui::DragFloat(u8"半径", &enemySpawnErea[i].radius, 0.1f);
+			
+			if(ImGui::Button(u8"ポジション更新"))
+			{
+				enemySpawnErea[i].position = targetPosition;
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::Button(u8"敵生成"))
+			{
+				// 乱数生成器の設定
+				std::random_device rd;  // 真の乱数生成器を初期化
+				std::mt19937 gen(rd()); // メルセンヌ・ツイスタ乱数生成器を初期化
+				std::uniform_real_distribution<float> dis(0.0f, enemySpawnErea[i].radius); // 0からenemySpawnErea[i].radiusの間の一様乱数生成器を作成
+
+				// ランダムなfloat型の値を取得
+				float randomValue = dis(gen);
+
+				for (int j = 0; j < enemyNum; j++)
+				{
+					StEnemy* enemy = new_ StEnemy(ENEMY_0);
+
+					float xPos = enemySpawnErea[i].position.x;
+					float zPos = enemySpawnErea[i].position.z;
+
+					float rad = DirectX::XMConvertToRadians(rand() % 360);
+					float dist = dis(gen);
+
+					xPos += cosf(rad) * dist;
+					zPos += sinf(rad) * dist;
+
+					enemy->SetPosition({ xPos, 10, zPos });
+
+					// スポーン座標設定
+					enemy->spawnPosition = { enemy->GetPosition().x, 0, enemy->GetPosition().z };
+					SpinningTopEnemyManager::Instance().Register(enemy);
+				}
+			}
+			ImGui::PopID();
+
+			DebugPrimitive::Instance().AddCylinder(enemySpawnErea[i].position, enemySpawnErea[i].radius, 0.4f, { 1,0,0,1 });
+		}
+	}
+	
 
 	ImGui::End();
 }
 
 // 生成位置更新
-void SceneEnemyLevelEditor::UpdateGeneratePosition()
+void SceneSpawnEditor::UpdateGeneratePosition()
 {
 	// --- Graphics 取得 ---
 	Graphics& gfx = Graphics::Instance();
@@ -380,7 +358,7 @@ void SceneEnemyLevelEditor::UpdateGeneratePosition()
 		HitResult hit;
 		if (StageManager::Instance().RayCast(rayStart, rayEnd, hit))
 		{
-			generatePosition = hit.position;
+			targetPosition = hit.position;
 		}
 	}
 }

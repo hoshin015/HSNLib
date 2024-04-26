@@ -1,6 +1,5 @@
 #include "StEnemyData.h"
 
-
 EnemyData enemyData[] =
 {
 	// Enemy0
@@ -18,5 +17,19 @@ EnemyData enemyData[] =
 		4.0f,
 		6.0f,
 		8.0f
-	}
+	},
+};
+
+EnemySpawnErea enemySpawnErea[] =
+{
+	// EREA0
+	{
+		{0,0,0},
+		5
+	},
+	// EREA1
+	{
+		{10, 0, 10},
+		3
+	},
 };

@@ -1,5 +1,5 @@
 #include <tchar.h>
-#include "SceneSpinningTop.h"
+#include "SceneWave.h"
 #include "SceneManager.h"
 #include "Library/Input/InputManager.h"
 #include "Library/ImGui/Include/imgui.h"
@@ -9,104 +9,35 @@
 #include "LightManager.h"
 #include "SpinningTopEnemyManager.h"
 #include "ObstacleManager.h"
-#include "StEnemy01.h"
-#include "StEnemy02.h"
 #include "StEnemy.h"
 #include "Library/3D/DebugPrimitive.h"
 #include "Library/3D/LineRenderer.h"
+#include "Wave.h"
 
 #include "DataManager.h"
 
-void SceneSpinningTop::Initialize()
+void SceneWave::Initialize()
 {
 	DataManager::Instance().LoadEnemyData(enemyData);
+	DataManager::Instance().LoadSpawnEreaData();
 
-	float x = 0;
-	float z = 0;
-	for (int i = 0; i < 15; i++)
-	{
-		StEnemy* enemy;
-		enemy = (i % 2 == 0) ? new_ StEnemy(ENEMY_1) : new_ StEnemy(ENEMY_0);
-		enemy->SetPosition({ x, 10, z });
-		// スポーン座標設定
-		enemy->spawnPosition = enemy->GetPosition();
-		SpinningTopEnemyManager::Instance().Register(enemy);
-		x += 3;
-		if (i % 7 == 0)
-		{
-			z -= 3;
-			x = 0;
-		}
-	}
-	
 	for (int i = 0; i < 3; i++)
 	{
 		Obstacle* obstacle = new_ Obstacle("Data/FBX/cylinder/cylinder.fbx");
-		obstacle->SetPosition({ i * 30.0f - 45.0f, 0, -6.0f });
+		obstacle->SetPosition({ i * 10.0f - 15.0f, 0, -6.0f });
 		ObstacleManager::Instance().Register(obstacle);
 	}
 
-	for (int i = 0; i < 3; i++)
-	{
-		Obstacle* obstacle = new_ Obstacle("Data/FBX/StMarunoko/StMarunoko.fbx");
-		obstacle->SetPosition({ i * 30.0f - 45.0f, 0, 6.0f });
-		obstacle->rotationSpeed = 360.0f;
-		obstacle->frictionPower = 0.0f;
-		obstacle->radius = 3.0f;
-		ObstacleManager::Instance().Register(obstacle);
-	}
-	
 	// ステージ初期化
 	StageManager& stageManager = StageManager::Instance();
 	StageContext* stageMain = new_ StageContext();
 	stageManager.Register(stageMain);
 
-#if 1
 	// ライト初期化
 	Light* directionLight = new Light(LightType::Directional);
 	directionLight->SetDirection(DirectX::XMFLOAT3(0.5, -1, -1));
 	directionLight->SetColor(DirectX::XMFLOAT4(1, 1, 1, 1));
-	//directionLight->SetColor(DirectX::XMFLOAT4(0, 0, 0, 1));
 	LightManager::Instance().Register(directionLight);
-	//LightManager::Instance().SetAmbientColor({0,0,0,1});
-#else
-	{
-		// ライト初期化
-		Light* directionLight = new Light(LightType::Directional);
-		directionLight->SetDirection(DirectX::XMFLOAT3(0.5, -1, -1));
-		//directionLight->SetColor(DirectX::XMFLOAT4(1, 1, 1, 1));
-		directionLight->SetColor(DirectX::XMFLOAT4(0, 0, 0, 1));
-		LightManager::Instance().Register(directionLight);
-
-		// 点光源追加
-		{
-			for (int i = 0; i < 3; i++)
-			{
-				Light* light = new Light(LightType::Point);
-				light->SetPosition({ i * 30.0f - 45.0f, 5, -4 });
-				light->SetColor(DirectX::XMFLOAT4(1, 1, 1, 1));
-				light->SetRange(30.0f);
-				LightManager::Instance().Register(light);
-			}
-
-			//Light* light2 = new Light(LightType::Point);
-			//light2->SetPosition(DirectX::XMFLOAT3(-2, 1, 0));
-			//light2->SetColor(DirectX::XMFLOAT4(1, 0, 1, 1));
-			//LightManager::Instance().Register(light2);
-		}
-		// スポットライトを追加
-		//{
-		//	Light* light = new Light(LightType::Spot);
-		//	light->SetPosition(DirectX::XMFLOAT3(-3, 2, 0));
-		//	light->SetColor(DirectX::XMFLOAT4(1, 0, 0, 1));
-		//	light->SetDirection(DirectX::XMFLOAT3(+1, -1, 0));
-		//	light->SetRange(4.0f);
-		//	LightManager::Instance().Register(light);
-		//}
-
-		LightManager::Instance().SetAmbientColor({ 0,0,0,1.0f });
-	}
-#endif
 
 	// スカイマップ
 	skyMap = std::make_unique<SkyMap>(L"Data/Texture/kloppenheim_05_puresky_4k.hdr");
@@ -121,9 +52,12 @@ void SceneSpinningTop::Initialize()
 	Camera::Instance().SetAngle({ DirectX::XMConvertToRadians(60), DirectX::XMConvertToRadians(180), 0 });
 
 	Camera::Instance().cameraType = Camera::CAMERA::FREE;
+
+	// Wave初期化
+	Wave::Instance().Init();
 }
 
-void SceneSpinningTop::Finalize()
+void SceneWave::Finalize()
 {
 	StageManager::Instance().Clear();
 
@@ -134,10 +68,13 @@ void SceneSpinningTop::Finalize()
 	ObstacleManager::Instance().Clear();
 }
 
-void SceneSpinningTop::Update()
+void SceneWave::Update()
 {
 	// カメラコントローラー更新処理
 	Camera::Instance().Update();
+
+
+	Wave::Instance().Update();
 
 	StageManager::Instance().Update();
 
@@ -146,7 +83,7 @@ void SceneSpinningTop::Update()
 	ObstacleManager::Instance().Update();
 }
 
-void SceneSpinningTop::Render()
+void SceneWave::Render()
 {
 	// --- Graphics 取得 ---
 	Graphics& gfx = Graphics::Instance();
@@ -198,7 +135,7 @@ void SceneSpinningTop::Render()
 	skyMap->Render();
 
 	gfx.SetDepthStencil(DEPTHSTENCIL_STATE::ZT_ON_ZW_ON);
-	gfx.SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);
+	gfx.SetRasterizer(static_cast<RASTERIZER_STATE>(RASTERIZER_STATE::CLOCK_FALSE_SOLID));
 
 	Graphics::SceneConstants data{};
 	XMMATRIX viewProjection = XMLoadFloat4x4(&Camera::Instance().GetView()) * XMLoadFloat4x4(&Camera::Instance().GetProjection());
@@ -224,16 +161,13 @@ void SceneSpinningTop::Render()
 
 	StageManager::Instance().Render();
 
-
-
+	SpinningTopEnemyManager::Instance().Render();
 
 	ObstacleManager::Instance().Render();
 
-	SpinningTopEnemyManager::Instance().Render();
 	// --- デバッグ描画 ---
 	DebugPrimitive::Instance().Render();
 	LineRenderer::Instance().Render();
-
 
 	gfx.bloomBuffer->DeActivate();
 
@@ -293,7 +227,7 @@ void SceneSpinningTop::Render()
 }
 
 // デバッグ描画
-void SceneSpinningTop::DrawDebugGUI()
+void SceneWave::DrawDebugGUI()
 {
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu("File")) {
@@ -320,7 +254,7 @@ void SceneSpinningTop::DrawDebugGUI()
 				}
 				if (ImGui::MenuItem("SpinningTop"))
 				{
-					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneSpinningTop));
+					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneWave));
 				}
 				ImGui::EndMenu();
 			}

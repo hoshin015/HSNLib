@@ -36,6 +36,9 @@ public:
 	// velocity設定
 	void SetVelocity(const DirectX::XMFLOAT3& velocity) { this->velocity = velocity; }
 
+	// 最大速度設定
+	void SetMaxMoveSpeed(float ms) { this->maxMoveSpeed = ms; }
+
 	// 接地判定取得
 	bool IsGround() const { return isGround; }
 
@@ -48,6 +51,7 @@ public:
 	int GetHealth() const { return health; }
 	// 最大健康状態を取得
 	int GetMaxHealth() const { return maxHealth; }
+	void SetMaxHealth(float mh) { this->maxHealth = mh; }
 
 
 
@@ -156,6 +160,9 @@ protected:
 	float stepOffset = 0.5f;
 	float stepOffset1 = 0.1f;
 	float slopeRate = 1.0f;
+
+	// コマの重さ
+	float weight = 1.0f;
 
 public:
 	std::shared_ptr<SkinnedMesh>	model;

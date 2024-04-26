@@ -11,12 +11,11 @@
 
 StEnemy::StEnemy(int enemyKind)
 {	
+	pF = std::make_unique<ParryEffect>();
+
 	this->enemyKind = enemyKind;
 
 	model = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemy01/Main/StEnemy01Main.fbx");
-	topParts = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemy01/Top/StEnemy01Top.fbx");
-	middleParts = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemy01/Middle/StEnemy01Middle.fbx");
-	bottomParts = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemy01/Bottom/StEnemy01Bottom.fbx");
 
 	paryEffect = ResourceManager::Instance().LoadModelResource("Data/Fbx/paryEffectTest/paryEffectTest.fbx");
 
@@ -42,6 +41,7 @@ void StEnemy::Update()
 	// 回転
 	DirectX::XMFLOAT3 ang = GetAngle();
 	ang.y += rotationSpeed * Timer::Instance().DeltaTime();
+	//ang.x = 10;
 	SetAngle(ang);
 
 	UpdateTargetPosition();
@@ -61,27 +61,32 @@ void StEnemy::Update()
 
 void StEnemy::Render(bool drawShadow)
 {
+	Graphics& gfx = Graphics::Instance();
+
 	model->Render(transform, { 1,1,1,1 }, &keyFrame);
 
-
-	if (!drawShadow)
-		paryEffect->Render(transform, { 1,1,1,1 }, &keyFrame);
+	//if (!drawShadow)
+	//{
+	//	pF->SetPosition({ GetPosition().x, 0.2f, GetPosition().z });
+	//	pF->Update();
+	//	pF->Render();
+	//}
 }
 
 // デバッグプリミティブ描画
 void StEnemy::DrawDebugPrimitive()
 {
-	DebugPrimitive::Instance().AddSphere(plPosition, 0.5f, { 1,1,0,1 });		// スポーン地点
-
-
-	//DebugPrimitive::Instance().AddCylinder(position, radius, height, { 1,0,0,1 });
-
-	DebugPrimitive::Instance().AddSphere(targetPosition, 0.2f, { 0,1,0,1 });	// ターゲット座標
-	DebugPrimitive::Instance().AddSphere(spawnPosition, 0.2f, { 0,1,1,1 });		// スポーン地点
-
-	DebugPrimitive::Instance().AddCylinder(position, pursuitRadius, 0.2, { 0,1,0,1 });
-	DebugPrimitive::Instance().AddCylinder(position, searchRadius, 0.2, { 1,0,0,1 });
-	DebugPrimitive::Instance().AddCylinder(position, notSearchRadius, 0.2, { 0,0,1,1 });
+	//DebugPrimitive::Instance().AddSphere(plPosition, 0.5f, { 1,1,0,1 });		// スポーン地点
+	//
+	//
+	////DebugPrimitive::Instance().AddCylinder(position, radius, height, { 1,0,0,1 });
+	//
+	//DebugPrimitive::Instance().AddSphere(targetPosition, 0.2f, { 0,1,0,1 });	// ターゲット座標
+	//DebugPrimitive::Instance().AddSphere(spawnPosition, 0.2f, { 0,1,1,1 });		// スポーン地点
+	//
+	//DebugPrimitive::Instance().AddCylinder(position, pursuitRadius, 0.2, { 0,1,0,1 });
+	//DebugPrimitive::Instance().AddCylinder(position, searchRadius, 0.2, { 1,0,0,1 });
+	//DebugPrimitive::Instance().AddCylinder(position, notSearchRadius, 0.2, { 0,0,1,1 });
 }
 
 // TargetPosition 更新
@@ -170,7 +175,8 @@ void StEnemy::CreateAiTree()
 
 		aiTree->AddNode((int)KIND::NONE, (int)KIND::ROOT, 0, IBTree::RULE::Priority, this);
 		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Generate, 0, IBTree::RULE::Non, this);
-		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Normal, 1, IBTree::RULE::Priority, this);
+		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Down, 1, IBTree::RULE::Non, this);
+		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Normal, 2, IBTree::RULE::Priority, this);
 		aiTree->AddNode((int)KIND::Normal, (int)KIND::PlayerPursuit, 0, IBTree::RULE::Sequence, this);
 		aiTree->AddNode((int)KIND::PlayerPursuit, (int)KIND::PlayerPositionGet, 0, IBTree::RULE::Non, this);
 		aiTree->AddNode((int)KIND::PlayerPursuit, (int)KIND::WaitChargeAttack, 1, IBTree::RULE::Non, this);
@@ -187,7 +193,8 @@ void StEnemy::CreateAiTree()
 
 		aiTree->AddNode((int)KIND::NONE, (int)KIND::ROOT, 0, IBTree::RULE::Priority, this);
 		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Generate, 0, IBTree::RULE::Non, this);
-		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Normal, 1, IBTree::RULE::Priority, this);
+		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Down, 1, IBTree::RULE::Non, this);
+		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Normal, 2, IBTree::RULE::Priority, this);
 
 		aiTree->AddNode((int)KIND::Normal, (int)KIND::SeekPlayer, 1, IBTree::RULE::Non, this);
 		aiTree->AddNode((int)KIND::Normal, (int)KIND::WanderSpawnArea, 2, IBTree::RULE::Non, this);
@@ -199,9 +206,32 @@ void StEnemy::CreateAiTree()
 // 死亡処理
 void StEnemy::OnDead()
 {
-	Obstacle* obstacle = new Obstacle("Data/Fbx/StEnemy/Top/StEnemyTop.fbx", false);
-	obstacle->SetPosition(GetPosition());
-	ObstacleManager::Instance().Register(obstacle);
+	Obstacle* top;
+	Obstacle* middle;
+	Obstacle* bottom;
+
+	top = new Obstacle("Data/Fbx/StEnemy01/Top/StEnemy01Top.fbx", false);
+	top->SetPosition(GetPosition());
+	top->SetRadius(0.0f);
+	top->velocity = { 40,0,0 };
+	top->SetRotationSpeed(60);
+	top->SetFriction(3);
+	ObstacleManager::Instance().Register(top);
+
+	middle = new Obstacle("Data/Fbx/StEnemy01/Middle/StEnemy01Middle.fbx", false);
+	middle->SetPosition(GetPosition());
+	middle->SetRadius(0.0f);
+	middle->velocity = { -5,0,10 };
+	middle->SetRotationSpeed(30);
+	ObstacleManager::Instance().Register(middle);
+
+	bottom = new Obstacle("Data/Fbx/StEnemy01/Bottom/StEnemy01Bottom.fbx", false);
+	bottom->SetPosition(GetPosition());
+	bottom->SetRadius(0.0f);
+	bottom->velocity = { 3,0,-10 };
+	bottom->SetRotationSpeed(120);
+	bottom->SetAngle({ 90,0,0 });
+	ObstacleManager::Instance().Register(bottom);
 
 	Destroy();
 }

@@ -174,6 +174,7 @@
     <ClCompile Include="BehaviorTree.cpp" />
     <ClCompile Include="BehaviorTreeNode.cpp" />
     <ClCompile Include="DataManager.cpp" />
+    <ClCompile Include="DomeEffect.cpp" />
     <ClCompile Include="Library\Easing.cpp" />
     <ClCompile Include="Library\Graphics\BloomBuffer.cpp" />
     <ClCompile Include="Character.cpp" />
@@ -222,8 +223,10 @@
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="LightManager.cpp" />
     <ClCompile Include="Library\2D\MaskSprite.cpp" />
+    <ClCompile Include="MeshEffect.cpp" />
     <ClCompile Include="Obstacle.cpp" />
     <ClCompile Include="ObstacleManager.cpp" />
+    <ClCompile Include="ParryEffect.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerManager.cpp" />
     <ClCompile Include="Projectile.cpp" />
@@ -243,6 +246,7 @@
     <ClCompile Include="Library\2D\GraphicsSpriteBatch.cpp" />
     <ClCompile Include="Library\3D\SkinnedMesh.cpp" />
     <ClCompile Include="Library\3D\SpherePrimitive.cpp" />
+    <ClCompile Include="SceneSpawnEditor.cpp" />
     <ClCompile Include="SceneSpinningTop.cpp" />
     <ClCompile Include="SceneSTPlayer.cpp" />
     <ClCompile Include="SceneTest.cpp" />
@@ -250,6 +254,7 @@
     <ClCompile Include="Library\3D\Sprite3D.cpp" />
     <ClCompile Include="Library\3D\SkyMap.cpp" />
     <ClCompile Include="Library\Graphics\ShadowBuffer.cpp" />
+    <ClCompile Include="SceneWave.cpp" />
     <ClCompile Include="SpinningTopBase.cpp" />
     <ClCompile Include="SpinningTopEnemy.cpp" />
     <ClCompile Include="SpinningTopEnemyManager.cpp" />
@@ -275,6 +280,7 @@
     <ClInclude Include="BehaviorTreeIF.h" />
     <ClInclude Include="BehaviorTreeNode.h" />
     <ClInclude Include="DataManager.h" />
+    <ClInclude Include="DomeEffect.h" />
     <ClInclude Include="Library\Easing.h" />
     <ClInclude Include="Library\Graphics\BloomBuffer.h" />
     <ClInclude Include="Character.h" />
@@ -328,8 +334,10 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="LightManager.h" />
     <ClInclude Include="Library\2D\MaskSprite.h" />
+    <ClInclude Include="MeshEffect.h" />
     <ClInclude Include="Obstacle.h" />
     <ClInclude Include="ObstacleManager.h" />
+    <ClInclude Include="ParryEffect.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerManager.h" />
     <ClInclude Include="Projectile.h" />
@@ -350,6 +358,7 @@
     <ClInclude Include="Library\2D\GraphicsSpriteBatch.h" />
     <ClInclude Include="Library\3D\SkinnedMesh.h" />
     <ClInclude Include="Library\3D\SpherePrimitive.h" />
+    <ClInclude Include="SceneSpawnEditor.h" />
     <ClInclude Include="SceneSpinningTop.h" />
     <ClInclude Include="SceneSTPlayer.h" />
     <ClInclude Include="SceneTest.h" />
@@ -357,6 +366,7 @@
     <ClInclude Include="Library\3D\Sprite3D.h" />
     <ClInclude Include="Library\3D\SkyMap.h" />
     <ClInclude Include="Library\Graphics\ShadowBuffer.h" />
+    <ClInclude Include="SceneWave.h" />
     <ClInclude Include="SpinningTopBase.h" />
     <ClInclude Include="SpinningTopEnemy.h" />
     <ClInclude Include="SpinningTopEnemyManager.h" />
@@ -399,6 +409,7 @@
     <None Include="Library\Shader\Mask.hlsli" />
     <None Include="Library\Shader\ShadowmapCaster.hlsli" />
     <None Include="Library\Shader\ShadowmapFunctions.hlsli" />
+    <None Include="Library\Shader\ParryEffect.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Library\Shader\BloomFinalPass_PS.hlsl">
@@ -616,6 +627,18 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="Library\Shader\ShadowMapCaster_VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\ParryEffect_PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\ParryEffect_VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>

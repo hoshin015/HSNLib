@@ -15,11 +15,16 @@ public:
 		return instance;
 	}
 
-	// 儘乕僪
+	// 鏁点儹銉笺儔
 	void LoadEnemyData(EnemyData* pData);
 	void LoadPlayerData(PlayerData* pData ,size_t arraySize);
 
-	// 僙乕僽
+	// 鏁点偦銉笺儢
 	void SaveEnemyData(EnemyData* pData);
 	void SavePlayerData(PlayerData* pData ,size_t arraySize);
+
+	// 銈广儩銉笺兂銈ㄣ儶銈€儹銉笺儔
+	void LoadSpawnEreaData();
+	// 銈广儩銉笺兂銈ㄣ儶銈€偦銉笺儢
+	void SaveSpawnEreaData();
 };

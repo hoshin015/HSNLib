@@ -20,8 +20,6 @@ public:
 	void UpdateTargetPosition();
 
 	// DrawDebugPrimitive
-
-
 protected:
 	// €–Sˆ—
 	void OnDead() override;

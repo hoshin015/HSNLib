@@ -5,3 +5,4 @@ Include/
 .vs/
 HSNLib.vcxproj.user
 /imgui.ini
+*.zip

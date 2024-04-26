@@ -5,7 +5,7 @@ struct VS_OUT
     float2 texcoord : TEXCOORD;
 };
 
-cbuffer CbScene : register(b0)
+cbuffer CbScene : register(b7)
 {
     float2 uvScrollValue;
     float2 pad;

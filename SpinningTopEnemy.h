@@ -15,6 +15,7 @@ public:
 		NONE = 0,
 		ROOT,
 		Normal,
+		Down,
 		IDLE,
 		CollisionAvoidance,
 		Generate,
@@ -98,6 +99,12 @@ public:
 
 	float chargeAttackTimer = 0.0f;
 	float chargeAttackTime = 2.0f;
+
+	float downFrictionPower = 5.0f;
+	bool isDown = false;		// ダウン状態かどうか
+	float downTime = 5.0f;		// ダウン状態の時間
+	float downTimer = 0.0f;		// ダウン状態要タイマー
+	float downAngle = 30.0f;
 
 	// ----- behaviorTree -----
 	int behaviorType;	// ビヘイビアツリーのタイプ

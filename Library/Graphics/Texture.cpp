@@ -65,7 +65,7 @@ HRESULT LoadTextureFromFile(const wchar_t* filename, ID3D11ShaderResourceView** 
 		(*shaderResourceView)->GetResource(&resource);
 		hr = resource->QueryInterface(__uuidof(ID3D11Texture2D), (LPVOID*)&texture2d);
 
-		///hr = resource.Get()->QueryInterface<ID3D11Texture2D>(texture2d.GetAddressOf());
+		//hr = resource.Get()->QueryInterface<ID3D11Texture2D>(texture2d.GetAddressOf());
 		_ASSERT_EXPR(SUCCEEDED(hr), hrTrace(hr));
 		texture2d->GetDesc(texture2dDesc);
 	}

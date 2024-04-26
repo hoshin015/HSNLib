@@ -5,11 +5,11 @@
 #include "Library/3D/SkyMap.h"
 
 // テストシーン
-class SceneSpinningTop : public Scene
+class SceneWave : public Scene
 {
 public:
-	SceneSpinningTop() {}
-	~SceneSpinningTop() override {};
+	SceneWave() {}
+	~SceneWave() override {};
 
 	// 初期化
 	void Initialize() override;
@@ -25,7 +25,6 @@ public:
 
 	// デバッグ描画
 	void DrawDebugGUI();
-
 
 private:
 	std::unique_ptr<SkyMap> skyMap;
