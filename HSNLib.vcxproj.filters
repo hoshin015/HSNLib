@@ -374,6 +374,7 @@
     </ClCompile>
     <ClCompile Include="StPlayerBase.cpp">
       <Filter>ソース ファイル\SpinningTopBase</Filter>
+    </ClCompile>
     <ClCompile Include="SceneSpawnEditor.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
