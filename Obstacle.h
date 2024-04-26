@@ -1,16 +1,15 @@
 #pragma once
 #include "Library/3D/SkinnedMesh.h"
-
 #include "Collision.h"
 
 class Obstacle
 {
 public:
-	Obstacle(const char* name, bool isCol = true);
-	~Obstacle();
+	Obstacle() {}
+	virtual ~Obstacle() {};
 
 	// 更新処理
-	void Update();
+	virtual void Update() {}
 
 	// 描画処理
 	void Render();
@@ -46,12 +45,12 @@ public:
 	// レイキャスト
 	bool RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit);
 
-private:
+protected:
 	// 行列更新関数
 	void UpdateTransform();
 
 public:
-	SkinnedMesh* model = nullptr;
+	std::shared_ptr<SkinnedMesh> model;
 
 	DirectX::XMFLOAT3 position = { 0,0,0 };
 	DirectX::XMFLOAT3 angle = { 0,0,0 };

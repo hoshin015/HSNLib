@@ -19,6 +19,9 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> inputLayout;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer;
 
+	Microsoft::WRL::ComPtr<ID3D11VertexShader> storeVertexShader;
+	Microsoft::WRL::ComPtr<ID3D11PixelShader> storePixelShader;
+
 	struct Constants
 	{
 		DirectX::XMFLOAT2 uvScrollValue;

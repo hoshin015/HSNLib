@@ -14,6 +14,8 @@
 #include "Library/3D/LineRenderer.h"
 #include "Wave.h"
 #include "SpinningTopPlayerManager.h"
+#include "ObsStaticObj.h"
+#include "ObsMarunoko.h"
 
 #include "DataManager.h"
 
@@ -28,10 +30,19 @@ void SceneWave::Initialize()
 	SpinningTopPlayerManager::Instance().Register(player);
 
 
+	// Cylinder
 	for (int i = 0; i < 3; i++)
 	{
-		Obstacle* obstacle = new_ Obstacle("Data/FBX/cylinder/cylinder.fbx");
-		obstacle->SetPosition({ i * 10.0f - 15.0f, 0, -6.0f });
+		ObsStaticObj* obstacle = new_ ObsStaticObj("Data/FBX/cylinder/cylinder.fbx");
+		obstacle->SetPosition({ i * 30.0f - 45.0f, 0, -6.0f });
+		ObstacleManager::Instance().Register(obstacle);
+	}
+
+	// マルのこ
+	for (int i = 0; i < 3; i++)
+	{
+		ObsMarunoko* obstacle = new_ ObsMarunoko("Data/FBX/StMarunoko/StMarunoko.fbx");
+		obstacle->SetPosition({ i * 30.0f - 45.0f, 0, 6.0f });
 		ObstacleManager::Instance().Register(obstacle);
 	}
 
@@ -282,8 +293,25 @@ void SceneWave::DrawDebugGUI()
 	ObstacleManager::Instance().DrawDebugGui();
 
 	Graphics* gfx = &Graphics::Instance();
+
 	ImGui::Begin("ColorFilter");
 	{
+		if (ImGui::CollapsingHeader("WaveLight", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			if (ImGui::Button(u8"ライトON"))
+			{
+				ScriptOnLight* onLight = new ScriptOnLight();
+				onLight->Execute();
+				delete onLight;
+			}
+			if (ImGui::Button(u8"ライトOFF"))
+			{
+				ScriptOffLight* offLight = new ScriptOffLight();
+				offLight->Execute();
+				delete offLight;
+			}
+		}
+
 		ImGui::SliderFloat("threshould", &gfx->luminanceExtractionConstant.threshould, 0.0f, 1.0f);
 		ImGui::SliderFloat("intensity", &gfx->luminanceExtractionConstant.intensity, 0.0f, 10.0f);
 		ImGui::SliderFloat("HueShift", &gfx->colorFilterConstant.hueShift, 0.0f, 360.0f);

@@ -14,6 +14,7 @@
 
 #include <typeinfo>
 #include <algorithm>
+#include "Library/Graphics/Graphics.h"
 
 using namespace DirectX;
 
@@ -75,6 +76,7 @@ void StPlayer::Update() {
 }
 
 void StPlayer::Render() {
+	
 	model->Render(transform, { 1,1,1,1 }, &keyFrame);
 	parryEffect->Render();
 	domeEffect->Render();

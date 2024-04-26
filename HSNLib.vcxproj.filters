@@ -79,6 +79,12 @@
     <Filter Include="ソース ファイル\MeshEffect">
       <UniqueIdentifier>{3601d1cc-9052-4417-b252-bd8863c0424a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\Obstacle">
+      <UniqueIdentifier>{2d89c448-2e65-44d0-8b95-da2d30131e31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Obstacle">
+      <UniqueIdentifier>{7e6a5ce0-f9a9-4ff4-af19-cbd585efd17c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Library\Graphics\Graphics.cpp">
@@ -330,12 +336,6 @@
     <ClCompile Include="SpinningTopEnemyManager.cpp">
       <Filter>ソース ファイル\SpinningTopBase</Filter>
     </ClCompile>
-    <ClCompile Include="Obstacle.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="ObstacleManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="StPlayer.cpp">
       <Filter>ソース ファイル\SpinningTopBase</Filter>
     </ClCompile>
@@ -389,6 +389,21 @@
     </ClCompile>
     <ClCompile Include="DomeEffect.cpp">
       <Filter>ソース ファイル\MeshEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="Obstacle.cpp">
+      <Filter>ソース ファイル\Obstacle</Filter>
+    </ClCompile>
+    <ClCompile Include="ObstacleManager.cpp">
+      <Filter>ソース ファイル\Obstacle</Filter>
+    </ClCompile>
+    <ClCompile Include="ObsParts.cpp">
+      <Filter>ソース ファイル\Obstacle</Filter>
+    </ClCompile>
+    <ClCompile Include="ObsStaticObj.cpp">
+      <Filter>ソース ファイル\Obstacle</Filter>
+    </ClCompile>
+    <ClCompile Include="ObsMarunoko.cpp">
+      <Filter>ソース ファイル\Obstacle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -665,12 +680,6 @@
     <ClInclude Include="SpinningTopEnemyManager.h">
       <Filter>ヘッダー ファイル\SpinningTopBase</Filter>
     </ClInclude>
-    <ClInclude Include="Obstacle.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="ObstacleManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="StPlayer.h">
       <Filter>ヘッダー ファイル\SpinningTopBase</Filter>
     </ClInclude>
@@ -724,6 +733,21 @@
     </ClInclude>
     <ClInclude Include="DomeEffect.h">
       <Filter>ヘッダー ファイル\MeshEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="ObstacleManager.h">
+      <Filter>ヘッダー ファイル\Obstacle</Filter>
+    </ClInclude>
+    <ClInclude Include="Obstacle.h">
+      <Filter>ヘッダー ファイル\Obstacle</Filter>
+    </ClInclude>
+    <ClInclude Include="ObsParts.h">
+      <Filter>ヘッダー ファイル\Obstacle</Filter>
+    </ClInclude>
+    <ClInclude Include="ObsStaticObj.h">
+      <Filter>ヘッダー ファイル\Obstacle</Filter>
+    </ClInclude>
+    <ClInclude Include="ObsMarunoko.h">
+      <Filter>ヘッダー ファイル\Obstacle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

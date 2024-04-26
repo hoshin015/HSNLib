@@ -41,19 +41,19 @@ void SceneSpinningTop::Initialize()
 	
 	for (int i = 0; i < 3; i++)
 	{
-		Obstacle* obstacle = new_ Obstacle("Data/FBX/cylinder/cylinder.fbx");
-		obstacle->SetPosition({ i * 30.0f - 45.0f, 0, -6.0f });
-		ObstacleManager::Instance().Register(obstacle);
+		//Obstacle* obstacle = new_ Obstacle("Data/FBX/cylinder/cylinder.fbx");
+		//obstacle->SetPosition({ i * 30.0f - 45.0f, 0, -6.0f });
+		//ObstacleManager::Instance().Register(obstacle);
 	}
 
 	for (int i = 0; i < 3; i++)
 	{
-		Obstacle* obstacle = new_ Obstacle("Data/FBX/StMarunoko/StMarunoko.fbx");
-		obstacle->SetPosition({ i * 30.0f - 45.0f, 0, 6.0f });
-		obstacle->rotationSpeed = 360.0f;
-		obstacle->frictionPower = 0.0f;
-		obstacle->radius = 3.0f;
-		ObstacleManager::Instance().Register(obstacle);
+		//Obstacle* obstacle = new_ Obstacle("Data/FBX/StMarunoko/StMarunoko.fbx");
+		//obstacle->SetPosition({ i * 30.0f - 45.0f, 0, 6.0f });
+		//obstacle->rotationSpeed = 360.0f;
+		//obstacle->frictionPower = 0.0f;
+		//obstacle->radius = 3.0f;
+		//ObstacleManager::Instance().Register(obstacle);
 	}
 	
 	// ステージ初期化

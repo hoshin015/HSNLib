@@ -8,7 +8,7 @@
 
 DomeEffect::DomeEffect()
 {
-	model = ResourceManager::Instance().LoadModelResource("Data/Fbx/dome/dome.fbx");
+	model = ResourceManager::Instance().LoadModelResource("Data/Fbx/cylinder01/cylinder01.fbx");
 
 	//--- < 頂点シェーダーオブジェクトと入力レイアウトオブジェクトの生成 > ---
 	const char* csoName{ "./Data/Shader/ParryEffect_VS.cso" };
@@ -38,7 +38,7 @@ DomeEffect::DomeEffect()
 	_ASSERT_EXPR(SUCCEEDED(hr), hrTrace(hr));
 
 	// スケール変更
-	SetScale({ nowScale,nowScale,nowScale });
+	SetScale({ nowScale,0.2,nowScale });
 }
 
 // 更新処理
@@ -46,16 +46,22 @@ void DomeEffect::Update()
 {
 	uvScrollValue.y -= uvScrollSpeed * Timer::Instance().DeltaTime();
 
-	nowScale += 200.0f * Timer::Instance().DeltaTime();
-	nowAlpha -= 1.5f * Timer::Instance().DeltaTime();
-	if (nowScale > 10) nowScale = 10;
-	if (nowAlpha < 0) nowAlpha = 0;
+	nowScale += 30.0f * Timer::Instance().DeltaTime();
+	nowAlpha -= 1.0f * Timer::Instance().DeltaTime();
+	if (nowScale > maxScale) nowScale = maxScale;
+	if (nowAlpha < 0)
+	{
+		nowAlpha = 0;
+	}
+
+	// スケール変更
+	SetScale({ nowScale,0.2,nowScale });
 
 	InputManager& input = InputManager::Instance();
 	
 	if (input.GetKeyPressed(DirectX::Keyboard::Enter))
 	{
-		nowAlpha = 1.0f;
+		nowAlpha = 2.0f;
 		nowScale = 0.0f;
 	}
 
@@ -73,18 +79,28 @@ void DomeEffect::Render()
 	gfx.deviceContext->UpdateSubresource(constantBuffer.Get(), 0, 0, &data, 0, 0);
 	gfx.deviceContext->VSSetConstantBuffers(7, 1, constantBuffer.GetAddressOf());
 
+	// 元のシェーダーを保存しておく
+	gfx.deviceContext->VSGetShader(storeVertexShader.GetAddressOf(), nullptr, 0);
+	gfx.deviceContext->PSGetShader(storePixelShader.GetAddressOf(), nullptr, 0);
+
+
 	//--- < シェーダーのバインド > ---
 	gfx.deviceContext->VSSetShader(vertexShader.Get(), nullptr, 0);
 	gfx.deviceContext->PSSetShader(pixelShader.Get(), nullptr, 0);
 
-
-	//gfx.SetBlend(BLEND_STATE::ADD);
 	gfx.SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_CULL_NONE);
 	model->Render(transform, { 1,0.62,1,nowAlpha }, NULL);
 
 	// 元に戻す
-	gfx.SetBlend(BLEND_STATE::ALPHA);
-	gfx.SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_CULL_NONE);
-	gfx.deviceContext->VSSetShader(gfx.vertexShaders[static_cast<size_t>(VS_TYPE::SkinnedMesh_VS)].Get(), nullptr, 0);
-	gfx.deviceContext->PSSetShader(gfx.pixelShaders[static_cast<size_t>(PS_TYPE::SkinnedMesh_PS)].Get(), nullptr, 0);
+	gfx.SetRasterizer(RASTERIZER_STATE::CLOCK_TRUE_SOLID);
+	gfx.deviceContext->VSSetShader(storeVertexShader.Get(), nullptr, 0);
+	gfx.deviceContext->PSSetShader(storePixelShader.Get(), nullptr, 0);
+}
+
+
+// エフェクト開始
+void DomeEffect::StartEffect()
+{
+	nowAlpha = 2.0f;
+	nowScale = 0.0f;
 }

@@ -13,11 +13,20 @@ public:
 	// 描画処理
 	void Render() override;
 
+	// 現在のアルファ値ゲッター
+	float GetNowAlpha() { return nowAlpha; }
+
+	// エフェクト開始
+	void StartEffect();
+
 private:
 	Microsoft::WRL::ComPtr<ID3D11VertexShader> vertexShader;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> pixelShader;
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> inputLayout;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer;
+
+	Microsoft::WRL::ComPtr<ID3D11VertexShader> storeVertexShader;
+	Microsoft::WRL::ComPtr<ID3D11PixelShader> storePixelShader;
 
 	struct Constants
 	{
@@ -28,6 +37,7 @@ private:
 	DirectX::XMFLOAT2 uvScrollValue = { 0,0 };
 
 	float nowScale = 5.0f;			// スケール
+	float maxScale = 5.0f;			// 最大スケール
 	float nowAlpha = 1.0f;			// アルファ
-	float uvScrollSpeed = 0.2f;		// UVスクロールのスピード
+	float uvScrollSpeed = 2.2f;		// UVスクロールのスピード
 };
