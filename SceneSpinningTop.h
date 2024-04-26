@@ -26,6 +26,7 @@ public:
 	// デバッグ描画
 	void DrawDebugGUI();
 
+
 private:
 	std::unique_ptr<SkyMap> skyMap;
 

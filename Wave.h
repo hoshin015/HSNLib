@@ -4,6 +4,7 @@
 #include "SpinningTopEnemyManager.h"
 #include "StEnemy.h"
 #include "StEnemyData.h"
+#include "LightManager.h"
 
 struct ScriptData
 {
@@ -49,8 +50,56 @@ struct ScriptEnemy : public ScriptData
 	}
 };
 
+struct ScriptOnLight : public ScriptData
+{
+	ScriptOnLight() {}
+
+	void Execute() override
+	{
+		LightManager::Instance().Clear();
+
+		// ライト初期化
+		Light* directionLight = new Light(LightType::Directional);
+		directionLight->SetDirection(DirectX::XMFLOAT3(0.5, -1, -1));
+		directionLight->SetColor(DirectX::XMFLOAT4(1, 1, 1, 1));
+		LightManager::Instance().Register(directionLight);
+	}
+};
+
+struct ScriptOffLight : public ScriptData
+{
+	ScriptOffLight() {}
+
+	void Execute() override
+	{
+		LightManager::Instance().Clear();
+
+		// ライト初期化
+		Light* directionLight = new Light(LightType::Directional);
+		directionLight->SetDirection(DirectX::XMFLOAT3(0.5, -1, -1));
+		directionLight->SetColor(DirectX::XMFLOAT4(0, 0, 0, 1));
+		LightManager::Instance().Register(directionLight);
+
+		// 点光源追加
+		{
+			for (int i = 0; i < 3; i++)
+			{
+				Light* light = new Light(LightType::Point);
+				light->SetPosition({ i * 30.0f - 45.0f, 5, -4 });
+				light->SetColor(DirectX::XMFLOAT4(1, 1, 1, 1));
+				light->SetRange(30.0f);
+				LightManager::Instance().Register(light);
+			}
+		}
+
+		LightManager::Instance().SetAmbientColor({ 0,0,0,1.0f });
+	}
+};
+
 
 #define SET_ENEMY(time, spawnType, enemyType) {(time), std::unique_ptr<ScriptData>(new ScriptEnemy(spawnType, enemyType))}
+#define SET_OnLight(time) {(time), std::unique_ptr<ScriptData>(new ScriptOnLight())}
+#define SET_OffLight(time) {(time), std::unique_ptr<ScriptData>(new ScriptOffLight())}
 #define SET_END		{0,nullptr}
 
 class Wave
