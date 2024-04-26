@@ -8,5 +8,5 @@ SamplerState TextlinearSamplerState : register(s3);
 
 float4 main(VS_OUT pin) : SV_TARGET
 {
-    return colorMap.Sample(TextlinearSamplerState, pin.texcoord) * pin.color;
+    return colorMap.Sample(pointSamplerState, pin.texcoord) * pin.color;
 }

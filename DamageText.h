@@ -6,9 +6,10 @@
 class DamageText
 {
 public:
-	DamageText(DirectX::XMFLOAT3 pos, const TCHAR* str)
+	DamageText(DirectX::XMFLOAT3 pos, const TCHAR* str, DirectX::XMFLOAT4 c = {1,1,1,1})
 	{
 		position = pos;
+		color = c;
 		// 文字列の長さ + 1（null 終端文字分）のメモリを動的に確保し、文字列をコピーする
 		text = new TCHAR[_tcslen(str) + 1];
 		_tcscpy_s(const_cast<TCHAR*>(text), _tcslen(str) + 1, str);
@@ -42,6 +43,7 @@ public:
 	void UpdateFadeOutState();
 
 private:
+	DirectX::XMFLOAT4 color = { 1,1,1,1 };
 	DirectX::XMFLOAT3 position;
 	DirectX::XMFLOAT2 drawPosition = { 0,0 };
 	const TCHAR* text;
@@ -50,8 +52,6 @@ private:
 	float timer = 0.0f;
 	float idleTime = 0.5f;
 	float fadeOutTime = 0.15f;
-
-	float alpha = 1.0f;
 
 	float addY = 0.0f;
 

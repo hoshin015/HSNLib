@@ -8,8 +8,6 @@
 // XVˆ—
 void DamageText::Update()
 {
-	
-
 	switch (state)
 	{
 	case DamageText::State::Idle:
@@ -27,7 +25,7 @@ void DamageText::Update()
 // •`‰æˆ—
 void DamageText::Render()
 {
-	DispString::Instance().Draw(text, { drawPosition.x, drawPosition.y }, size, TEXT_ALIGN::MIDDLE, { 0, 1, 1, alpha }, true, { 0,0,0,1 }, 2);
+	DispString::Instance().Draw(text, { drawPosition.x, drawPosition.y }, size, TEXT_ALIGN::MIDDLE, color, true, { 0,0,0,1 }, 2);
 }
 
 // ”jŠü
@@ -124,6 +122,5 @@ void DamageText::UpdateFadeOutState()
 		return;
 	}
 
-	addY += 2 * Timer::Instance().DeltaTime();
-	alpha = 1.0f - (timer / fadeOutTime);
+	addY += 4 * Timer::Instance().DeltaTime();
 }

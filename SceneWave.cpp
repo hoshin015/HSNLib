@@ -18,6 +18,8 @@
 #include "ObsMarunoko.h"
 
 #include "DataManager.h"
+#include "DamageTextManager.h"
+#include "Library/Text/DispString.h"
 
 void SceneWave::Initialize()
 {
@@ -77,6 +79,8 @@ void SceneWave::Initialize()
 
 void SceneWave::Finalize()
 {
+	DamageTextManager::Instance().Clear();
+
 	SpinningTopPlayerManager::Instance().Clear();
 
 	StageManager::Instance().Clear();
@@ -102,6 +106,8 @@ void SceneWave::Update()
 	SpinningTopEnemyManager::Instance().Update();
 
 	ObstacleManager::Instance().Update();
+
+	DamageTextManager::Instance().Update();
 }
 
 void SceneWave::Render()
@@ -191,9 +197,18 @@ void SceneWave::Render()
 
 	SpinningTopPlayerManager::Instance().Render();
 
+	gfx.SetDepthStencil(DEPTHSTENCIL_STATE::ZT_OFF_ZW_OFF);
+	gfx.SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);
+
+	DamageTextManager::Instance().Render();
+
+	DispString::Instance().Draw(L"HOŠ´SH‚gIN Li‚¤B", { 800, 60 }, 32, TEXT_ALIGN::MIDDLE, { 0, 0, 0, 1 });
+
 	// --- ƒfƒoƒbƒO•`‰æ ---
 	DebugPrimitive::Instance().Render();
 	LineRenderer::Instance().Render();
+
+
 
 	gfx.bloomBuffer->DeActivate();
 

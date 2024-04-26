@@ -64,16 +64,7 @@ void StEnemy::Update()
 
 void StEnemy::Render(bool drawShadow)
 {
-	Graphics& gfx = Graphics::Instance();
-
 	model->Render(transform, { 1,1,1,1 }, &keyFrame);
-
-	//if (!drawShadow)
-	//{
-	//	pF->SetPosition({ GetPosition().x, 0.2f, GetPosition().z });
-	//	pF->Update();
-	//	pF->Render();
-	//}
 }
 
 // デバッグプリミティブ描画

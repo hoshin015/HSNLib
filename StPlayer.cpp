@@ -15,6 +15,7 @@
 #include <typeinfo>
 #include <algorithm>
 #include "Library/Graphics/Graphics.h"
+#include "DamageTextManager.h"
 
 using namespace DirectX;
 
@@ -331,6 +332,14 @@ void StPlayer::UpdateDamaged() {
 
 			velocity = out1;
 			ApplyDamage(1, 0);
+
+			// ダメージ表示
+			int damage = 2;
+			std::wstring damageString = std::to_wstring(damage);
+			const TCHAR* damageTChar = damageString.c_str();
+			DamageText* damageText = new DamageText({ GetPosition().x, 1.0f, GetPosition().z }, damageTChar, {1,0,0,1});
+			DamageTextManager::Instance().Register(damageText);
+
 			break;
 		}
 	}
