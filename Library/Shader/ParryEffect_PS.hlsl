@@ -1,6 +1,5 @@
 #include "ParryEffect.hlsli"
 
-
 #define POINT 0
 #define LINEAR 1
 #define ANISOTROPIC 2
@@ -25,8 +24,6 @@ float4 main(VS_OUT pin) : SV_TARGET
     float4 diffuseColor = texture_maps[0].Sample(sampler_states[ANISOTROPIC], pin.texcoord);
      // エミッシブカラーの取得
     float4 emissive = texture_maps[3].Sample(sampler_states[POINT], pin.texcoord);
-   
-    
     
     // 最終的なカラーを計算
     float4 finalColor;
@@ -35,7 +32,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     
     //finalColor.rgb = diffuseColor.rgb * pin.color.rgb;
     finalColor.rgb = pin.color.rgb;
-    finalColor.a = length(diffuseColor.rgb);
+    finalColor.a = length(diffuseColor.rgb) * pin.color.a;
     
     //if (length(finalColor.rgb) < 0.5)
     //    clip(-1);

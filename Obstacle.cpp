@@ -39,7 +39,6 @@ void Obstacle::Update()
 		DirectX::XMStoreFloat3(&position, POSITION);
 	}
 
-
 	// ‰ñ“]
 	if (rotationSpeed != 0)
 	{
@@ -70,7 +69,7 @@ void Obstacle::Render()
 
 void Obstacle::DrawDebugPrimitive()
 {
-	DebugPrimitive::Instance().AddSphere(position, radius, { 0,0,0,1 });
+	//DebugPrimitive::Instance().AddSphere(position, radius, { 0,0,0,1 });
 }
 
 bool Obstacle::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit)

@@ -381,6 +381,9 @@
     <ClCompile Include="ParryEffect.cpp">
       <Filter>ソース ファイル\MeshEffect</Filter>
     </ClCompile>
+    <ClCompile Include="DomeEffect.cpp">
+      <Filter>ソース ファイル\MeshEffect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\Graphics\Graphics.h">
@@ -705,6 +708,9 @@
       <Filter>ヘッダー ファイル\MeshEffect</Filter>
     </ClInclude>
     <ClInclude Include="ParryEffect.h">
+      <Filter>ヘッダー ファイル\MeshEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="DomeEffect.h">
       <Filter>ヘッダー ファイル\MeshEffect</Filter>
     </ClInclude>
   </ItemGroup>

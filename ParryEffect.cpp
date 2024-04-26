@@ -43,12 +43,17 @@ ParryEffect::ParryEffect()
 void ParryEffect::Update()
 {
 	uvScrollValue.y += 0.2f * Timer::Instance().DeltaTime();
-	//nowScale += 100.0f * Timer::Instance().DeltaTime();
+	//nowScale += 200.0f * Timer::Instance().DeltaTime();
+	//nowAlpha -= 1.5f * Timer::Instance().DeltaTime();
+	//if (nowScale > 10) nowScale = 10;
+	//if (nowAlpha < 0) nowAlpha = 0;
+
 
 	InputManager& input = InputManager::Instance();
 
 	if (input.GetKeyPressed(DirectX::Keyboard::Enter))
 	{
+		nowAlpha = 1.0f;
 		nowScale = 0.0f;
 	}
 	
@@ -75,8 +80,8 @@ void ParryEffect::Render()
 
 
 	//gfx.SetBlend(BLEND_STATE::ADD);
-	gfx.SetRasterizer(static_cast<RASTERIZER_STATE>(RASTERIZER_STATE::CLOCK_FALSE_CULL_NONE));
-	model->Render(transform, { 0.62,1,1,1 }, NULL);
+	gfx.SetRasterizer(static_cast<RASTERIZER_STATE>(RASTERIZER_STATE::CLOCK_FALSE_SOLID));
+	model->Render(transform, { 0.62,1,1,nowAlpha }, NULL);
 
 	// Œ³‚É–ß‚·
 	gfx.SetBlend(BLEND_STATE::ALPHA);

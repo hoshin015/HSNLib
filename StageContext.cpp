@@ -7,15 +7,15 @@
 // コンストラクタ
 StageContext::StageContext()
 {
-	model = new_ SkinnedMesh("Data/Fbx/testStage/testStage.fbx");
-	//collisionModel = new_ SkinnedMesh("Data/Fbx/MyStageCollision/MyStageCollision.fbx");
+	model = new_ SkinnedMesh("Data/Fbx/StStage/StStage.fbx");
+	collisionModel = new_ SkinnedMesh("Data/Fbx/StStageCollision/StStageCollision.fbx");
 }
 
 // デストラクタ
 StageContext::~StageContext()
 {
 	delete model;
-	//delete collisionModel;
+	delete collisionModel;
 }
 
 // 更新処理
@@ -50,6 +50,6 @@ void StageContext::Render()
 // レイキャスト
 bool StageContext::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit)
 {
-	return Collision::IntersectRayVsModel(start, end, model, hit);
-	//return Collision::IntersectRayVsModel(start, end, collisionModel, hit);
+	//return Collision::IntersectRayVsModel(start, end, model, hit);
+	return Collision::IntersectRayVsModel(start, end, collisionModel, hit);
 }

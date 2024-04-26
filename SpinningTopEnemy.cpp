@@ -293,6 +293,8 @@ DirectX::XMFLOAT3 SpinningTopEnemy::SbCollisionAvoidance()
 		float length;
 		DirectX::XMStoreFloat(&length, LENGTH);
 
+		length -= iObs->radius;
+
 		if (obsDistance > length)
 		{
 			obsDistance = length;
@@ -320,6 +322,11 @@ DirectX::XMFLOAT3 SpinningTopEnemy::SbCollisionAvoidance()
 	DirectX::XMStoreFloat3(&lVecStart, L_VEC_START);
 	DirectX::XMStoreFloat3(&rVecEnd, R_VEC_END);
 	DirectX::XMStoreFloat3(&lVecEnd, L_VEC_END);
+	rVecStart.y = 0.2f;
+	lVecStart.y = 0.2f;
+	rVecEnd.y = 0.2f;
+	lVecEnd.y = 0.2f;
+
 #if 0
 	// ê¸ï`âÊ
 	const DirectX::XMFLOAT4 white = DirectX::XMFLOAT4(0.5f, 0.5f, 0.5f, 1);

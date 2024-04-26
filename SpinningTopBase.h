@@ -161,6 +161,9 @@ protected:
 	float stepOffset1 = 0.1f;
 	float slopeRate = 1.0f;
 
+	// ƒRƒ}‚Ìd‚³
+	float weight = 1.0f;
+
 public:
 	std::shared_ptr<SkinnedMesh>	model;
 	std::shared_ptr<SkinnedMesh>	topParts;

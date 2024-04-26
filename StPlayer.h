@@ -86,7 +86,5 @@ private:
 	T GetDebugValue(std::string str) {
 		return std::get<T>(debugValue[str]);
 	}
-
-
 };
 

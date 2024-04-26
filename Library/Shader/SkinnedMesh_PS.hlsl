@@ -129,10 +129,10 @@ float4 main(VS_OUT pin) : SV_TARGET
     // 最終的なカラーを計算
     float4 finalColor;
     
-    finalColor.a = diffuseColor.a;
+    finalColor.a = diffuseColor.a * pin.color.a;
     
     //finalColor.rgb = (emissive.a) ? emissive.rgb : lig * diffuseColor.rgb;
-    finalColor.rgb = lerp(lig * diffuseColor.rgb, emissive.rgb*5, emissive.a);
+    finalColor.rgb = lerp(lig * diffuseColor.rgb, emissive.rgb * 5, emissive.a) * pin.color.rgb;
     
     //finalColor.rgb = emissive.rgb + diffuseColor.rgb * lig;
    

@@ -65,20 +65,12 @@ void StEnemy::Render(bool drawShadow)
 
 	model->Render(transform, { 1,1,1,1 }, &keyFrame);
 
-	//gfx.SetBlend(BLEND_STATE::ADD);
-	//gfx.SetRasterizer(static_cast<RASTERIZER_STATE>(RASTERIZER_STATE::CLOCK_FALSE_CULL_NONE));
 	//if (!drawShadow)
-	//	paryEffect->Render(transform, { 1,1,1,1 }, &keyFrame);
-	//
-	//gfx.SetBlend(BLEND_STATE::ALPHA	);
-	//gfx.SetRasterizer(static_cast<RASTERIZER_STATE>(RASTERIZER_STATE::CLOCK_FALSE_SOLID));
-
-	if (!drawShadow)
-	{
-		pF->SetPosition({ GetPosition().x, 0.2f, GetPosition().z });
-		pF->Update();
-		pF->Render();
-	}
+	//{
+	//	pF->SetPosition({ GetPosition().x, 0.2f, GetPosition().z });
+	//	pF->Update();
+	//	pF->Render();
+	//}
 }
 
 // デバッグプリミティブ描画

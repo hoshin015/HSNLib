@@ -23,7 +23,7 @@ void SceneSpinningTop::Initialize()
 
 	float x = 0;
 	float z = 0;
-	for (int i = 0; i < 1; i++)
+	for (int i = 0; i < 15; i++)
 	{
 		StEnemy* enemy;
 		enemy = (i % 2 == 0) ? new_ StEnemy(ENEMY_1) : new_ StEnemy(ENEMY_0);
@@ -42,7 +42,17 @@ void SceneSpinningTop::Initialize()
 	for (int i = 0; i < 3; i++)
 	{
 		Obstacle* obstacle = new_ Obstacle("Data/FBX/cylinder/cylinder.fbx");
-		obstacle->SetPosition({ i * 10.0f - 15.0f, 0, -6.0f });
+		obstacle->SetPosition({ i * 30.0f - 45.0f, 0, -6.0f });
+		ObstacleManager::Instance().Register(obstacle);
+	}
+
+	for (int i = 0; i < 3; i++)
+	{
+		Obstacle* obstacle = new_ Obstacle("Data/FBX/StMarunoko/StMarunoko.fbx");
+		obstacle->SetPosition({ i * 30.0f - 45.0f, 0, 6.0f });
+		obstacle->rotationSpeed = 360.0f;
+		obstacle->frictionPower = 0.0f;
+		obstacle->radius = 3.0f;
 		ObstacleManager::Instance().Register(obstacle);
 	}
 	
@@ -51,7 +61,7 @@ void SceneSpinningTop::Initialize()
 	StageContext* stageMain = new_ StageContext();
 	stageManager.Register(stageMain);
 
-#if 0
+#if 1
 	// ライト初期化
 	Light* directionLight = new Light(LightType::Directional);
 	directionLight->SetDirection(DirectX::XMFLOAT3(0.5, -1, -1));
@@ -70,11 +80,14 @@ void SceneSpinningTop::Initialize()
 
 		// 点光源追加
 		{
-			Light* light = new Light(LightType::Point);
-			light->SetPosition(DirectX::XMFLOAT3(2, 1, 0));
-			light->SetColor(DirectX::XMFLOAT4(1, 1, 1, 1));
-			light->SetRange(30.0f);
-			LightManager::Instance().Register(light);
+			for (int i = 0; i < 3; i++)
+			{
+				Light* light = new Light(LightType::Point);
+				light->SetPosition({ i * 30.0f - 45.0f, 5, -4 });
+				light->SetColor(DirectX::XMFLOAT4(1, 1, 1, 1));
+				light->SetRange(30.0f);
+				LightManager::Instance().Register(light);
+			}
 
 			//Light* light2 = new Light(LightType::Point);
 			//light2->SetPosition(DirectX::XMFLOAT3(-2, 1, 0));
@@ -82,14 +95,14 @@ void SceneSpinningTop::Initialize()
 			//LightManager::Instance().Register(light2);
 		}
 		// スポットライトを追加
-		{
-			Light* light = new Light(LightType::Spot);
-			light->SetPosition(DirectX::XMFLOAT3(-3, 2, 0));
-			light->SetColor(DirectX::XMFLOAT4(1, 0, 0, 1));
-			light->SetDirection(DirectX::XMFLOAT3(+1, -1, 0));
-			light->SetRange(4.0f);
-			LightManager::Instance().Register(light);
-		}
+		//{
+		//	Light* light = new Light(LightType::Spot);
+		//	light->SetPosition(DirectX::XMFLOAT3(-3, 2, 0));
+		//	light->SetColor(DirectX::XMFLOAT4(1, 0, 0, 1));
+		//	light->SetDirection(DirectX::XMFLOAT3(+1, -1, 0));
+		//	light->SetRange(4.0f);
+		//	LightManager::Instance().Register(light);
+		//}
 
 		LightManager::Instance().SetAmbientColor({ 0,0,0,1.0f });
 	}
