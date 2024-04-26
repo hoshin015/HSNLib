@@ -18,6 +18,13 @@ public:
 	bool IsPlayer() { return isPlayer; }
 	void Input();
 
+	bool GetParryGauge() { return parryGauge; }
+	bool GetParry() { return parry; }
+	PlayerData* GetData() { return data.get(); }
+	float parryDamageRadius = 0;
+	float parryGaugeDamageRadius = 0;
+
+
 private:
 	//void UpdateRotate();
 	//void UpdateMove();
@@ -32,22 +39,22 @@ protected:
 	//パラメータは上に,プロパティは下に書いてる
 	inline static std::vector<SpinningTopEnemy*> nearEnemy;
 
-	PlayerData data;
-	PlayerData optionData;
+	std::shared_ptr<PlayerData> data;
+	std::shared_ptr<PlayerData> optionData;
 	bool isPlayer;
 
 	//移動
 
 	//回転
-	float rotateSpeed;
+	inline static float rotateSpeed;
 
 	//パリィ
-	bool parry = false;
-	float parryDamageRadius = 0;
-	float parryCooldownCount = 0;
+	inline static bool parry = false;
 
-	bool parryGauge = false;
-	float parryGaugeDamageRadius = 0;
+
+	inline static float parryCooldownCount = 0;
+
+	inline static bool parryGauge = false;
 
 	//ダメージ
 
@@ -55,7 +62,7 @@ protected:
 
 	//入力
 	using InputVariant = std::variant<bool, int, float, DirectX::XMFLOAT2>;
-	std::map<std::string, InputVariant> inputMap;
+	inline static std::map<std::string, InputVariant> inputMap;
 
 	template<typename T>
 	const T& GetInputMap(std::string str) {

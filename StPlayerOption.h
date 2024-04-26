@@ -5,7 +5,7 @@
 
 class StPlayerOption :public StPlayerBase {
 public:
-	StPlayerOption(std::shared_ptr<SkinnedMesh> model, PlayerData& data);
+	StPlayerOption(std::shared_ptr<SkinnedMesh> model, std::shared_ptr<PlayerData>& data);
 	~StPlayerOption() override;
 
 	void Update() override;
