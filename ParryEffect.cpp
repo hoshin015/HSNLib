@@ -8,7 +8,6 @@
 
 ParryEffect::ParryEffect()
 {
-	//model = ResourceManager::Instance().LoadModelResource("Data/Fbx/paryEffectTest/paryEffectTest.fbx");
 	model = ResourceManager::Instance().LoadModelResource("Data/Fbx/ring/ring.fbx");
 
 	//--- < 頂点シェーダーオブジェクトと入力レイアウトオブジェクトの生成 > ---
@@ -37,28 +36,15 @@ ParryEffect::ParryEffect()
 	constantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	HRESULT hr = Graphics::Instance().device->CreateBuffer(&constantBufferDesc, nullptr, constantBuffer.GetAddressOf());
 	_ASSERT_EXPR(SUCCEEDED(hr), hrTrace(hr));
+
+	// スケール変更
+	SetScale({ nowScale,nowScale,nowScale });
 }
 
 // 更新処理
 void ParryEffect::Update()
 {
-	uvScrollValue.y += 0.2f * Timer::Instance().DeltaTime();
-	//nowScale += 200.0f * Timer::Instance().DeltaTime();
-	//nowAlpha -= 1.5f * Timer::Instance().DeltaTime();
-	//if (nowScale > 10) nowScale = 10;
-	//if (nowAlpha < 0) nowAlpha = 0;
-
-
-	InputManager& input = InputManager::Instance();
-
-	if (input.GetKeyPressed(DirectX::Keyboard::Enter))
-	{
-		nowAlpha = 1.0f;
-		nowScale = 0.0f;
-	}
-	
-
-	SetScale({ nowScale,nowScale,nowScale });
+	uvScrollValue.y += uvScrollSpeed * Timer::Instance().DeltaTime();
 
 	// 行列更新
 	UpdateTransform();

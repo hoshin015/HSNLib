@@ -13,6 +13,7 @@
 #include "Library/3D/DebugPrimitive.h"
 #include "Library/3D/LineRenderer.h"
 #include "Wave.h"
+#include "SpinningTopPlayerManager.h"
 
 #include "DataManager.h"
 
@@ -20,6 +21,12 @@ void SceneWave::Initialize()
 {
 	DataManager::Instance().LoadEnemyData(enemyData);
 	DataManager::Instance().LoadSpawnEreaData();
+
+
+	// プレイヤー初期化
+	StPlayerBase* player = new StPlayer();
+	SpinningTopPlayerManager::Instance().Register(player);
+
 
 	for (int i = 0; i < 3; i++)
 	{
@@ -59,6 +66,8 @@ void SceneWave::Initialize()
 
 void SceneWave::Finalize()
 {
+	SpinningTopPlayerManager::Instance().Clear();
+
 	StageManager::Instance().Clear();
 
 	LightManager::Instance().Clear();
@@ -73,8 +82,9 @@ void SceneWave::Update()
 	// カメラコントローラー更新処理
 	Camera::Instance().Update();
 
-
 	Wave::Instance().Update();
+
+	SpinningTopPlayerManager::Instance().Update();
 
 	StageManager::Instance().Update();
 
@@ -121,6 +131,8 @@ void SceneWave::Render()
 
 		StageManager::Instance().Render();
 
+		SpinningTopPlayerManager::Instance().Render();
+
 		SpinningTopEnemyManager::Instance().Render(true);
 
 		ObstacleManager::Instance().Render();
@@ -161,9 +173,12 @@ void SceneWave::Render()
 
 	StageManager::Instance().Render();
 
+
 	SpinningTopEnemyManager::Instance().Render();
 
 	ObstacleManager::Instance().Render();
+
+	SpinningTopPlayerManager::Instance().Render();
 
 	// --- デバッグ描画 ---
 	DebugPrimitive::Instance().Render();

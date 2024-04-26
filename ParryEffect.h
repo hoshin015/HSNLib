@@ -26,6 +26,8 @@ private:
 	};
 
 	DirectX::XMFLOAT2 uvScrollValue = { 0,0 };
-	float nowScale = 5.0f;
-	float nowAlpha = 1.0f;
+
+	float nowScale = 3.0f;			// スケール
+	float nowAlpha = 1.0f;			// アルファ
+	float uvScrollSpeed = 0.2f;		// UVスクロールのスピード
 };

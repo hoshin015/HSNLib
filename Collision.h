@@ -44,7 +44,8 @@ public:
 		float radiusA,
 		const DirectX::XMFLOAT3& positionB,
 		float radiusB,
-		DirectX::XMFLOAT3& outPositionA
+		DirectX::XMFLOAT3& outPositionA,
+		int power
 	);
 
 	// ‰~’Œ‚Æ‰~’Œ‚ÌŒğ·”»’è

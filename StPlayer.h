@@ -22,6 +22,8 @@ private:
 	void UpdateMove();
 	void UpdateDamaged();
 
+	void UpdateObstacleCollision();
+
 	void UpdateOption();
 	void AddOption();
 	void EraseOption();

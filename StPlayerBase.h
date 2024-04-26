@@ -6,6 +6,8 @@
 #include "SpinningTopBase.h"
 #include "SpinningTopEnemyManager.h"
 #include "StPlayerData.h"
+#include "ParryEffect.h"
+#include "DomeEffect.h"
 
 class StPlayerBase :public SpinningTopBase {
 public:
@@ -49,6 +51,8 @@ protected:
 	inline static float rotateSpeed;
 
 	//ƒpƒŠƒB
+	std::unique_ptr<ParryEffect> parryEffect;
+	std::unique_ptr<DomeEffect> domeEffect;
 	inline static bool parry = false;
 
 

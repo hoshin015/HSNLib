@@ -8,7 +8,7 @@
 
 #include "SpinningTopEnemyManager.h"
 #include "SpinningTopPlayerManager.h"
-#include "Obstacle.h"
+#include "ObstacleManager.h"
 #include "Collision.h"
 #include "DataManager.h"
 
@@ -35,6 +35,11 @@ StPlayer::StPlayer() {
 	rotateSpeed = data->rotateInitialSpeed;
 
 	isPlayer = true;
+
+	// parryEffect
+	parryEffect = std::make_unique<ParryEffect>();
+	// domeEffect
+	domeEffect = std::make_unique<DomeEffect>();
 }
 
 StPlayer::~StPlayer() {}
@@ -44,8 +49,16 @@ void StPlayer::Update() {
 
 	Camera::Instance().SetTarget(position);
 
+	// parryEffect更新
+	parryEffect->SetPosition({ position.x, 0.2f, position.z });
+	parryEffect->Update();
+	// domeEffect更新
+	domeEffect->SetPosition({ position.x, 0.2f, position.z });
+	domeEffect->Update();
+
 	UpdateRotate();
 	UpdateMove();
+	UpdateObstacleCollision();
 	UpdateAttack();
 	UpdateDamaged();
 	UpdateOption();
@@ -63,6 +76,8 @@ void StPlayer::Update() {
 
 void StPlayer::Render() {
 	model->Render(transform, { 1,1,1,1 }, &keyFrame);
+	parryEffect->Render();
+	domeEffect->Render();
 }
 
 void StPlayer::DrawDebugGui() {
@@ -298,6 +313,8 @@ void StPlayer::UpdateMove() {
 }
 
 void StPlayer::UpdateDamaged() {
+
+
 	for (SpinningTopEnemy* enemy : nearEnemy) {
 		XMVECTOR pPosVec = XMLoadFloat3(&position);
 		XMVECTOR ePosVec = XMLoadFloat3(&enemy->GetPosition());
@@ -316,6 +333,42 @@ void StPlayer::UpdateDamaged() {
 		}
 	}
 
+}
+
+void StPlayer::UpdateObstacleCollision()
+{
+	ObstacleManager& obsM = ObstacleManager::Instance();
+
+	int obsCount = obsM.GetObstacleCount();
+	for (int i = 0; i < obsCount; i++)
+	{
+		Obstacle* obs = obsM.GetObstacle(i);
+
+		if (!obs->isCollision) continue;
+
+		// 衝突処理
+		DirectX::XMFLOAT3 velocityA;
+		if (Collision::StaticRepulsionSphereVsSphere(
+			GetPosition(),
+			GetRadius(),
+			obs->GetPosition(),
+			obs->GetRadius(),
+			velocityA,
+			60
+		))
+		{
+			// 押し出し後の位置設定
+			DirectX::XMFLOAT3 playerAVel = GetVelocity();
+			DirectX::XMVECTOR V_A = DirectX::XMLoadFloat3(&playerAVel);
+
+			DirectX::XMVECTOR AddA = DirectX::XMLoadFloat3(&velocityA);
+
+			V_A = DirectX::XMVectorAdd(V_A, AddA);
+			DirectX::XMStoreFloat3(&velocityA, V_A);
+
+			SetVelocity(velocityA);
+		}
+	}
 }
 
 void StPlayer::UpdateRotate() {

@@ -251,7 +251,8 @@ void SpinningTopEnemyManager::CollisionEnemyVsObstacle()
 				enemyA->GetRadius(),
 				obs->GetPosition(),
 				obs->GetRadius(),
-				velocityA
+				velocityA,
+				60
 			))
 			{
 				// ‰Ÿ‚µo‚µŒã‚ÌˆÊ’uİ’è
