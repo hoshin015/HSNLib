@@ -14,6 +14,7 @@
 
 #include "SpinningTopPlayerManager.h"
 #include "StPlayer.h"
+#include "Video.h"
 
 void SceneSTPlayer::Initialize() {
 	for (size_t i = 0; i < 1; i++) {
@@ -44,6 +45,9 @@ void SceneSTPlayer::Initialize() {
 	);
 	Camera::Instance().SetAngle({ DirectX::XMConvertToRadians(30), DirectX::XMConvertToRadians(180), 0 });
 	Camera::Instance().cameraType = Camera::CAMERA::FREE;
+
+	VideoManager::Instance().LoadFile(0,L"D:/etc/yt-dlp/video/ミニ偏 - 重音テト.mp4");
+	VideoManager::Instance().Play(0, true);
 }
 
 void SceneSTPlayer::Finalize() {
@@ -68,6 +72,7 @@ void SceneSTPlayer::Update() {
 	SpinningTopEnemyManager::Instance().Update();
 	SpinningTopPlayerManager::Instance().Update();
 	ObstacleManager::Instance().Update();
+	VideoManager::Instance().Update();
 }
 
 void SceneSTPlayer::Render() {
@@ -146,6 +151,7 @@ void SceneSTPlayer::Render() {
 	SpinningTopPlayerManager::Instance().Render();
 	ObstacleManager::Instance().Render();
 	DebugPrimitive::Instance().Render();
+	VideoManager::Instance().Draw(0, { 100,100 }, { 1920,1080 });
 
 	// --- デバッグ描画 ---
 	DrawDebugGUI();
