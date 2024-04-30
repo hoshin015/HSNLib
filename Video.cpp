@@ -49,7 +49,7 @@ void NV12ToRGB(BYTE* rgbBufferOut, BYTE* yuvBuffer, int width, int height) {
 void moveUV(BYTE* yuvBuffer, int bufferSize, int width, int height) {
 	size_t uvStart;
 	int yEnd = width * height;
-	for (uvStart = yEnd; yuvBuffer[uvStart] != 0; uvStart += width);
+	for (uvStart = yEnd; yuvBuffer[uvStart] == 0; uvStart += width);
 	if (uvStart != yEnd)memmove(&yuvBuffer[width * height], &yuvBuffer[uvStart], bufferSize - uvStart);
 }
 
@@ -70,6 +70,10 @@ void Video::LoadFile(ID3D11Device* device, const wchar_t* filePath) {
 	_isEmpty = false;
 
 	hr = MFCreateSourceReaderFromURL(filePath, NULL, _sourceReader.GetAddressOf());
+	if (FAILED(hr)) {
+		ErrorLogger::Log(hr, L"Video: Failed to load file");
+		return;
+	}
 
 	//‰¹º“Ç‚Ýž‚Ý
 	//¡‰ñ‚Íì‚ç‚È‚¢
@@ -375,7 +379,7 @@ void Video::LoadFrame(ID3D11DeviceContext* deviceContext) {
 
 				D3D11_MAPPED_SUBRESOURCE subresource;
 				deviceContext->Map(_texture.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &subresource);
-				memcpy(subresource.pData, bBuffer, subresource.DepthPitch);
+				memcpy(subresource.pData, bBuffer, maxlen);
 				deviceContext->Unmap(_texture.Get(), 0);
 
 				hr = buffer->Unlock();
@@ -416,10 +420,14 @@ void Video::LoadFrame(ID3D11DeviceContext* deviceContext) {
 	}
 }
 
-void Video::Play(bool loop) {
-	_isPlay = true;
-	_isLoop = loop;
-	_pauseTime = Timer::Instance().TimeStamp() + _timeStamp == 0 ? 0 : _timeStamp * -0.1f;
+bool Video::Play(bool loop) {
+	if (!_isPlay) {
+		_isPlay = true;
+		_isLoop = loop;
+		_pauseTime = Timer::Instance().TimeStamp() + (_timeStamp == 0 ? 0 : _timeStamp * -0.1f);
+		return true;
+	}
+	return false;
 }
 
 void Video::Pause() {
@@ -458,20 +466,21 @@ void VideoManager::Draw(size_t num, DirectX::XMFLOAT2 dPos, DirectX::XMFLOAT2 dS
 	}
 }
 
-void VideoManager::Draw(size_t num, DirectX::XMFLOAT2 dPos, DirectX::XMFLOAT2 dSize) {
+void VideoManager::Draw(size_t num, DirectX::XMFLOAT2 dPos, DirectX::XMFLOAT2 dSize, DirectX::XMFLOAT4 color) {
 	try {
 		if (_videos.at(num).Empty()) ErrorLogger::Log("VideoManager: Video is not loaded");
-		_videos.at(num).Render(Graphics::Instance().deviceContext.Get(), dPos, dSize);
+		_videos.at(num).Render(Graphics::Instance().deviceContext.Get(), dPos, dSize, color);
 	}
 	catch (std::out_of_range& ex) {
 		ErrorLogger::Log("VideoManager: out of range");
 	}
 }
 
-void VideoManager::Play(size_t num, bool loop) {
+//thread‚Ì’†‚ÅŒÄ‚Î‚ê‚é‚ÆŽn‚Ü‚é‚Æ‚«TimerŠÖŒW‚ª‚¸‚ê‚é‚½‚ßUpdate‚È‚Ç‚ÅŒÄ‚ñ‚Å
+bool VideoManager::Play(size_t num, bool loop) {
 	try {
 		if (_videos.at(num).Empty()) ErrorLogger::Log("VideoManager: Video is not loaded");
-		_videos.at(num).Play(loop);
+		return _videos.at(num).Play(loop);
 	}
 	catch (std::out_of_range& ex) {
 		ErrorLogger::Log("VideoManager: out of range");

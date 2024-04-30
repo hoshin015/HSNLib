@@ -252,6 +252,7 @@
     <ClCompile Include="SceneSpawnEditor.cpp" />
     <ClCompile Include="SceneSpinningTop.cpp" />
     <ClCompile Include="SceneSTPlayer.cpp" />
+    <ClCompile Include="SceneSTTitle.cpp" />
     <ClCompile Include="SceneTest.cpp" />
     <ClCompile Include="SceneTitle.cpp" />
     <ClCompile Include="Library\3D\Sprite3D.cpp" />
@@ -369,6 +370,7 @@
     <ClInclude Include="SceneSpawnEditor.h" />
     <ClInclude Include="SceneSpinningTop.h" />
     <ClInclude Include="SceneSTPlayer.h" />
+    <ClInclude Include="SceneSTTitle.h" />
     <ClInclude Include="SceneTest.h" />
     <ClInclude Include="SceneTitle.h" />
     <ClInclude Include="Library\3D\Sprite3D.h" />

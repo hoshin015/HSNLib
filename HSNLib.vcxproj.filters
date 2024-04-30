@@ -414,6 +414,9 @@
     <ClCompile Include="ObsMarunoko.cpp">
       <Filter>ソース ファイル\Obstacle</Filter>
     </ClCompile>
+    <ClCompile Include="SceneSTTitle.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\Graphics\Graphics.h">
@@ -763,6 +766,9 @@
     </ClInclude>
     <ClInclude Include="macro.h">
       <Filter>HSNLib\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneSTTitle.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
