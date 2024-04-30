@@ -4,7 +4,7 @@
 class DomeEffect : public MeshEffect
 {
 public:
-	DomeEffect();
+	DomeEffect(float radius);
 	~DomeEffect() {}
 
 	// 更新処理
@@ -38,6 +38,6 @@ private:
 
 	float nowScale = 5.0f;			// スケール
 	float maxScale = 5.0f;			// 最大スケール
-	float nowAlpha = 1.0f;			// アルファ
+	float nowAlpha = 3.0f;			// アルファ
 	float uvScrollSpeed = 2.2f;		// UVスクロールのスピード
 };

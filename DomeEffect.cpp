@@ -5,8 +5,9 @@
 #include "Library/Graphics/Shader.h"
 #include "Library/Timer.h"
 #include "Library/Input/InputManager.h"
+#include "SpinningTopPlayerManager.h"
 
-DomeEffect::DomeEffect()
+DomeEffect::DomeEffect(float radius)
 {
 	model = ResourceManager::Instance().LoadModelResource("Data/Fbx/cylinder01/cylinder01.fbx");
 
@@ -39,6 +40,9 @@ DomeEffect::DomeEffect()
 
 	// スケール変更
 	SetScale({ nowScale,0.2,nowScale });
+
+	// サイズ設定
+	maxScale = radius;
 }
 
 // 更新処理
@@ -46,7 +50,7 @@ void DomeEffect::Update()
 {
 	uvScrollValue.y -= uvScrollSpeed * Timer::Instance().DeltaTime();
 
-	nowScale += 30.0f * Timer::Instance().DeltaTime();
+	nowScale += 60.0f * Timer::Instance().DeltaTime();
 	nowAlpha -= 1.0f * Timer::Instance().DeltaTime();
 	if (nowScale > maxScale) nowScale = maxScale;
 	if (nowAlpha < 0)
@@ -55,13 +59,13 @@ void DomeEffect::Update()
 	}
 
 	// スケール変更
-	SetScale({ nowScale,0.2,nowScale });
+	SetScale({ nowScale,0.4,nowScale });
 
 	InputManager& input = InputManager::Instance();
 	
 	if (input.GetKeyPressed(DirectX::Keyboard::Enter))
 	{
-		nowAlpha = 2.0f;
+		nowAlpha = 3.0f;
 		nowScale = 0.0f;
 	}
 

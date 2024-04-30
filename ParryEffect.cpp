@@ -6,7 +6,7 @@
 #include "Library/Timer.h"
 #include "Library/Input/InputManager.h"
 
-ParryEffect::ParryEffect()
+ParryEffect::ParryEffect(float scale)
 {
 	model = ResourceManager::Instance().LoadModelResource("Data/Fbx/ring/ring.fbx");
 
@@ -38,13 +38,13 @@ ParryEffect::ParryEffect()
 	_ASSERT_EXPR(SUCCEEDED(hr), hrTrace(hr));
 
 	// スケール変更
-	SetScale({ nowScale,nowScale,nowScale });
+	SetScale({ scale,scale,scale });
 }
 
 // 更新処理
 void ParryEffect::Update()
 {
-	uvScrollValue.y += uvScrollSpeed * Timer::Instance().DeltaTime();
+	uvScrollValue.y -= uvScrollSpeed * Timer::Instance().DeltaTime();
 
 	// 行列更新
 	UpdateTransform();

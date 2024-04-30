@@ -749,6 +749,9 @@
     <ClInclude Include="ObsMarunoko.h">
       <Filter>ヘッダー ファイル\Obstacle</Filter>
     </ClInclude>
+    <ClInclude Include="macro.h">
+      <Filter>HSNLib\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Library\Icon\Icon.rc">

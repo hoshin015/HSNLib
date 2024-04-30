@@ -337,6 +337,7 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="LightManager.h" />
     <ClInclude Include="Library\2D\MaskSprite.h" />
+    <ClInclude Include="macro.h" />
     <ClInclude Include="MeshEffect.h" />
     <ClInclude Include="ObsMarunoko.h" />
     <ClInclude Include="ObsParts.h" />

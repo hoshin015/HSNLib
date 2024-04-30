@@ -4,7 +4,7 @@
 class ParryEffect : public MeshEffect
 {
 public:
-	ParryEffect();
+	ParryEffect(float scale);
 	~ParryEffect() {}
 
 	// 更新処理
@@ -30,7 +30,6 @@ private:
 
 	DirectX::XMFLOAT2 uvScrollValue = { 0,0 };
 
-	float nowScale = 3.0f;			// スケール
-	float nowAlpha = 1.0f;			// アルファ
+	float nowAlpha = 0.3f;			// アルファ
 	float uvScrollSpeed = 0.2f;		// UVスクロールのスピード
 };

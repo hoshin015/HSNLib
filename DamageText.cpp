@@ -25,7 +25,7 @@ void DamageText::Update()
 // ï`âÊèàóù
 void DamageText::Render()
 {
-	DispString::Instance().Draw(text, { drawPosition.x, drawPosition.y }, size, TEXT_ALIGN::MIDDLE, color, true, { 0,0,0,1 }, 2);
+	DispString::Instance().Draw(text, { drawPosition.x, drawPosition.y }, size, TEXT_ALIGN::MIDDLE, color, false, { 0,0,0,1 }, 2);
 }
 
 // îjä¸

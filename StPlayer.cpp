@@ -39,9 +39,9 @@ StPlayer::StPlayer() {
 	isPlayer = true;
 
 	// parryEffect
-	parryEffect = std::make_unique<ParryEffect>();
+	parryEffect = std::make_unique<ParryEffect>(data->parryRadius);
 	// domeEffect
-	domeEffect = std::make_unique<DomeEffect>();
+	domeEffect = std::make_unique<DomeEffect>(data->parryRadius);
 }
 
 StPlayer::~StPlayer() {}

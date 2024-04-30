@@ -190,14 +190,14 @@ void SceneWave::Render()
 
 	StageManager::Instance().Render();
 
-
 	SpinningTopEnemyManager::Instance().Render();
 
 	ObstacleManager::Instance().Render();
 
 	SpinningTopPlayerManager::Instance().Render();
 
-	gfx.SetDepthStencil(DEPTHSTENCIL_STATE::ZT_OFF_ZW_OFF);
+
+	//gfx.SetDepthStencil(DEPTHSTENCIL_STATE::ZT_OFF_ZW_OFF);
 	gfx.SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);
 
 	DamageTextManager::Instance().Render();
@@ -306,6 +306,7 @@ void SceneWave::DrawDebugGUI()
 
 	SpinningTopEnemyManager::Instance().DrawDebugGui();
 	ObstacleManager::Instance().DrawDebugGui();
+	SpinningTopPlayerManager::Instance().DrawDebugGui();
 
 	Graphics* gfx = &Graphics::Instance();
 
