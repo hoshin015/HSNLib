@@ -8,10 +8,11 @@
 #include "Library/Input/InputManager.h"
 #include "StageManager.h"
 #include "ObstacleManager.h"
+#include "ObsParts.h"
 
 StEnemy::StEnemy(int enemyKind)
 {	
-	pF = std::make_unique<ParryEffect>();
+	pF = std::make_unique<ParryEffect>(3);
 
 	this->enemyKind = enemyKind;
 
@@ -30,6 +31,8 @@ StEnemy::StEnemy(int enemyKind)
 
 	// aiTree の構築
 	CreateAiTree();
+
+	health = 1;
 }
 
 StEnemy::~StEnemy()
@@ -61,32 +64,23 @@ void StEnemy::Update()
 
 void StEnemy::Render(bool drawShadow)
 {
-	Graphics& gfx = Graphics::Instance();
-
 	model->Render(transform, { 1,1,1,1 }, &keyFrame);
-
-	//if (!drawShadow)
-	//{
-	//	pF->SetPosition({ GetPosition().x, 0.2f, GetPosition().z });
-	//	pF->Update();
-	//	pF->Render();
-	//}
 }
 
 // デバッグプリミティブ描画
 void StEnemy::DrawDebugPrimitive()
 {
-	//DebugPrimitive::Instance().AddSphere(plPosition, 0.5f, { 1,1,0,1 });		// スポーン地点
-	//
-	//
-	////DebugPrimitive::Instance().AddCylinder(position, radius, height, { 1,0,0,1 });
-	//
-	//DebugPrimitive::Instance().AddSphere(targetPosition, 0.2f, { 0,1,0,1 });	// ターゲット座標
-	//DebugPrimitive::Instance().AddSphere(spawnPosition, 0.2f, { 0,1,1,1 });		// スポーン地点
-	//
-	//DebugPrimitive::Instance().AddCylinder(position, pursuitRadius, 0.2, { 0,1,0,1 });
-	//DebugPrimitive::Instance().AddCylinder(position, searchRadius, 0.2, { 1,0,0,1 });
-	//DebugPrimitive::Instance().AddCylinder(position, notSearchRadius, 0.2, { 0,0,1,1 });
+	DebugPrimitive::Instance().AddSphere(plPosition, 0.5f, { 1,1,0,1 });		// スポーン地点
+	
+	
+	//DebugPrimitive::Instance().AddCylinder(position, radius, height, { 1,0,0,1 });
+	
+	DebugPrimitive::Instance().AddSphere(targetPosition, 0.2f, { 0,1,0,1 });	// ターゲット座標
+	DebugPrimitive::Instance().AddSphere(spawnPosition, 0.2f, { 0,1,1,1 });		// スポーン地点
+	
+	DebugPrimitive::Instance().AddCylinder(position, pursuitRadius, 0.2, { 0,1,0,1 });
+	DebugPrimitive::Instance().AddCylinder(position, searchRadius, 0.2, { 1,0,0,1 });
+	DebugPrimitive::Instance().AddCylinder(position, notSearchRadius, 0.2, { 0,0,1,1 });
 }
 
 // TargetPosition 更新
@@ -206,30 +200,20 @@ void StEnemy::CreateAiTree()
 // 死亡処理
 void StEnemy::OnDead()
 {
-	Obstacle* top;
-	Obstacle* middle;
-	Obstacle* bottom;
+	ObsParts* top;
+	ObsParts* middle;
+	ObsParts* bottom;
 
-	top = new Obstacle("Data/Fbx/StEnemy01/Top/StEnemy01Top.fbx", false);
+	top = new ObsParts("Data/Fbx/StEnemy01/Top/StEnemy01Top.fbx");
 	top->SetPosition(GetPosition());
-	top->SetRadius(0.0f);
-	top->velocity = { 40,0,0 };
-	top->SetRotationSpeed(60);
-	top->SetFriction(3);
 	ObstacleManager::Instance().Register(top);
-
-	middle = new Obstacle("Data/Fbx/StEnemy01/Middle/StEnemy01Middle.fbx", false);
+	
+	middle = new ObsParts("Data/Fbx/StEnemy01/Middle/StEnemy01Middle.fbx");
 	middle->SetPosition(GetPosition());
-	middle->SetRadius(0.0f);
-	middle->velocity = { -5,0,10 };
-	middle->SetRotationSpeed(30);
 	ObstacleManager::Instance().Register(middle);
-
-	bottom = new Obstacle("Data/Fbx/StEnemy01/Bottom/StEnemy01Bottom.fbx", false);
+	
+	bottom = new ObsParts("Data/Fbx/StEnemy01/Bottom/StEnemy01Bottom.fbx");
 	bottom->SetPosition(GetPosition());
-	bottom->SetRadius(0.0f);
-	bottom->velocity = { 3,0,-10 };
-	bottom->SetRotationSpeed(120);
 	bottom->SetAngle({ 90,0,0 });
 	ObstacleManager::Instance().Register(bottom);
 

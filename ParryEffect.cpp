@@ -6,9 +6,8 @@
 #include "Library/Timer.h"
 #include "Library/Input/InputManager.h"
 
-ParryEffect::ParryEffect()
+ParryEffect::ParryEffect(float scale)
 {
-	//model = ResourceManager::Instance().LoadModelResource("Data/Fbx/paryEffectTest/paryEffectTest.fbx");
 	model = ResourceManager::Instance().LoadModelResource("Data/Fbx/ring/ring.fbx");
 
 	//--- < 頂点シェーダーオブジェクトと入力レイアウトオブジェクトの生成 > ---
@@ -37,28 +36,15 @@ ParryEffect::ParryEffect()
 	constantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	HRESULT hr = Graphics::Instance().device->CreateBuffer(&constantBufferDesc, nullptr, constantBuffer.GetAddressOf());
 	_ASSERT_EXPR(SUCCEEDED(hr), hrTrace(hr));
+
+	// スケール変更
+	SetScale({ scale,scale,scale });
 }
 
 // 更新処理
 void ParryEffect::Update()
 {
-	uvScrollValue.y += 0.2f * Timer::Instance().DeltaTime();
-	//nowScale += 200.0f * Timer::Instance().DeltaTime();
-	//nowAlpha -= 1.5f * Timer::Instance().DeltaTime();
-	//if (nowScale > 10) nowScale = 10;
-	//if (nowAlpha < 0) nowAlpha = 0;
-
-
-	InputManager& input = InputManager::Instance();
-
-	if (input.GetKeyPressed(DirectX::Keyboard::Enter))
-	{
-		nowAlpha = 1.0f;
-		nowScale = 0.0f;
-	}
-	
-
-	SetScale({ nowScale,nowScale,nowScale });
+	uvScrollValue.y -= uvScrollSpeed * Timer::Instance().DeltaTime();
 
 	// 行列更新
 	UpdateTransform();
@@ -74,19 +60,20 @@ void ParryEffect::Render()
 	gfx.deviceContext->UpdateSubresource(constantBuffer.Get(), 0, 0, &data, 0, 0);
 	gfx.deviceContext->VSSetConstantBuffers(7, 1, constantBuffer.GetAddressOf());
 
+	// 元のシェーダーを保存しておく
+	gfx.deviceContext->VSGetShader(storeVertexShader.GetAddressOf(), nullptr, 0);
+	gfx.deviceContext->PSGetShader(storePixelShader.GetAddressOf(), nullptr, 0);
+
 	//--- < シェーダーのバインド > ---
 	gfx.deviceContext->VSSetShader(vertexShader.Get(), nullptr, 0);
 	gfx.deviceContext->PSSetShader(pixelShader.Get(), nullptr, 0);
 
-
-	//gfx.SetBlend(BLEND_STATE::ADD);
 	gfx.SetRasterizer(static_cast<RASTERIZER_STATE>(RASTERIZER_STATE::CLOCK_FALSE_SOLID));
 	model->Render(transform, { 0.62,1,1,nowAlpha }, NULL);
 
-	// 元に戻す
-	gfx.SetBlend(BLEND_STATE::ALPHA);
-	gfx.SetRasterizer(static_cast<RASTERIZER_STATE>(RASTERIZER_STATE::CLOCK_FALSE_CULL_NONE));
-	gfx.deviceContext->VSSetShader(gfx.vertexShaders[static_cast<size_t>(VS_TYPE::SkinnedMesh_VS)].Get(), nullptr, 0);
-	gfx.deviceContext->PSSetShader(gfx.pixelShaders[static_cast<size_t>(PS_TYPE::SkinnedMesh_PS)].Get(), nullptr, 0);
+	//// 元に戻す
+	gfx.SetRasterizer(static_cast<RASTERIZER_STATE>(RASTERIZER_STATE::CLOCK_TRUE_SOLID));
+	gfx.deviceContext->VSSetShader(storeVertexShader.Get(), nullptr, 0);
+	gfx.deviceContext->PSSetShader(storePixelShader.Get(), nullptr, 0);
 
 }

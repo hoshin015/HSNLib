@@ -189,7 +189,7 @@ public:
 	struct LuminanceExtractionConstant
 	{
 		float threshould;
-		float intensity;
+		float intensity = 2.0f;
 		DirectX::XMFLOAT2 lumiPad;
 	};
 	LuminanceExtractionConstant luminanceExtractionConstant;

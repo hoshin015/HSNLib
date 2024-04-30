@@ -224,6 +224,9 @@
     <ClCompile Include="LightManager.cpp" />
     <ClCompile Include="Library\2D\MaskSprite.cpp" />
     <ClCompile Include="MeshEffect.cpp" />
+    <ClCompile Include="ObsMarunoko.cpp" />
+    <ClCompile Include="ObsParts.cpp" />
+    <ClCompile Include="ObsStaticObj.cpp" />
     <ClCompile Include="Obstacle.cpp" />
     <ClCompile Include="ObstacleManager.cpp" />
     <ClCompile Include="ParryEffect.cpp" />
@@ -335,7 +338,11 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="LightManager.h" />
     <ClInclude Include="Library\2D\MaskSprite.h" />
+    <ClInclude Include="macro.h" />
     <ClInclude Include="MeshEffect.h" />
+    <ClInclude Include="ObsMarunoko.h" />
+    <ClInclude Include="ObsParts.h" />
+    <ClInclude Include="ObsStaticObj.h" />
     <ClInclude Include="Obstacle.h" />
     <ClInclude Include="ObstacleManager.h" />
     <ClInclude Include="ParryEffect.h" />

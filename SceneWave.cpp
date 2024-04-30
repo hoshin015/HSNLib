@@ -13,18 +13,38 @@
 #include "Library/3D/DebugPrimitive.h"
 #include "Library/3D/LineRenderer.h"
 #include "Wave.h"
+#include "SpinningTopPlayerManager.h"
+#include "ObsStaticObj.h"
+#include "ObsMarunoko.h"
 
 #include "DataManager.h"
+#include "DamageTextManager.h"
+#include "Library/Text/DispString.h"
 
 void SceneWave::Initialize()
 {
 	DataManager::Instance().LoadEnemyData(enemyData);
 	DataManager::Instance().LoadSpawnEreaData();
 
+
+	// プレイヤー初期化
+	StPlayerBase* player = new StPlayer();
+	SpinningTopPlayerManager::Instance().Register(player);
+
+
+	// Cylinder
 	for (int i = 0; i < 3; i++)
 	{
-		Obstacle* obstacle = new_ Obstacle("Data/FBX/cylinder/cylinder.fbx");
-		obstacle->SetPosition({ i * 10.0f - 15.0f, 0, -6.0f });
+		ObsStaticObj* obstacle = new_ ObsStaticObj("Data/FBX/cylinder/cylinder.fbx");
+		obstacle->SetPosition({ i * 30.0f - 45.0f, 0, -6.0f });
+		ObstacleManager::Instance().Register(obstacle);
+	}
+
+	// マルのこ
+	for (int i = 0; i < 3; i++)
+	{
+		ObsMarunoko* obstacle = new_ ObsMarunoko("Data/FBX/StMarunoko/StMarunoko.fbx");
+		obstacle->SetPosition({ i * 30.0f - 45.0f, 0, 6.0f });
 		ObstacleManager::Instance().Register(obstacle);
 	}
 
@@ -59,6 +79,10 @@ void SceneWave::Initialize()
 
 void SceneWave::Finalize()
 {
+	DamageTextManager::Instance().Clear();
+
+	SpinningTopPlayerManager::Instance().Clear();
+
 	StageManager::Instance().Clear();
 
 	LightManager::Instance().Clear();
@@ -73,14 +97,17 @@ void SceneWave::Update()
 	// カメラコントローラー更新処理
 	Camera::Instance().Update();
 
-
 	Wave::Instance().Update();
+
+	SpinningTopPlayerManager::Instance().Update();
 
 	StageManager::Instance().Update();
 
 	SpinningTopEnemyManager::Instance().Update();
 
 	ObstacleManager::Instance().Update();
+
+	DamageTextManager::Instance().Update();
 }
 
 void SceneWave::Render()
@@ -120,6 +147,8 @@ void SceneWave::Render()
 		gfx.deviceContext->PSSetShader(nullptr, nullptr, 0);
 
 		StageManager::Instance().Render();
+
+		SpinningTopPlayerManager::Instance().Render();
 
 		SpinningTopEnemyManager::Instance().Render(true);
 
@@ -165,9 +194,21 @@ void SceneWave::Render()
 
 	ObstacleManager::Instance().Render();
 
+	SpinningTopPlayerManager::Instance().Render();
+
+
+	//gfx.SetDepthStencil(DEPTHSTENCIL_STATE::ZT_OFF_ZW_OFF);
+	gfx.SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);
+
+	DamageTextManager::Instance().Render();
+
+	DispString::Instance().Draw(L"HO感SHＨIN LiうB", { 800, 60 }, 32, TEXT_ALIGN::MIDDLE, { 0, 0, 0, 1 });
+
 	// --- デバッグ描画 ---
 	DebugPrimitive::Instance().Render();
 	LineRenderer::Instance().Render();
+
+
 
 	gfx.bloomBuffer->DeActivate();
 
@@ -265,10 +306,28 @@ void SceneWave::DrawDebugGUI()
 
 	SpinningTopEnemyManager::Instance().DrawDebugGui();
 	ObstacleManager::Instance().DrawDebugGui();
+	SpinningTopPlayerManager::Instance().DrawDebugGui();
 
 	Graphics* gfx = &Graphics::Instance();
+
 	ImGui::Begin("ColorFilter");
 	{
+		if (ImGui::CollapsingHeader("WaveLight", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			if (ImGui::Button(u8"ライトON"))
+			{
+				ScriptOnLight* onLight = new ScriptOnLight();
+				onLight->Execute();
+				delete onLight;
+			}
+			if (ImGui::Button(u8"ライトOFF"))
+			{
+				ScriptOffLight* offLight = new ScriptOffLight();
+				offLight->Execute();
+				delete offLight;
+			}
+		}
+
 		ImGui::SliderFloat("threshould", &gfx->luminanceExtractionConstant.threshould, 0.0f, 1.0f);
 		ImGui::SliderFloat("intensity", &gfx->luminanceExtractionConstant.intensity, 0.0f, 10.0f);
 		ImGui::SliderFloat("HueShift", &gfx->colorFilterConstant.hueShift, 0.0f, 360.0f);

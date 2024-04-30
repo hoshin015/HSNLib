@@ -168,9 +168,9 @@ void StEnemy01::UpdateTargetPosition()
 // Ž€–Sˆ—
 void StEnemy01::OnDead()
 {
-	Obstacle* obstacle = new Obstacle("Data/Fbx/StEnemy01/Top/StEnemy01Top.fbx", false);
-	obstacle->SetPosition(GetPosition());
-	ObstacleManager::Instance().Register(obstacle);
+	//Obstacle* obstacle = new Obstacle("Data/Fbx/StEnemy01/Top/StEnemy01Top.fbx", false);
+	//obstacle->SetPosition(GetPosition());
+	//ObstacleManager::Instance().Register(obstacle);
 
 	Destroy();
 }

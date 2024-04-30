@@ -36,9 +36,9 @@ void SceneEnemyLevelEditor::Initialize()
 	// 障害物生成
 	for (int i = 0; i < 3; i++)
 	{
-		Obstacle* obstacle = new_ Obstacle("Data/FBX/cylinder/cylinder.fbx");
-		obstacle->SetPosition({ i * 10.0f - 10.0f, 0, -6.0f });
-		ObstacleManager::Instance().Register(obstacle);
+		//Obstacle* obstacle = new_ Obstacle("Data/FBX/cylinder/cylinder.fbx");
+		//obstacle->SetPosition({ i * 10.0f - 10.0f, 0, -6.0f });
+		//ObstacleManager::Instance().Register(obstacle);
 	}
 
 	// ステージ初期化

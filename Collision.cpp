@@ -70,7 +70,7 @@ bool Collision::RepulsionSphereVsSphere(const DirectX::XMFLOAT3& positionA, floa
     return false;
 }
 
-bool Collision::StaticRepulsionSphereVsSphere(const DirectX::XMFLOAT3& positionA, float radiusA, const DirectX::XMFLOAT3& positionB, float radiusB, DirectX::XMFLOAT3& outPositionA)
+bool Collision::StaticRepulsionSphereVsSphere(const DirectX::XMFLOAT3& positionA, float radiusA, const DirectX::XMFLOAT3& positionB, float radiusB, DirectX::XMFLOAT3& outPositionA, int power)
 {
     DirectX::XMVECTOR posA = DirectX::XMLoadFloat3(&positionA);
     DirectX::XMVECTOR posB = DirectX::XMLoadFloat3(&positionB);
@@ -89,7 +89,7 @@ bool Collision::StaticRepulsionSphereVsSphere(const DirectX::XMFLOAT3& positionA
         // a の移動
         BtoA = DirectX::XMVector3Normalize(BtoA);				    // bからaに向かう単位ベクトル
         BtoA = DirectX::XMVectorScale(BtoA, defLength);             // めり込んだ量
-        BtoA = DirectX::XMVectorScale(BtoA, 2.0);                   // スケーリング
+        BtoA = DirectX::XMVectorScale(BtoA, 2.0 * power);           // スケーリング
         DirectX::XMStoreFloat3(&outPositionA, BtoA);			    // 適応
 
         return true;

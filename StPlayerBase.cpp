@@ -4,6 +4,7 @@
 #include "Library/3D/DebugPrimitive.h"
 
 #include "SpinningTopPlayerManager.h"
+#include "DamageTextManager.h"
 using namespace DirectX;
 
 //TODO::一番大きい判定の中にいるEnemyを取得する もっといい方法あるかもしれない
@@ -143,6 +144,14 @@ void StPlayerBase::UpdateAttack() {
 					}
 					enemy->SetVelocity(out2);
 					enemy->ApplyDamage(1, 0);
+
+					// ダメージ表示
+					int damage = 3;
+					std::wstring damageString = std::to_wstring(damage);
+					const TCHAR* damageTChar = damageString.c_str();
+					DamageText* damageText = new DamageText({ enemy->GetPosition().x, 1.0f, enemy->GetPosition().z }, damageTChar, { 0.62,1,1,1});
+					DamageTextManager::Instance().Register(damageText);
+
 #endif
 				}
 			}

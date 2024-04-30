@@ -161,28 +161,28 @@ void StEnemy02::UpdateTargetPosition()
 // Ž€–Sˆ—
 void StEnemy02::OnDead()
 {
-	Obstacle* obstacle = new Obstacle("Data/Fbx/StEnemy01/Top/StEnemy01Top.fbx", false);
-	obstacle->SetPosition(GetPosition());
-	obstacle->SetRadius(0.0f);
-	obstacle->velocity = { 40,0,0 };
-	obstacle->SetRotationSpeed(60);
-	obstacle->SetFriction(3);
-	ObstacleManager::Instance().Register(obstacle);
-
-	Obstacle* obstacle1 = new Obstacle("Data/Fbx/StEnemy01/Middle/StEnemy01Middle.fbx", false);
-	obstacle1->SetPosition(GetPosition());
-	obstacle1->SetRadius(0.0f);
-	obstacle1->velocity = { -5,0,10 };
-	obstacle1->SetRotationSpeed(30);
-	ObstacleManager::Instance().Register(obstacle1);
-
-	Obstacle* obstacle2 = new Obstacle("Data/Fbx/StEnemy01/Bottom/StEnemy01Bottom.fbx", false);
-	obstacle2->SetPosition(GetPosition());
-	obstacle2->SetRadius(0.0f);
-	obstacle2->velocity = { 3,0,-10 };
-	obstacle2->SetRotationSpeed(120);
-	obstacle2->SetAngle({90,0,0});
-	ObstacleManager::Instance().Register(obstacle2);
+	//Obstacle* obstacle = new Obstacle("Data/Fbx/StEnemy01/Top/StEnemy01Top.fbx", false);
+	//obstacle->SetPosition(GetPosition());
+	//obstacle->SetRadius(0.0f);
+	//obstacle->velocity = { 40,0,0 };
+	//obstacle->SetRotationSpeed(60);
+	//obstacle->SetFriction(3);
+	//ObstacleManager::Instance().Register(obstacle);
+	//
+	//Obstacle* obstacle1 = new Obstacle("Data/Fbx/StEnemy01/Middle/StEnemy01Middle.fbx", false);
+	//obstacle1->SetPosition(GetPosition());
+	//obstacle1->SetRadius(0.0f);
+	//obstacle1->velocity = { -5,0,10 };
+	//obstacle1->SetRotationSpeed(30);
+	//ObstacleManager::Instance().Register(obstacle1);
+	//
+	//Obstacle* obstacle2 = new Obstacle("Data/Fbx/StEnemy01/Bottom/StEnemy01Bottom.fbx", false);
+	//obstacle2->SetPosition(GetPosition());
+	//obstacle2->SetRadius(0.0f);
+	//obstacle2->velocity = { 3,0,-10 };
+	//obstacle2->SetRotationSpeed(120);
+	//obstacle2->SetAngle({90,0,0});
+	//ObstacleManager::Instance().Register(obstacle2);
 
 	Destroy();
 }
