@@ -46,6 +46,13 @@ void NV12ToRGB(BYTE* rgbBufferOut, BYTE* yuvBuffer, int width, int height) {
 	}
 }
 
+void moveUV(BYTE* yuvBuffer, int bufferSize, int width, int height) {
+	size_t uvStart;
+	int yEnd = width * height;
+	for (uvStart = yEnd; yuvBuffer[uvStart] != 0; uvStart += width);
+	if (uvStart != yEnd)memmove(&yuvBuffer[width * height], &yuvBuffer[uvStart], bufferSize - uvStart);
+}
+
 inline void  Rotate(XMFLOAT2& pos, XMFLOAT2 cPos, float cos, float sin) {
 	pos.x -= cPos.x;
 	pos.y -= cPos.y;
@@ -313,6 +320,23 @@ void Video::LoadFrame(ID3D11DeviceContext* deviceContext) {
 	//次のフレームのTextureを取得
 	hr = _sourceReader->ReadSample(MF_SOURCE_READER_FIRST_VIDEO_STREAM, 0, &striamIndex, &dwStreamFlags, &_timeStamp, sample.GetAddressOf());
 	if (!(dwStreamFlags & MF_SOURCE_READERF_ENDOFSTREAM)) {
+		//YからUVまでのデータを移動する
+		ComPtr<IMFMediaBuffer> yuvBuffer;
+		{
+			sample->GetBufferByIndex(0, yuvBuffer.GetAddressOf());
+
+			BYTE* bBuffer;
+			DWORD maxlen, currentlen;
+			yuvBuffer->Lock(&bBuffer, &maxlen, &currentlen);
+
+			moveUV(bBuffer, maxlen, _videoSize.x, _videoSize.y);
+
+			yuvBuffer->Unlock();
+
+			sample->RemoveAllBuffers();
+			sample->AddBuffer(yuvBuffer.Get());
+		}
+
 		//IMFTransformはデータをインプットするときはしてアウトプットするときはアウトプットのみする
 		//同時にやってしまうとインプットができない
 		hr = _transform->ProcessInput(0, sample.Get(), 0);
@@ -342,7 +366,7 @@ void Video::LoadFrame(ID3D11DeviceContext* deviceContext) {
 					break;
 				}
 
-#if 0
+#if 1
 				//Texture2Dに書き込み
 				BYTE* bBuffer;
 				DWORD maxlen, currentlen;
