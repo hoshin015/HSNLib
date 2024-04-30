@@ -79,6 +79,12 @@
     <Filter Include="ソース ファイル\MeshEffect">
       <UniqueIdentifier>{3601d1cc-9052-4417-b252-bd8863c0424a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Video">
+      <UniqueIdentifier>{f5a1fae4-14bd-4543-9489-f639f1c94b2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Video">
+      <UniqueIdentifier>{2c314bcf-f2a5-46ae-8bb6-fafc35c56fec}</UniqueIdentifier>
+    </Filter>
     <Filter Include="ヘッダー ファイル\Obstacle">
       <UniqueIdentifier>{2d89c448-2e65-44d0-8b95-da2d30131e31}</UniqueIdentifier>
     </Filter>
@@ -389,6 +395,9 @@
     </ClCompile>
     <ClCompile Include="DomeEffect.cpp">
       <Filter>ソース ファイル\MeshEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="Video.cpp">
+      <Filter>ソース ファイル\Video</Filter>
     </ClCompile>
     <ClCompile Include="Obstacle.cpp">
       <Filter>ソース ファイル\Obstacle</Filter>
@@ -733,6 +742,9 @@
     </ClInclude>
     <ClInclude Include="DomeEffect.h">
       <Filter>ヘッダー ファイル\MeshEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="Video.h">
+      <Filter>ヘッダー ファイル\Video</Filter>
     </ClInclude>
     <ClInclude Include="ObstacleManager.h">
       <Filter>ヘッダー ファイル\Obstacle</Filter>
