@@ -5,6 +5,7 @@
 #include "Library/Text/DispString.h"
 #include "Library/Text/Text.h"
 #include "Library/Timer.h"
+#include "Library/Input/InputManager.h"
 
 #include "Video.h"
 
@@ -12,7 +13,7 @@
 #include <filesystem>
 
 void SceneSTTitle::Initialize() {
-	VideoManager::Instance().LoadFile(0, L"C:/Users/2230137/Videos/Captures/PlatformRunner.mp4");
+	VideoManager::Instance().LoadFile(0, nullptr);
 }
 
 void SceneSTTitle::Finalize() {
@@ -20,7 +21,6 @@ void SceneSTTitle::Finalize() {
 }
 
 void SceneSTTitle::Update() {
-	VideoManager::Instance().Play(0, true);
 	VideoManager::Instance().Update();
 }
 
@@ -108,6 +108,12 @@ void SceneSTTitle::DrawDebugGUI() {
 		ImGui::DragFloat2("Pos", &_videoPos.x);
 		ImGui::DragFloat2("Size", &_videoSize.x);
 		ImGui::ColorEdit4("Color", &_videoColor.x);
+
+		static bool isLoop = false;
+		ImGui::Checkbox("Loop", &isLoop);
+		if (ImGui::Button("Play")) VideoManager::Instance().Play(0, isLoop);
+		if (ImGui::Button("Pause")||InputManager::Instance().GetKeyPressed(Keyboard::Space)) VideoManager::Instance().Pause(0);
+		if (ImGui::Button("Stop")) VideoManager::Instance().Stop(0);
 	}
 	ImGui::End();
 }

@@ -9,6 +9,8 @@
 #include <mfidl.h>
 #include <mfreadwrite.h>
 #include <mferror.h>
+#include <Audio.h>
+#include <atlbase.h>
 #include <wrl.h>
 #include <DirectXMath.h>
 #include <d3d11.h>
@@ -47,11 +49,19 @@ private:
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 	ComPtr<IMFSourceReader> _sourceReader;
-	ComPtr<IMFTransform> _transform;
+
+	//AudioŠÖŒW
+	inline static ComPtr<IXAudio2> _xaudio2;
+	inline static IXAudio2MasteringVoice* _masteringVoice;
 
 	ComPtr<IMFMediaType> _audioType;
+	//CComHeapPtr<WAVEFORMATEX> _waveFormat;
+	std::vector<BYTE> _audioData;
+
+	//VideoŠÖŒW
 	ComPtr<IMFMediaType> _videoTypeNV12;
 	ComPtr<IMFMediaType> _videoTypeARGB;
+	ComPtr<IMFTransform> _transform;
 
 	ComPtr<ID3D11Texture2D> _texture;
 	ComPtr<ID3D11ShaderResourceView> _textureView;
@@ -60,6 +70,8 @@ private:
 	ComPtr<ID3D11VertexShader> _vertexShader;
 	ComPtr<ID3D11InputLayout> _inputLayout;
 	ComPtr<ID3D11PixelShader> _pixelShader;
+
+	int _movePos = -1;
 
 	DirectX::XMFLOAT2 _videoSize;
 	LONGLONG _timeStamp;
@@ -102,7 +114,7 @@ public:
 private:
 	VideoManager(){
 		MFStartup(MF_VERSION);
-		//_videos.resize(10);
+		//_videos.resize(5);
 	}
 
 	std::vector<Video> _videos;
