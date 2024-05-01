@@ -66,7 +66,8 @@ public:
 	float playerDistance;
 	DirectX::XMFLOAT3 plPosition = { 0,0,0 };	// TODO: デバッグ用だから削除する
 
-	
+	float downRotationSpeed = 360.0f;
+	float normalRoatationSpeed = 720.0f;
 	float rotationSpeed = 720;	// 1秒に回転する角度
 
 	float pursuitRadius = 8.0f;		// プレイヤーに突っ込み始める範囲

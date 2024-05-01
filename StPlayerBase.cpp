@@ -235,6 +235,8 @@ void StPlayerBase::UpdateAttack() {
 						XMStoreFloat3(&out2, (pPosVec - playerPosVec) * power);
 					}
 					enemy->SetVelocity(out2);
+
+#if 0 ゲージパリィはダメージを与えない
 					enemy->ApplyDamage(1, 0);
 
 					// ダメージ表示
@@ -243,6 +245,10 @@ void StPlayerBase::UpdateAttack() {
 					const TCHAR* damageTChar = damageString.c_str();
 					DamageText* damageText = new DamageText({ enemy->GetPosition().x, 1.0f, enemy->GetPosition().z }, damageTChar, { 0.62,1,1,1 });
 					DamageTextManager::Instance().Register(damageText);
+#endif
+
+					// ダウン状態に移行
+					enemy->isDown = true;
 				}
 			}
 		}

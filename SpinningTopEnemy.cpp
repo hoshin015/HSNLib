@@ -407,7 +407,9 @@ bool SpinningTopEnemy::GetBTreeJudge(const int _kind)
 	case KIND::Generate:
 		return (isGenerateFinish) ? false : true;
 	case KIND::Down:
+	{
 		return (isDown) ? true : false;
+	}
 	case KIND::PlayerPursuit:
 	{
 		// クールタイムチェック
@@ -473,9 +475,14 @@ IBTree::STATE SpinningTopEnemy::ActBTree(const int _kind)
 		downTimer += Timer::Instance().DeltaTime();
 		if (downTimer > downTime)
 		{
+			rotationSpeed = normalRoatationSpeed;
+			SetAngle({ 0,GetAngle().y, GetAngle().z });	// 角度の修正
+			isDown = false;
 			downTimer = 0.0f;
 			return  IBTree::STATE::Complete;
 		}
+		SetAngle({ 15, GetAngle().y, GetAngle().z});	// コマをすこし倒す
+		rotationSpeed = downRotationSpeed;
 
 		// 減速処理
 		DirectX::XMVECTOR VELOCITY = DirectX::XMLoadFloat3(&velocity);
@@ -533,6 +540,7 @@ IBTree::STATE SpinningTopEnemy::ActBTree(const int _kind)
 		//DirectX::XMVECTOR VLEOCITY = DirectX::XMLoadFloat3(&velocity);
 		//DirectX::XMVectorScale(VLEOCITY, 0.01f);
 		//DirectX::XMStoreFloat3(&velocity, VLEOCITY);
+		if(isDown) return  IBTree::STATE::Complete;
 
 		waitChargeAttackTimer += Timer::Instance().DeltaTime();
 
@@ -548,6 +556,8 @@ IBTree::STATE SpinningTopEnemy::ActBTree(const int _kind)
 	}
 	case KIND::ChargeAttack:
 	{
+		if (isDown) return  IBTree::STATE::Complete;
+
 		// ターゲット座標の +-0.01 に到達したらノードを抜ける
 		{
 			DirectX::XMVECTOR TARGETPOSITION = DirectX::XMLoadFloat3(&targetPosition);
@@ -593,6 +603,8 @@ IBTree::STATE SpinningTopEnemy::ActBTree(const int _kind)
 	}
 	case KIND::SeekPlayer:
 	{
+		if (isDown) return  IBTree::STATE::Complete;
+
 		steeringForce = { 0,0,0 };
 		DirectX::XMVECTOR SteeringForce = DirectX::XMLoadFloat3(&steeringForce);
 

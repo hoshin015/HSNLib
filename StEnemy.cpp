@@ -32,7 +32,7 @@ StEnemy::StEnemy(int enemyKind)
 	// aiTree ÇÃç\íz
 	CreateAiTree();
 
-	health = 1;
+	health = 3;
 }
 
 StEnemy::~StEnemy()

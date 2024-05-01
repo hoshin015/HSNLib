@@ -332,14 +332,25 @@ void StPlayer::UpdateDamaged() {
 			XMStoreFloat3(&out1, XMVector3Normalize(XMLoadFloat3(&out1)) * data->damagedKnockback);
 
 			velocity = out1;
-			ApplyDamage(1, 0);
+			
+			if (enemy->isDown)
+			{
+				// 敵がダウン中なら敵を破壊
+				enemy->ApplyDamage(9999, 0);
+			}
+			else
+			{
+				// 敵がダウン中でないならプレイヤーにダメージ
+				ApplyDamage(1, 0);
 
-			// ダメージ表示
-			int damage = 2;
-			std::wstring damageString = std::to_wstring(damage);
-			const TCHAR* damageTChar = damageString.c_str();
-			DamageText* damageText = new DamageText({ GetPosition().x, 1.0f, GetPosition().z }, damageTChar, {1,0,0,1});
-			DamageTextManager::Instance().Register(damageText);
+				// ダメージ表示
+				int damage = 2;
+				std::wstring damageString = std::to_wstring(damage);
+				const TCHAR* damageTChar = damageString.c_str();
+				DamageText* damageText = new DamageText({ GetPosition().x, 1.0f, GetPosition().z }, damageTChar, { 1,0,0,1 });
+				DamageTextManager::Instance().Register(damageText);
+			}
+			
 
 			break;
 		}
