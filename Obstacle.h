@@ -62,6 +62,7 @@ public:
 		0,0,1,0,
 		0,0,0,1
 	};
+	DirectX::XMFLOAT4 color = { 1,1,1,1 };
 
 	DirectX::XMFLOAT3 targetPosition = { -1,-1,-1 };
 	float moveSpeed = 1.0f;

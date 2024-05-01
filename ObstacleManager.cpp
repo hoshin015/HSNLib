@@ -27,7 +27,7 @@ void ObstacleManager::Update()
 	removes.clear();
 
 	// áŠQ•¨“¯m‚Ì“–‚½‚è”»’è
-	CollisionObstacleVSObstacle();
+	//CollisionObstacleVSObstacle();
 }
 
 //@•`‰æˆ—

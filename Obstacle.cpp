@@ -55,7 +55,7 @@ void Obstacle::Render()
 	// rasterizer Ý’è
 	gfx.SetRasterizer(RASTERIZER_STATE::CLOCK_TRUE_SOLID);
 
-	model->Render(transform, { 1, 1, 1, 1 }, NULL);
+	model->Render(transform, color, NULL);
 }
 
 void Obstacle::DrawDebugPrimitive()
