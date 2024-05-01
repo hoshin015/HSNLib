@@ -10,6 +10,8 @@
 void SceneTitle::Initialize()
 {
 	//sprite = new Sprite(L"Data/Texture/Title.png");
+
+	testText = std::make_unique<Sprite>(L"Data/Font/font0.png");
 	uvSprite = std::make_unique<UVScrollSprite>(L"Data/Texture/Title.png");
 	maskSprite = std::make_unique<MaskSprite>(L"Data/Texture/Title.png", L"Data/Texture/dissolve.png");
 	maskSprite->maskConstant.edgeColor = { 1,0,0,1 };
@@ -51,6 +53,10 @@ void SceneTitle::Render()
 	DispString::Instance().Draw(L"‚ ‚¢‚¤‚¦‚¨", { 800, 450 }, 32, TEXT_ALIGN::LOWER_RIGHT,{ 1, 0, 0, 1 });
 
 	Text::Instance().drawText(FONTNO::meirio, FONTSIZE::SIZE22, "ƒeƒXƒg", { 100,200 });
+
+	Graphics::Instance().SetDepthStencil(DEPTHSTENCIL_STATE::ZT_OFF_ZW_OFF);
+	Graphics::Instance().SetBlend(BLEND_STATE::ALPHA);
+	testText->SprTextOut("test message!01234", { 200, 200 }, { 50, 50 });
 
 	//easingSprite->Render(0, 360, 640, 360, 1, 1, 1, 1, 0);
 

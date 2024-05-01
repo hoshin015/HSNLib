@@ -8,6 +8,8 @@
 #include "SpinningTopPlayerManager.h"
 #include "ObstacleManager.h"
 
+#define ST_ENEMY_DEBUG 0
+
 // ÉåÉCÉLÉÉÉXÉg
 bool SpinningTopEnemy::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit)
 {
@@ -51,7 +53,7 @@ DirectX::XMFLOAT3 SpinningTopEnemy::SbSeek()
 	DirectX::XMFLOAT3 steering;
 	DirectX::XMStoreFloat3(&steering, STEERING);
 
-#if 1
+#if ST_ENEMY_DEBUG
 	{
 		// ê¸ï`âÊ
 		const DirectX::XMFLOAT4 white = DirectX::XMFLOAT4(0.5f, 0.5f, 0.5f, 1);
@@ -125,7 +127,7 @@ DirectX::XMFLOAT3 SpinningTopEnemy::SbArrival()
 	DirectX::XMFLOAT3 steering;
 	DirectX::XMStoreFloat3(&steering, STEERING);
 
-#if 1
+#if ST_ENEMY_DEBUG
 	{
 		// ê¸ï`âÊ
 		const DirectX::XMFLOAT4 white = DirectX::XMFLOAT4(0.5f, 0.5f, 0.5f, 1);
@@ -204,7 +206,7 @@ DirectX::XMFLOAT3 SpinningTopEnemy::SbWander()
 		}
 	}
 
-#if 1
+#if ST_ENEMY_DEBUG
 	{
 		// ãÖëÃï`âÊ
 		DirectX::XMFLOAT3 circlePos;
@@ -327,7 +329,7 @@ DirectX::XMFLOAT3 SpinningTopEnemy::SbCollisionAvoidance()
 	rVecEnd.y = 0.2f;
 	lVecEnd.y = 0.2f;
 
-#if 1
+#if ST_ENEMY_DEBUG
 	// ê¸ï`âÊ
 	const DirectX::XMFLOAT4 white = DirectX::XMFLOAT4(0.5f, 0.5f, 0.5f, 1);
 	const DirectX::XMFLOAT4 green = DirectX::XMFLOAT4(0, 1, 0, 1);

@@ -16,6 +16,7 @@
 #include <algorithm>
 #include "Library/Graphics/Graphics.h"
 #include "DamageTextManager.h"
+#include "ObsParts.h"
 
 using namespace DirectX;
 
@@ -26,7 +27,7 @@ static const char* u8cast(const char* x) { return x; }
 #endif
 
 StPlayer::StPlayer() {
-	model = ResourceManager::Instance().LoadModelResource("Data/Fbx/StPlayer/StPlayer.fbx");
+	model = ResourceManager::Instance().LoadModelResource("Data/Fbx/StPlayer/Main/StPlayer.fbx");
 	childModel = ResourceManager::Instance().LoadModelResource("Data/Fbx/StPlayerOption/koki_all.fbx");
 	PlayerData dataArray[2];
 	DataManager::Instance().LoadPlayerData(dataArray,ARRAYSIZE(dataArray));
@@ -257,7 +258,7 @@ void StPlayer::DrawDebugGui() {
 				if (loopcount < 1) loopcount = 1;
 				if (lowfps) for (size_t i = 0; i < loopcount; i++);
 
-				static bool drawPrimitive = true;
+				static bool drawPrimitive = false;
 				ImGui::Checkbox(u8cast(u8"デバック用当たり判定を表示"), &drawPrimitive);
 				if (drawPrimitive) RenderDebugPrimitive();
 
@@ -430,5 +431,22 @@ void StPlayer::OnDamaged() {
 }
 
 void StPlayer::OnDead() {
+	ObsParts* top;
+	ObsParts* middle;
+	ObsParts* bottom;
 
+	top = new ObsParts("Data/Fbx/StPlayer/Top/StPlayerTop.fbx");
+	top->SetPosition(GetPosition());
+	ObstacleManager::Instance().Register(top);
+
+	middle = new ObsParts("Data/Fbx/StPlayer/Middle/StPlayerMiddle.fbx");
+	middle->SetPosition(GetPosition());
+	ObstacleManager::Instance().Register(middle);
+
+	bottom = new ObsParts("Data/Fbx/StPlayer/Bottom/StPlayerBottom.fbx");
+	bottom->SetPosition(GetPosition());
+	bottom->SetAngle({ 90,0,0 });
+	ObstacleManager::Instance().Register(bottom);
+
+	//Destroy();
 }

@@ -177,3 +177,15 @@ void Sprite::Render( float dx, float dy, float dw, float dh, float r, float g, f
 	//--- < プリミティブの描画 > ---
 	gfx->deviceContext->Draw(4, 0);
 }
+
+void Sprite::SprTextOut(std::string s, DirectX::XMFLOAT2 position, DirectX::XMFLOAT2 WH, DirectX::XMFLOAT4 color)
+{
+	float sw = static_cast<float>(texture2dDesc.Width / 16);
+	float sh = static_cast<float>(texture2dDesc.Height / 16);
+	float carriage = 0;
+	for (const char c : s)
+	{
+		Render(position.x + carriage, position.y, WH.x, WH.y, color.x, color.y, color.z, color.w, 0, sw * (c & 0x0F), sh * (c >> 4), sw, sh);
+		carriage += WH.x;
+	}
+}

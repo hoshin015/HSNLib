@@ -11,6 +11,8 @@ public:
 	void Render(float dx, float dy, float dw, float dh, float r, float g, float b, float a, float angle);
 	void Render(float dx, float dy, float dw, float dh, float r, float g, float b, float a, float angle, float sx, float sy, float sw, float sh);
 
+	void SprTextOut(std::string s, DirectX::XMFLOAT2 position, DirectX::XMFLOAT2 WH, DirectX::XMFLOAT4 color = { 1,1,1,1 });
+
 private:
 	Microsoft::WRL::ComPtr<ID3D11VertexShader> vertexShader;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> pixelShader;

@@ -17,7 +17,7 @@ public:
 	float GetNowAlpha() { return nowAlpha; }
 
 	// エフェクト開始
-	void StartEffect();
+	void StartEffect(float maxScale, DirectX::XMFLOAT3 color = { 1,0.62,1 });
 
 private:
 	Microsoft::WRL::ComPtr<ID3D11VertexShader> vertexShader;
@@ -35,9 +35,10 @@ private:
 	};
 
 	DirectX::XMFLOAT2 uvScrollValue = { 0,0 };
+	DirectX::XMFLOAT3 color = { 1,0.62,1 };
 
 	float nowScale = 5.0f;			// スケール
 	float maxScale = 5.0f;			// 最大スケール
-	float nowAlpha = 3.0f;			// アルファ
+	float nowAlpha = 0.0f;			// アルファ
 	float uvScrollSpeed = 2.2f;		// UVスクロールのスピード
 };

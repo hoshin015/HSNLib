@@ -5,6 +5,7 @@
 
 #include "SpinningTopPlayerManager.h"
 #include "DamageTextManager.h"
+#include "Library/Easing.h"
 using namespace DirectX;
 
 //TODO::一番大きい判定の中にいるEnemyを取得する もっといい方法あるかもしれない
@@ -45,16 +46,49 @@ void StPlayerBase::Input() {
 	inputMap["Move"] = movefloat2;
 
 	//Attack
-	bool attack = im.GetKeyPressed(Keyboard::J) || im.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a);
-	attack = attack && parryCooldownCount <= 0;
-	inputMap["Attack"] = attack;
+	bool enter = im.GetKeyPressed(Keyboard::Enter) || im.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a);
+	bool attack = enter && parryCooldownCount <= 0;
+	bool subAttack = enter && (rotateSpeed > data->parryGaugeConsumed);
 
-	bool subAttack = im.GetKeyPressed(Keyboard::K) || im.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::b);
-	subAttack = subAttack && (rotateSpeed > data->parryGaugeConsumed);
 	inputMap["SubAttack"] = subAttack;
+	inputMap["Attack"] = attack && !subAttack;
 }
 
 void StPlayerBase::UpdateAttack() {
+	// エフェクトの更新
+
+	static const float parryEffectRangeChangePower = 3.0f;	// パリィ範囲を変更する力
+	if (rotateSpeed > data->parryGaugeConsumed)
+	{
+		// 徐々にパリィ範囲のエフェクトのサイズを変更している
+		DirectX::XMVECTOR PGR = DirectX::XMLoadFloat(&data->parryGaugeRadius);
+		DirectX::XMVECTOR NOWR = DirectX::XMLoadFloat(&parryEffect->GetScale().x);
+		NOWR = DirectX::XMVectorLerp(NOWR, PGR, parryEffectRangeChangePower * Timer::Instance().DeltaTime());
+		float r;
+		DirectX::XMStoreFloat(&r, NOWR);
+		parryEffect->SetScale({ r, r, r });
+	}
+	else
+	{
+		// 徐々にパリィ範囲のエフェクトのサイズを変更している
+		DirectX::XMVECTOR PR = DirectX::XMLoadFloat(&data->parryRadius);
+		DirectX::XMVECTOR NOWR = DirectX::XMLoadFloat(&parryEffect->GetScale().x);
+		NOWR = DirectX::XMVectorLerp(NOWR, PR, parryEffectRangeChangePower * Timer::Instance().DeltaTime());
+		float r;
+		DirectX::XMStoreFloat(&r, NOWR);
+		parryEffect->SetScale({ r, r, r });
+	}
+
+	if (GetInputMap<bool>("Attack"))
+	{
+		domeEffect->StartEffect(data->parryRadius);
+	}
+	if (GetInputMap<bool>("SubAttack"))
+	{
+		domeEffect->StartEffect(data->parryGaugeRadius);
+	}
+
+
 	//パルス状のUpdate
 	static std::vector<SpinningTopEnemy*> hitEnemys;
 	float deltaTime = Timer::Instance().DeltaTime();
@@ -179,10 +213,11 @@ void StPlayerBase::UpdateAttack() {
 				float eRadius = enemy->GetRadius();
 				float distance = XMVectorGetX(XMVector3Length(ePosVec - pPosVec));
 
-				if ((eRadius + data->parryGaugeRadius > distance) && !parryGauge) {
-					parryGauge = true;
-					break;
-				}
+				//if ((eRadius + data->parryGaugeRadius > distance) && !parryGauge) {
+				//	parryGauge = true;
+				//	break;
+				//}
+				parryGauge = true;
 
 				if (parryGauge && eRadius + player->parryDamageRadius > distance) {
 					hitEnemys.push_back(enemy);
@@ -200,6 +235,14 @@ void StPlayerBase::UpdateAttack() {
 						XMStoreFloat3(&out2, (pPosVec - playerPosVec) * power);
 					}
 					enemy->SetVelocity(out2);
+					enemy->ApplyDamage(1, 0);
+
+					// ダメージ表示
+					int damage = 3;
+					std::wstring damageString = std::to_wstring(damage);
+					const TCHAR* damageTChar = damageString.c_str();
+					DamageText* damageText = new DamageText({ enemy->GetPosition().x, 1.0f, enemy->GetPosition().z }, damageTChar, { 0.62,1,1,1 });
+					DamageTextManager::Instance().Register(damageText);
 				}
 			}
 		}

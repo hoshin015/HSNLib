@@ -31,6 +31,8 @@ public:
 private:
 	Sprite* sprite = nullptr;
 
+	std::unique_ptr<Sprite> testText;
+
 	std::unique_ptr<UVScrollSprite> uvSprite;
 	DirectX::XMFLOAT2 uvScrollValue = { 0,0 };
 

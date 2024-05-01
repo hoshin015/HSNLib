@@ -1,5 +1,6 @@
 #include "WaveData_1.h"
 
+// ウェーブ１
 WaveScript wave1Script[] =
 {
 	SET_ENEMY(3.0f, EREA0, ENEMY_0),
@@ -14,6 +15,7 @@ WaveScript wave1Script[] =
 
 };
 
+// ウェーブ2
 WaveScript wave2Script[] =
 {
 	SET_OnLight(0.0f),
@@ -23,3 +25,4 @@ WaveScript wave2Script[] =
 
 	SET_END								// 終了コード
 };
+

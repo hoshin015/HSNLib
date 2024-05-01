@@ -50,8 +50,8 @@ void DomeEffect::Update()
 {
 	uvScrollValue.y -= uvScrollSpeed * Timer::Instance().DeltaTime();
 
-	nowScale += 60.0f * Timer::Instance().DeltaTime();
-	nowAlpha -= 1.0f * Timer::Instance().DeltaTime();
+	nowScale += 120.0f * Timer::Instance().DeltaTime();
+	nowAlpha -= 2.0f * Timer::Instance().DeltaTime();
 	if (nowScale > maxScale) nowScale = maxScale;
 	if (nowAlpha < 0)
 	{
@@ -61,13 +61,12 @@ void DomeEffect::Update()
 	// スケール変更
 	SetScale({ nowScale,0.4,nowScale });
 
-	InputManager& input = InputManager::Instance();
-	
-	if (input.GetKeyPressed(DirectX::Keyboard::Enter))
-	{
-		nowAlpha = 3.0f;
-		nowScale = 0.0f;
-	}
+	//InputManager& input = InputManager::Instance();
+	//
+	//if (input.GetKeyPressed(DirectX::Keyboard::Enter))
+	//{
+	//	StartEffect();
+	//}
 
 	// 行列更新
 	UpdateTransform();
@@ -87,13 +86,12 @@ void DomeEffect::Render()
 	gfx.deviceContext->VSGetShader(storeVertexShader.GetAddressOf(), nullptr, 0);
 	gfx.deviceContext->PSGetShader(storePixelShader.GetAddressOf(), nullptr, 0);
 
-
 	//--- < シェーダーのバインド > ---
 	gfx.deviceContext->VSSetShader(vertexShader.Get(), nullptr, 0);
 	gfx.deviceContext->PSSetShader(pixelShader.Get(), nullptr, 0);
 
 	gfx.SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_CULL_NONE);
-	model->Render(transform, { 1,0.62,1,nowAlpha }, NULL);
+	model->Render(transform, { color.x,color.y,color.z,nowAlpha }, NULL);
 
 	// 元に戻す
 	gfx.SetRasterizer(RASTERIZER_STATE::CLOCK_TRUE_SOLID);
@@ -103,8 +101,11 @@ void DomeEffect::Render()
 
 
 // エフェクト開始
-void DomeEffect::StartEffect()
+void DomeEffect::StartEffect(float maxScale, DirectX::XMFLOAT3 color)
 {
-	nowAlpha = 2.0f;
+	nowAlpha = 3.0f;
 	nowScale = 0.0f;
+
+	this->maxScale = maxScale;
+	this->color = color;
 }

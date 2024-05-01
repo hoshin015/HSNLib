@@ -71,7 +71,7 @@ void SceneWave::Initialize()
 	);
 	Camera::Instance().SetAngle({ DirectX::XMConvertToRadians(60), DirectX::XMConvertToRadians(180), 0 });
 
-	Camera::Instance().cameraType = Camera::CAMERA::FREE;
+	Camera::Instance().cameraType = Camera::CAMERA::TargetStPlayer;
 
 	// Waveèâä˙âª
 	Wave::Instance().Init();
