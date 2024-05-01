@@ -251,6 +251,7 @@
     <ClCompile Include="Library\3D\SpherePrimitive.cpp" />
     <ClCompile Include="SceneSpawnEditor.cpp" />
     <ClCompile Include="SceneSpinningTop.cpp" />
+    <ClCompile Include="SceneSTMainMenu.cpp" />
     <ClCompile Include="SceneSTPlayer.cpp" />
     <ClCompile Include="SceneSTTitle.cpp" />
     <ClCompile Include="SceneTest.cpp" />
@@ -369,6 +370,7 @@
     <ClInclude Include="Library\3D\SpherePrimitive.h" />
     <ClInclude Include="SceneSpawnEditor.h" />
     <ClInclude Include="SceneSpinningTop.h" />
+    <ClInclude Include="SceneSTMainMenu.h" />
     <ClInclude Include="SceneSTPlayer.h" />
     <ClInclude Include="SceneSTTitle.h" />
     <ClInclude Include="SceneTest.h" />

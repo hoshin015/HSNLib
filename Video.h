@@ -34,10 +34,15 @@ public:
 	bool Play(bool loop = false);
 	void Pause();
 	void Stop();
-	void SeekPosition(LONGLONG seekTime);
+	void SeekPosition(LONGLONG seekTime/*10É s(1/10000000)Ç≈Ç¢ÇÍÇÈ*/);
+	void SeekPositionSec(float seekTimeSec);
 
 	bool Empty() { return _isEmpty; }
 
+	const DirectX::XMFLOAT2& GetSourceSize() { return _videoSize; }
+	const float& GetSourceFrameRate() { return _framerate; }
+	const LONGLONG& GetTimeStamp() { return _timeStamp; }
+	const float GetTimeStampSec() { return _timeStamp * 0.0000001f; }
 private:
 	void LoadAudio();
 
@@ -106,11 +111,12 @@ public:
 	bool Play(size_t num, bool loop = false);
 	void Pause(size_t num);
 	void Stop(size_t num);
-	void SeekPosition(size_t num, LONGLONG time/*10É s(1/10000000)Ç≈Ç¢ÇÍÇÈ*/);
+	void SeekPosition(size_t num, float timeSec);
 
 	void LoadFile(size_t num, const wchar_t* filePath);
 	void Clear(size_t num = 0);
 
+	Video& GetVideo(size_t num);
 private:
 	VideoManager(){
 		MFStartup(MF_VERSION);

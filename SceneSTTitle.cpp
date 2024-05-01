@@ -6,6 +6,7 @@
 #include "Library/Text/Text.h"
 #include "Library/Timer.h"
 #include "Library/Input/InputManager.h"
+#include "Library/Framework.h"
 
 #include "Video.h"
 
@@ -14,6 +15,9 @@
 
 void SceneSTTitle::Initialize() {
 	VideoManager::Instance().LoadFile(0, nullptr);
+	VideoManager::Instance().Play(0, true);
+	titleSprite = std::make_unique<Sprite>(L"Data/Texture/tyu-.png");
+
 }
 
 void SceneSTTitle::Finalize() {
@@ -21,11 +25,27 @@ void SceneSTTitle::Finalize() {
 }
 
 void SceneSTTitle::Update() {
+	InputManager& im = InputManager::Instance();
 	VideoManager::Instance().Update();
+
+	if (im.GetKeyPressed(Keyboard::Enter)) {
+		SceneManager::Instance().ChangeScene(new SceneLoading(new SceneSTMainMenu));
+	}
 }
 
 void SceneSTTitle::Render() {
-	VideoManager::Instance().Draw(0, _videoPos, _videoSize, _videoColor);
+	float width = Framework::Instance().windowWidth;
+	float height = Framework::Instance().windowHeight;
+	float wRatio = width / 1280;
+	float hRatio = height / 720;
+	float sRatio = wRatio * hRatio;
+
+	VideoManager::Instance().Draw(0, {0,0}, {width,height}, _videoColor);
+	DispString::Instance().Draw(L"`Press Enter`", { width * .5f, height * .8f }, 25 * sRatio, TEXT_ALIGN::MIDDLE, { 0, 0, 0, 1 }, true, { 1,1,1,.5f });
+	DispString::Instance().Draw(L"ESC Quit", { width * .01f, height * .99f }, 25 * sRatio, TEXT_ALIGN::LOWER_LEFT, { 0, 0, 0, 1 }, true, { 1,1,1,.5f });
+	titleSprite->Render(0, 0, wRatio * 300, hRatio * 200, 1, 1, 1, 1, 0);
+	fadeout.Render(0, 0, width, height, 0, 0, 0, fadeoutA, 0);
+
 	DrawDebugGUI();
 }
 
@@ -105,8 +125,6 @@ void SceneSTTitle::DrawDebugGUI() {
 			VideoManager::Instance().LoadFile(0, videofile.data());
 		}
 
-		ImGui::DragFloat2("Pos", &_videoPos.x);
-		ImGui::DragFloat2("Size", &_videoSize.x);
 		ImGui::ColorEdit4("Color", &_videoColor.x);
 
 		static bool isLoop = false;
@@ -114,6 +132,10 @@ void SceneSTTitle::DrawDebugGUI() {
 		if (ImGui::Button("Play")) VideoManager::Instance().Play(0, isLoop);
 		if (ImGui::Button("Pause")||InputManager::Instance().GetKeyPressed(Keyboard::Space)) VideoManager::Instance().Pause(0);
 		if (ImGui::Button("Stop")) VideoManager::Instance().Stop(0);
+
+		static float timeSec = 0;
+		ImGui::DragFloat("SeekTime", &timeSec);
+		if (ImGui::Button("Seek"))VideoManager::Instance().SeekPosition(0, timeSec);
 	}
 	ImGui::End();
 }

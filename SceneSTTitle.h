@@ -2,9 +2,8 @@
 #include <memory>
 #include "Scene.h"
 #include "Library/2D/Sprite.h"
-#include "Library/2D/UVScrollSprite.h"
 #include "Library/2D/MaskSprite.h"
-
+#include "Library/2D/Primitive2D.h"
 
 // タイトルシーン
 class SceneSTTitle : public Scene {
@@ -28,7 +27,10 @@ public:
 	void DrawDebugGUI();
 
 private:
-	DirectX::XMFLOAT2 _videoPos = {0,0};
-	DirectX::XMFLOAT2 _videoSize = { 1280,720 };
+	std::unique_ptr<Sprite> titleSprite;
+	std::unique_ptr<MaskSprite> maskSprite;
+	Primitive2D fadeout;
+	float fadeoutA = 0;
+
 	DirectX::XMFLOAT4 _videoColor = { 1,1,1,1 };
 };

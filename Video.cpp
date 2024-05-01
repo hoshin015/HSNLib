@@ -306,7 +306,7 @@ void Video::InitializeVideo(ID3D11Device* device) {
 	textureDesc.MipLevels = 1;
 
 	std::vector<UINT32> dummyData;
-	dummyData.resize(_videoSize.x * _videoSize.y, 0xffffffff);
+	dummyData.resize(_videoSize.x * _videoSize.y, 0);
 	D3D11_SUBRESOURCE_DATA texSubresourceData = {};
 	texSubresourceData.pSysMem = dummyData.data();
 	texSubresourceData.SysMemPitch = _videoSize.x * sizeof(UINT32);
@@ -465,7 +465,7 @@ bool Video::Play(bool loop) {
 	if (!_isPlay) {
 		_isPlay = true;
 		_isLoop = loop;
-		_pauseTime = Timer::Instance().TimeStamp() + (_timeStamp == 0 ? 0 : _timeStamp * -0.0000001f);
+		_pauseTime = Timer::Instance().TimeStamp() + _timeStamp * -0.0000001f;
 		return true;
 	}
 	return false;
@@ -489,6 +489,11 @@ void Video::SeekPosition(LONGLONG seekTime) {
 	time.lVal = seekTime;
 	_sourceReader->SetCurrentPosition(GUID_NULL, time);
 	PropVariantClear(&time);
+	_pauseTime = Timer::Instance().TimeStamp() + _timeStamp * -0.0000001f;
+}
+
+void Video::SeekPositionSec(float seekTimeSec) {
+	SeekPosition(seekTimeSec * 10000000);
 }
 
 void VideoManager::Update() {
@@ -545,9 +550,9 @@ void VideoManager::Stop(size_t num) {
 	}
 }
 
-void VideoManager::SeekPosition(size_t num, LONGLONG time) {
+void VideoManager::SeekPosition(size_t num, float timeSec) {
 	try {
-		_videos.at(num).SeekPosition(time);
+		_videos.at(num).SeekPositionSec(timeSec);
 	}
 	catch (std::out_of_range& ex) {
 		ErrorLogger::Log("VideoManager: out of range");
@@ -567,5 +572,14 @@ void VideoManager::Clear(size_t num) {
 
 	_videos.erase(_videos.begin() + num);
 	_videos.insert(_videos.begin() + num, Video());
+}
+
+Video& VideoManager::GetVideo(size_t num) {
+	try {
+		return _videos.at(num);
+	}
+	catch (std::out_of_range& ex) {
+		ErrorLogger::Log("VideoManager: out of range");
+	}
 }
 

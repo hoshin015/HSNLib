@@ -43,7 +43,7 @@ bool Framework::Initialize(HINSTANCE hInstance)
 	LineRenderer::Instance().Initialize();
 
 	// --- シーン初期化 ---
-	SceneManager::Instance().ChangeScene(new SceneTitle);
+	SceneManager::Instance().ChangeScene(new SceneSTTitle); //TODO:SceneSTTitleから始まるように変更
 
 	return true;
 }
