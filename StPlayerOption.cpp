@@ -15,6 +15,10 @@ StPlayerOption::StPlayerOption(std::shared_ptr<SkinnedMesh> model, std::shared_p
 	isPlayer = false;
 	SetScale({ .5f,.5f,.5f });
 
+	// parryEffect
+	parryEffect = std::make_unique<ParryEffect>(data->parryRadius);
+	// domeEffect
+	domeEffect = std::make_unique<DomeEffect>(data->parryRadius);
 }
 
 StPlayerOption::~StPlayerOption() {}
@@ -28,7 +32,17 @@ void StPlayerOption::Update() {
 		return;
 	}
 
+	// parryEffect更新
+	parryEffect->SetPosition({ position.x, 0.2f, position.z });
+	parryEffect->Update();
+	// domeEffect更新
+	domeEffect->SetPosition({ position.x, 0.2f, position.z });
+	domeEffect->Update();
+
+
 	angle.y += 360 * Timer::Instance().DeltaTime();
+
+
 	//UpdateAttack();
 
 	// 速力更新処理
@@ -43,9 +57,11 @@ void StPlayerOption::Update() {
 }
 
 void StPlayerOption::Render() {
-	model->Render(transform, { 0,1,0,1 }, &keyFrame);
+	model->Render(transform, { 1,1,1,1 }, &keyFrame);
+	parryEffect->Render();
+	domeEffect->Render();
 }
 
 void StPlayerOption::DrawDebugGui() {
-	RenderDebugPrimitive();
+	//RenderDebugPrimitive();
 }

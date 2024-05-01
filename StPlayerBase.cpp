@@ -81,7 +81,7 @@ void StPlayerBase::UpdateAttack() {
 
 	if (GetInputMap<bool>("Attack"))
 	{
-		domeEffect->StartEffect(data->parryRadius);
+		domeEffect->StartEffect(data->parryRadius, { 0.62,1,1 });
 	}
 	if (GetInputMap<bool>("SubAttack"))
 	{
@@ -97,12 +97,18 @@ void StPlayerBase::UpdateAttack() {
 		for (int i = 0; i < SpinningTopPlayerManager::Instance().GetPlayerCount(); i++) {
 			StPlayerBase* player = SpinningTopPlayerManager::Instance().GetPlayer(i);
 			PlayerData* data = player->GetData();
-			player->parryDamageRadius += data->parryRadius / (parentSpeed) * deltaTime;
+			player->parryDamageRadius +=  data->parryRadius/(parentSpeed) * deltaTime;
+			debugValue[std::string("parryDamageRadius")+std::to_string(i)] = player->parryDamageRadius;
 			if (player->parryDamageRadius > data->parryRadius) {
-				player->parryDamageRadius = 0;
 				parry = false;
-				hitEnemys.clear();
 			}
+		}
+		if (!parry) {
+			for (int i = 0; i < SpinningTopPlayerManager::Instance().GetPlayerCount(); i++) {
+				StPlayerBase* player = SpinningTopPlayerManager::Instance().GetPlayer(i);
+				player->parryDamageRadius = 0;
+			}
+			hitEnemys.clear();
 		}
 	}
 
@@ -112,11 +118,17 @@ void StPlayerBase::UpdateAttack() {
 			StPlayerBase* player = SpinningTopPlayerManager::Instance().GetPlayer(i);
 			PlayerData* data = player->GetData();
 			player->parryDamageRadius += data->parryRadius / (parentSpeed) * deltaTime;
+			debugValue[std::string("parryDamageRadius") + std::to_string(i)] = player->parryDamageRadius;
 			if (player->parryDamageRadius > data->parryGaugeRadius) {
-				player->parryDamageRadius = 0;
 				parryGauge = false;
-				hitEnemys.clear();
 			}
+		}
+		if (!parryGauge) {
+			for (int i = 0; i < SpinningTopPlayerManager::Instance().GetPlayerCount(); i++) {
+				StPlayerBase* player = SpinningTopPlayerManager::Instance().GetPlayer(i);
+				player->parryDamageRadius = 0;
+			}
+			hitEnemys.clear();
 		}
 	}
 
@@ -259,7 +271,7 @@ void StPlayerBase::UpdateAttack() {
 }
 
 void StPlayerBase::RenderDebugPrimitive() {
-	DebugPrimitive::Instance().AddSphere(position, radius, { 0,0,1,1 });
+	//DebugPrimitive::Instance().AddSphere(position, radius, { 0,0,1,1 });
 	DebugPrimitive::Instance().AddSphere(position, data->parryRadius, { 1,1,1,1 });
 	if (rotateSpeed > data->parryGaugeConsumed)DebugPrimitive::Instance().AddSphere(position, data->parryGaugeRadius, { 1,0,1,1 });
 
