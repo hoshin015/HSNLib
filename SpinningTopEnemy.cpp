@@ -470,6 +470,8 @@ IBTree::STATE SpinningTopEnemy::ActBTree(const int _kind)
 	case KIND::IDLE:
 		return  IBTree::STATE::Complete;
 		break;
+	case KIND::DEBUG_STOP:
+		break;
 	case KIND::Down:
 	{
 		downTimer += Timer::Instance().DeltaTime();

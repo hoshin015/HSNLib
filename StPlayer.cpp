@@ -48,6 +48,9 @@ StPlayer::StPlayer() {
 StPlayer::~StPlayer() {}
 
 void StPlayer::Update() {
+
+	if (isDead) return;
+
 	Input();
 
 	Camera::Instance().SetTarget(position);
@@ -78,7 +81,8 @@ void StPlayer::Update() {
 }
 
 void StPlayer::Render() {
-	
+	if (isDead) return;
+
 	model->Render(transform, { 1,1,1,1 }, &keyFrame);
 	parryEffect->Render();
 	domeEffect->Render();
@@ -472,5 +476,6 @@ void StPlayer::OnDead() {
 	bottom->SetAngle({ 90,0,0 });
 	ObstacleManager::Instance().Register(bottom);
 
-	//Destroy();
+	// Ž€–S
+	isDead = true;
 }

@@ -17,6 +17,7 @@ public:
 	// デバッグプリミティブ描画
 	void DrawDebugPrimitive();
 
+
 	// 位置取得
 	const DirectX::XMFLOAT3& GetPosition() const { return position; }
 	// 位置設定
@@ -44,7 +45,6 @@ public:
 
 	// レイキャスト
 	bool RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit);
-
 protected:
 	// 行列更新関数
 	void UpdateTransform();

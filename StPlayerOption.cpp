@@ -39,6 +39,40 @@ void StPlayerOption::Update() {
 	domeEffect->SetPosition({ position.x, 0.2f, position.z });
 	domeEffect->Update();
 
+	// エフェクトの更新
+	{
+		static const float parryEffectRangeChangePower = 3.0f;	// パリィ範囲を変更する力
+		if (rotateSpeed > data->parryGaugeConsumed)
+		{
+			// 徐々にパリィ範囲のエフェクトのサイズを変更している
+			DirectX::XMVECTOR PGR = DirectX::XMLoadFloat(&data->parryGaugeRadius);
+			DirectX::XMVECTOR NOWR = DirectX::XMLoadFloat(&parryEffect->GetScale().x);
+			NOWR = DirectX::XMVectorLerp(NOWR, PGR, parryEffectRangeChangePower * Timer::Instance().DeltaTime());
+			float r;
+			DirectX::XMStoreFloat(&r, NOWR);
+			parryEffect->SetScale({ r, r, r });
+		}
+		else
+		{
+			// 徐々にパリィ範囲のエフェクトのサイズを変更している
+			DirectX::XMVECTOR PR = DirectX::XMLoadFloat(&data->parryRadius);
+			DirectX::XMVECTOR NOWR = DirectX::XMLoadFloat(&parryEffect->GetScale().x);
+			NOWR = DirectX::XMVectorLerp(NOWR, PR, parryEffectRangeChangePower * Timer::Instance().DeltaTime());
+			float r;
+			DirectX::XMStoreFloat(&r, NOWR);
+			parryEffect->SetScale({ r, r, r });
+		}
+
+		if (GetInputMap<bool>("Attack"))
+		{
+			domeEffect->StartEffect(data->parryRadius, { 0.62,1,1 });
+		}
+		if (GetInputMap<bool>("SubAttack"))
+		{
+			domeEffect->StartEffect(data->parryGaugeRadius);
+		}
+	}
+
 
 	angle.y += 360 * Timer::Instance().DeltaTime();
 

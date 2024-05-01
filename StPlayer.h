@@ -33,6 +33,8 @@ protected:
 	void OnDead() override;
 
 private:
+	bool isDead = false;
+
 	//パラメータは上に,プロパティは下に書いてる
 	//std::vector<SpinningTopEnemy*> nearEnemy;
 

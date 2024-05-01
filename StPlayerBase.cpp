@@ -117,7 +117,7 @@ void StPlayerBase::UpdateAttack() {
 		for (int i = 0; i < SpinningTopPlayerManager::Instance().GetPlayerCount(); i++) {
 			StPlayerBase* player = SpinningTopPlayerManager::Instance().GetPlayer(i);
 			PlayerData* data = player->GetData();
-			player->parryDamageRadius += data->parryRadius / (parentSpeed) * deltaTime;
+			player->parryDamageRadius += data->parryGaugeRadius / (parentSpeed) * deltaTime;
 			debugValue[std::string("parryDamageRadius") + std::to_string(i)] = player->parryDamageRadius;
 			if (player->parryDamageRadius > data->parryGaugeRadius) {
 				parryGauge = false;
@@ -225,11 +225,11 @@ void StPlayerBase::UpdateAttack() {
 				float eRadius = enemy->GetRadius();
 				float distance = XMVectorGetX(XMVector3Length(ePosVec - pPosVec));
 
-				//if ((eRadius + data->parryGaugeRadius > distance) && !parryGauge) {
-				//	parryGauge = true;
-				//	break;
-				//}
-				parryGauge = true;
+				if ((eRadius + data->parryGaugeRadius > distance) && !parryGauge) {
+					parryGauge = true;
+					break;
+				}
+				//parryGauge = true;
 
 				if (parryGauge && eRadius + player->parryDamageRadius > distance) {
 					hitEnemys.push_back(enemy);

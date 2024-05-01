@@ -42,6 +42,9 @@ public:
 	// 障害物取得
 	Obstacle* GetObstacle(int index) { return obstacles.at(index); }
 
+	// 障害物同士の衝突
+	void CollisionObstacleVSObstacle();
+
 	// デバッグ用GUI描画
 	void DrawDebugGui();
 

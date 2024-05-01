@@ -25,6 +25,9 @@ void ObstacleManager::Update()
 	}
 	// 破棄リストをクリア
 	removes.clear();
+
+	// 障害物同士の当たり判定
+	CollisionObstacleVSObstacle();
 }
 
 //　描画処理
@@ -61,6 +64,36 @@ void ObstacleManager::Clear()
 		delete obstacle;
 	}
 	obstacles.clear();
+}
+
+void ObstacleManager::CollisionObstacleVSObstacle()
+{
+	for (Obstacle* obsA : obstacles)
+	{
+		for (Obstacle* obsB : obstacles)
+		{
+			if (obsA == obsB) continue;
+
+			// 衝突処理
+			DirectX::XMFLOAT3 outPositionA;
+			DirectX::XMFLOAT3 outPositionB;
+			if (Collision::RepulsionSphereVsSphere(
+				obsA->GetPosition(),
+				obsA->GetRadius(),
+				1.0f,
+				obsB->GetPosition(),
+				obsB->GetRadius(),
+				1.0f,
+				outPositionA,
+				outPositionB)
+				)
+			{
+				// 当たり判定のない障害物のみ velocityに影響を与える(現状ではパーツのみだから、もし増やしたら変更が必要)
+				if (!obsA->isCollision) obsA->velocity = outPositionA;
+				if (!obsA->isCollision) obsB->velocity = outPositionB;
+			}
+		}
+	}
 }
 
 // デバッグ用GUI描画

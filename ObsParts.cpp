@@ -27,9 +27,11 @@ ObsParts::ObsParts(const char* filePath)
 	isCollision = false;
 }
 
+
 ObsParts::~ObsParts()
 {
 }
+
 
 void ObsParts::Update()
 {

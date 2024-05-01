@@ -13,6 +13,7 @@ public:
 	enum class KIND
 	{
 		NONE = 0,
+		DEBUG_STOP,
 		ROOT,
 		Normal,
 		Down,
