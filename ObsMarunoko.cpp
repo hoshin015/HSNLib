@@ -6,6 +6,8 @@ ObsMarunoko::ObsMarunoko(const char* filePath)
 {
 	model = ResourceManager::Instance().LoadModelResource(filePath);
 
+	hitDamae = 1;
+
 	SetRadius(3.0f);
 }
 

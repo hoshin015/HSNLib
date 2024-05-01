@@ -379,6 +379,19 @@ void StPlayer::UpdateObstacleCollision()
 			DirectX::XMStoreFloat3(&velocityA, V_A);
 
 			SetVelocity(velocityA);
+
+			if (obs->hitDamae > 0)
+			{
+				ApplyDamage(obs->hitDamae, 0.0f);
+
+				// ダメージ表示
+				std::wstring damageString = std::to_wstring(obs->hitDamae);
+				const TCHAR* damageTChar = damageString.c_str();
+				DamageText* damageText = new DamageText({ GetPosition().x, 1.0f, GetPosition().z }, damageTChar, { 1,0,0,1 });
+				DamageTextManager::Instance().Register(damageText);
+			}
+
+			break;
 		}
 	}
 }

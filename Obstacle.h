@@ -74,4 +74,6 @@ public:
 	float radius = 1.1f;
 
 	bool isCollision = true;
+
+	int hitDamae = 0;	// プレイヤーと衝突したときに与えるダメージ
 };
