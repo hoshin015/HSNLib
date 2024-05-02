@@ -7,7 +7,6 @@
 #include "Library/Timer.h"
 #include "Library/Input/InputManager.h"
 
-
 #include "Video.h"
 #include "StageManager.h"
 #include "LightManager.h"
@@ -16,7 +15,7 @@
 #include <filesystem>
 
 void SceneSTMainMenu::Initialize() {
-	tutorialS3D = std::make_unique<Sprite3D>(L"Data/Texture/tyu-.png");
+	tutorialS3D = std::make_unique<Sprite3DObject>(L"Data/Texture/tyu-.png", DirectX::XMFLOAT2( 512,256 ));
 
 	StageManager& stageManager = StageManager::Instance();
 	stageMain = std::make_unique<StageContext>();
@@ -46,6 +45,9 @@ void SceneSTMainMenu::Finalize() {
 
 void SceneSTMainMenu::Update() {
 	Camera::Instance().Update();
+	player.Update();
+
+	tutorialS3D->SetColor({ (float)!tutorialS3D->HitToPoint(player.GetPosition()), 1, 1, 1 });
 }
 
 void SceneSTMainMenu::Render() {
@@ -84,6 +86,7 @@ void SceneSTMainMenu::Render() {
 		gfx.deviceContext->PSSetShader(nullptr, nullptr, 0);
 
 		StageManager::Instance().Render();
+		player.Render();
 
 		gfx.shadowBuffer->DeActivate();
 	}
@@ -115,21 +118,8 @@ void SceneSTMainMenu::Render() {
 	gfx.deviceContext->PSSetConstantBuffers(3, 1, gfx.constantBuffers[5].GetAddressOf());
 
 	StageManager::Instance().Render();
-	{
-		// スケール行列を作成
-		DirectX::XMMATRIX S = DirectX::XMMatrixScaling(tutorialS3DAspectRatio.x * tS3DScale, tutorialS3DAspectRatio.y * tS3DScale, 0);
-		// 回転行列を作成
-		DirectX::XMMATRIX R = DirectX::XMMatrixRotationRollPitchYaw((tS3DAngle.x), (tS3DAngle.y), (tS3DAngle.z));
-		// 位置行列を作成
-		DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(tS3DPosition.x, tS3DPosition.y, tS3DPosition.z);
-
-		// ４つの行列を組み合わせ、ワールド行列を作成
-		DirectX::XMMATRIX W = S * R * T;
-		// 計算したワールド行列を取り出す
-		DirectX::XMStoreFloat4x4(&tS3DTransform, W);
-
-		tutorialS3D->Render(tS3DTransform, { 1,1,1,1 });
-	}
+	player.Render();
+	tutorialS3D->Draw();
 
 	// --- デバッグ描画 ---
 	DrawDebugGUI();
@@ -180,9 +170,22 @@ void SceneSTMainMenu::DrawDebugGUI() {
 	}
 
 	if (ImGui::Begin("Sprite3D")) {
-		ImGui::DragFloat3("Position", &tS3DPosition.x,0.01f);
-		//ImGui::DragFloat3("Angle", &tS3DAngle.x,DirectX::XM_PI/180);
-		ImGui::DragFloat("Scale", &tS3DScale);
+		static DirectX::XMFLOAT3 defPos = tutorialS3D->GetPosition();
+		static DirectX::XMFLOAT3 defAng = tutorialS3D->GetAngle();
+		static DirectX::XMFLOAT3 defScl = tutorialS3D->GetScale();
+
+		ImGui::DragFloat3("Position", &tutorialS3D->GetPosition().x, 0.01f);
+		ImGui::DragFloat3("Angle", &tutorialS3D->GetAngle().x, DirectX::XM_PI / 180);
+
+		static float scale = 1;
+		ImGui::DragFloat("Scale", &scale);
+		tutorialS3D->SetScaleInAsp(scale);
+
+		if (ImGui::Button("Reset")) {
+			tutorialS3D->SetPosition(defPos);
+			tutorialS3D->SetAngle(defAng);
+			tutorialS3D->SetScale(defScl);
+		}
 
 		ImGui::End();
 	}
