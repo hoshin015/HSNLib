@@ -27,5 +27,5 @@ struct PlayerData {
 	float damagedKnockback = 15;
 
 	//Žq‹@
-	float optionRange = 1;
+	float optionRange = 10;
 };

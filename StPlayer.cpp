@@ -55,13 +55,6 @@ void StPlayer::Update() {
 
 	Camera::Instance().SetTarget(position);
 
-	// parryEffect更新
-	parryEffect->SetPosition({ position.x, 0.2f, position.z });
-	parryEffect->Update();
-	// domeEffect更新
-	domeEffect->SetPosition({ position.x, 0.2f, position.z });
-	domeEffect->Update();
-
 	UpdateRotate();
 	UpdateMove();
 	UpdateObstacleCollision();
@@ -78,6 +71,13 @@ void StPlayer::Update() {
 
 	// オブジェクト行列更新
 	UpdateTransform();
+
+	// parryEffect更新
+	parryEffect->SetPosition({ position.x, 0.2f, position.z });
+	parryEffect->Update();
+	// domeEffect更新
+	domeEffect->SetPosition({ position.x, 0.2f, position.z });
+	domeEffect->Update();
 }
 
 void StPlayer::Render() {
@@ -459,6 +459,7 @@ void StPlayer::OnDamaged() {
 }
 
 void StPlayer::OnDead() {
+	// 各パーツの生成
 	ObsParts* top;
 	ObsParts* middle;
 	ObsParts* bottom;
@@ -476,6 +477,12 @@ void StPlayer::OnDead() {
 	bottom->SetAngle({ 90,0,0 });
 	ObstacleManager::Instance().Register(bottom);
 
-	// 死亡
+	// 子機を全て削除
+	while (!option.empty())
+	{
+		EraseOption();
+	}
+
+	// 死亡フラグをON
 	isDead = true;
 }

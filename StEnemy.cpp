@@ -16,7 +16,6 @@ StEnemy::StEnemy(int enemyKind)
 
 	this->enemyKind = enemyKind;
 
-	model = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemy01/Main/StEnemy01Main.fbx");
 
 	paryEffect = ResourceManager::Instance().LoadModelResource("Data/Fbx/paryEffectTest/paryEffectTest.fbx");
 
@@ -28,6 +27,7 @@ StEnemy::StEnemy(int enemyKind)
 	searchRadius = data.searchRadius;
 	notSearchRadius = data.notSearchRadius;
 	
+	CreateModel();
 
 	// aiTree ‚Ì\’z
 	CreateAiTree();
@@ -155,6 +155,23 @@ void StEnemy::UpdateTargetPosition()
 	}
 }
 
+void StEnemy::CreateModel()
+{
+	switch (behaviorType)
+	{
+	case pursuit:
+	{
+		model = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemy01/Main/StEnemy01Main.fbx");
+		break;
+	}
+	case chase:
+	{
+		model = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemy02/Main/StEnemy02Main.fbx");
+		break;
+	}
+	}
+}
+
 void StEnemy::CreateAiTree()
 {
 	switch (behaviorType)
@@ -205,22 +222,36 @@ void StEnemy::CreateAiTree()
 // Ž€–Sˆ—
 void StEnemy::OnDead()
 {
-	ObsParts* top;
-	ObsParts* middle;
-	ObsParts* bottom;
+	ObsParts* top = nullptr;
+	ObsParts* middle = nullptr;
+	ObsParts* bottom = nullptr;
 
-	top = new ObsParts("Data/Fbx/StEnemy01/Top/StEnemy01Top.fbx");
+	switch (behaviorType)
+	{
+	case pursuit:
+	{
+		top = new ObsParts("Data/Fbx/StEnemy01/Top/StEnemy01Top.fbx");
+		middle = new ObsParts("Data/Fbx/StEnemy01/Middle/StEnemy01Middle.fbx");
+		bottom = new ObsParts("Data/Fbx/StEnemy01/Bottom/StEnemy01Bottom.fbx");
+		break;
+	}
+	case chase:
+	{
+		top = new ObsParts("Data/Fbx/StEnemy02/Top/StEnemy02Top.fbx");
+		middle = new ObsParts("Data/Fbx/StEnemy02/Middle/StEnemy02Middle.fbx");
+		bottom = new ObsParts("Data/Fbx/StEnemy02/Bottom/StEnemy02Bottom.fbx");
+		break;
+	}
+	}
+
 	top->SetPosition(GetPosition());
 	ObstacleManager::Instance().Register(top);
-	
-	middle = new ObsParts("Data/Fbx/StEnemy01/Middle/StEnemy01Middle.fbx");
 	middle->SetPosition(GetPosition());
 	ObstacleManager::Instance().Register(middle);
-	
-	bottom = new ObsParts("Data/Fbx/StEnemy01/Bottom/StEnemy01Bottom.fbx");
 	bottom->SetPosition(GetPosition());
 	bottom->SetAngle({ 90,0,0 });
 	ObstacleManager::Instance().Register(bottom);
+	
 
 	Destroy();
 }

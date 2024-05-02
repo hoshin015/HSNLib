@@ -83,7 +83,7 @@ protected:
 
 
 
-private:
+protected:
 	// 垂直速力更新処理
 	void UpdateVerticalVelocity();
 	// 垂直移動更新処理

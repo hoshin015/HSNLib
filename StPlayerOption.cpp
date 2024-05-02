@@ -32,13 +32,6 @@ void StPlayerOption::Update() {
 		return;
 	}
 
-	// parryEffect更新
-	parryEffect->SetPosition({ position.x, 0.2f, position.z });
-	parryEffect->Update();
-	// domeEffect更新
-	domeEffect->SetPosition({ position.x, 0.2f, position.z });
-	domeEffect->Update();
-
 	// エフェクトの更新
 	{
 		static const float parryEffectRangeChangePower = 3.0f;	// パリィ範囲を変更する力
@@ -73,6 +66,15 @@ void StPlayerOption::Update() {
 		}
 	}
 
+	// parryEffect更新
+	parryEffect->SetPosition({ position.x, 0.2f, position.z });
+	parryEffect->Update();
+	// domeEffect更新
+	domeEffect->SetPosition({ position.x, 0.2f, position.z });
+	domeEffect->Update();
+
+	
+
 
 	angle.y += 360 * Timer::Instance().DeltaTime();
 
@@ -80,7 +82,13 @@ void StPlayerOption::Update() {
 	//UpdateAttack();
 
 	// 速力更新処理
-	UpdateVelocity();
+	//UpdateVelocity();
+	
+	// 水平速力更新処理
+	UpdateHorizontalVelocity();
+	// 水平移動更新処理
+	UpdateHorizontalMove();
+	
 	// 無敵時間更新
 	UpdateInvincibleTimer();
 

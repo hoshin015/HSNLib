@@ -23,6 +23,8 @@ public:
 	void UpdateTargetPosition();
 
 private:
+	void CreateModel();
+
 	void CreateAiTree();
 
 

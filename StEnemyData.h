@@ -15,6 +15,8 @@ enum BEHAVIOR_TYPE
 {
 	pursuit,
 	chase,
+
+	BEHAVIOR_NUM,
 };
 
 enum ENEMY_SPAWN_EREA

@@ -76,6 +76,7 @@ private:
 
 	float optionAngle = 0;
 
+
 	//入力
 	//using InputVariant = std::variant<bool, int, float, DirectX::XMFLOAT2>;
 	//std::map<std::string, InputVariant> inputMap;
@@ -99,5 +100,9 @@ private:
 	T GetDebugValue(std::string str) {
 		return std::get<T>(debugValue[str]);
 	}
+
+
+public:
+	int partsCount = 0;
 };
 

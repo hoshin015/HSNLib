@@ -25,7 +25,12 @@ public:
 	PlayerData* GetData() { return data.get(); }
 	float parryDamageRadius = 0;
 	float parryGaugeDamageRadius = 0;
+	
+	int partsCount = 0;
 
+	// 子機
+	virtual void AddOption() {};
+	virtual void EraseOption() {};
 
 private:
 	//void UpdateRotate();
@@ -36,7 +41,6 @@ private:
 protected:
 	void UpdateAttack();
 	void RenderDebugPrimitive();
-
 
 	//パラメータは上に,プロパティは下に書いてる
 	inline static std::vector<SpinningTopEnemy*> nearEnemy;

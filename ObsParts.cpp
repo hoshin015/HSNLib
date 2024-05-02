@@ -102,6 +102,8 @@ void ObsParts::UpdateWait()
 void ObsParts::TranslationGoPlayer()
 {
 	state = STATE::GO_PLAYER;
+
+	//model->materials.at(0).textureFilenames[0] = "";
 }
 
 void ObsParts::UpdateGoPlayer()
@@ -122,6 +124,12 @@ void ObsParts::UpdateGoPlayer()
 
 	if (length < 0.1f)
 	{
+		SpinningTopPlayerManager::Instance().GetPlayer(0)->partsCount++;	// ƒp[ƒc‚ð‰ÁŽZ
+		if (SpinningTopPlayerManager::Instance().GetPlayer(0)->partsCount >= 3)
+		{
+			SpinningTopPlayerManager::Instance().GetPlayer(0)->partsCount -= 3;
+			SpinningTopPlayerManager::Instance().GetPlayer(0)->AddOption();
+		}
 		ObstacleManager::Instance().Remove(this);
 	}
 }
