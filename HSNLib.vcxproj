@@ -273,6 +273,7 @@
     <ClCompile Include="StEnemy01.cpp" />
     <ClCompile Include="StEnemy02.cpp" />
     <ClCompile Include="StEnemyData.cpp" />
+    <ClCompile Include="StMenuPlayer.cpp" />
     <ClCompile Include="StPlayer.cpp" />
     <ClCompile Include="StPlayerBase.cpp" />
     <ClCompile Include="StPlayerData.cpp" />

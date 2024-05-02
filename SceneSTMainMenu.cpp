@@ -34,7 +34,7 @@ void SceneSTMainMenu::Initialize() {
 		DirectX::XMFLOAT3(0, 1, 0)			// ã•ûŒüƒxƒNƒgƒ‹
 	);
 	Camera::Instance().SetAngle({ DirectX::XMConvertToRadians(30), DirectX::XMConvertToRadians(180), 0 });
-	Camera::Instance().cameraType = Camera::CAMERA::FREE;
+	Camera::Instance().cameraType = Camera::CAMERA::TargetStPlayer;
 }
 
 void SceneSTMainMenu::Finalize() {

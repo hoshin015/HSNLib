@@ -420,6 +420,9 @@
     <ClCompile Include="SceneSTMainMenu.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="StMenuPlayer.cpp">
+      <Filter>ソース ファイル\SpinningTopBase</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\Graphics\Graphics.h">
