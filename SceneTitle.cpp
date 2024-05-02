@@ -110,6 +110,9 @@ void SceneTitle::DrawDebugGUI()
 				{
 					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneWave));
 				}
+				if (ImGui::MenuItem("STTitle")) {
+					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneSTTitle));
+				}
 				ImGui::EndMenu();
 			}
 			ImGui::EndMenu();

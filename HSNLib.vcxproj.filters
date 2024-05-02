@@ -31,9 +31,6 @@
     <Filter Include="HSNLib\2D">
       <UniqueIdentifier>{4fa73d85-0a97-4906-b015-3dd435678867}</UniqueIdentifier>
     </Filter>
-    <Filter Include="シェーダーファイル">
-      <UniqueIdentifier>{2038c7ac-d674-4263-9908-800fa4c3fbf5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="HSNLib\Text">
       <UniqueIdentifier>{e6197c73-c549-4502-a30c-67d7157b29eb}</UniqueIdentifier>
     </Filter>
@@ -90,6 +87,9 @@
     </Filter>
     <Filter Include="ソース ファイル\Obstacle">
       <UniqueIdentifier>{7e6a5ce0-f9a9-4ff4-af19-cbd585efd17c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダーファイル">
+      <UniqueIdentifier>{2038c7ac-d674-4263-9908-800fa4c3fbf5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -413,6 +413,12 @@
     </ClCompile>
     <ClCompile Include="ObsMarunoko.cpp">
       <Filter>ソース ファイル\Obstacle</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneSTTitle.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneSTMainMenu.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -763,6 +769,12 @@
     </ClInclude>
     <ClInclude Include="macro.h">
       <Filter>HSNLib\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneSTTitle.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneSTMainMenu.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

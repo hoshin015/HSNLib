@@ -11,6 +11,8 @@
 #include "SceneEnemyLevelEditor.h"
 #include "SceneSpawnEditor.h"
 #include "SceneWave.h"
+#include "SceneSTTitle.h"
+#include "SceneSTMainMenu.h"
 #include "Library/MemoryLeak.h"
 
 // シーンマネージャー

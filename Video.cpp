@@ -14,7 +14,7 @@ using namespace DirectX;
 //計算はめんどいので下のサイトからコピー
 //https://www.klab.com/jp/blog/tech/2016/1054828175.html
 void NV12ToRGB(BYTE* rgbBufferOut, BYTE* yuvBuffer, int width, int height) {
-	BYTE* uvStart = yuvBuffer + width * height + 15360/3;
+	BYTE* uvStart = yuvBuffer + width * height;
 	BYTE y[2] = { 0, 0 };
 	BYTE u = 0;
 	BYTE v = 0;
@@ -46,11 +46,15 @@ void NV12ToRGB(BYTE* rgbBufferOut, BYTE* yuvBuffer, int width, int height) {
 	}
 }
 
-void moveUV(BYTE* yuvBuffer, int bufferSize, int width, int height) {
-	size_t uvStart;
+void moveUV(BYTE* yuvBuffer, int bufferSize, int width, int height, int* movePos) {
 	int yEnd = width * height;
-	for (uvStart = yEnd; yuvBuffer[uvStart] != 0; uvStart += width);
-	if (uvStart != yEnd)memmove(&yuvBuffer[width * height], &yuvBuffer[uvStart], bufferSize - uvStart);
+	if (*movePos < 0) {
+		size_t uvStart = yEnd;
+		for (; yuvBuffer[uvStart] == 0; uvStart += width);
+		*movePos = uvStart;
+	}
+
+	if (movePos != 0)memmove(&yuvBuffer[yEnd], &yuvBuffer[(*movePos)], bufferSize - (*movePos));
 }
 
 inline void  Rotate(XMFLOAT2& pos, XMFLOAT2 cPos, float cos, float sin) {
@@ -66,20 +70,27 @@ inline void  Rotate(XMFLOAT2& pos, XMFLOAT2 cPos, float cos, float sin) {
 };
 
 void Video::LoadFile(ID3D11Device* device, const wchar_t* filePath) {
+	if (filePath == nullptr) filePath = L"Data/Video/SampleVideo_1280x720_1mb.mp4";
 	HRESULT hr = {};
 	_isEmpty = false;
 
 	hr = MFCreateSourceReaderFromURL(filePath, NULL, _sourceReader.GetAddressOf());
+	if (FAILED(hr)) {
+		ErrorLogger::Log(hr, L"Video: Failed to load file");
+		_isEmpty = true;
+		return;
+	}
 
 	//音声読み込み
 	//今回は作らない
-	LoadAudio();
+	//LoadAudio();
 
 	//動画読み込み初期設定
 	InitializeVideo(device);
 }
 
 void Video::Render(ID3D11DeviceContext* deviceContext, DirectX::XMFLOAT2 dPos, DirectX::XMFLOAT2 dSize, DirectX::XMFLOAT4 color, float angle, DirectX::XMFLOAT2 sPos, DirectX::XMFLOAT2 sSize) {
+	if (_sourceReader.Get() == nullptr) return;
 	D3D11_VIEWPORT viewport {};
 	UINT numViewports { 1 };
 	deviceContext->RSGetViewports(&numViewports, &viewport);
@@ -165,7 +176,40 @@ void Video::Render(ID3D11DeviceContext* deviceContext, DirectX::XMFLOAT2 dPos, D
 	deviceContext->Draw(4, 0);
 }
 
-void Video::LoadAudio() {}
+void Video::LoadAudio() {
+	MFCreateMediaType(_audioType.GetAddressOf());
+	_audioType->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Audio);
+	_audioType->SetGUID(MF_MT_SUBTYPE, MFAudioFormat_PCM);
+	_sourceReader->SetCurrentMediaType(MF_SOURCE_READER_FIRST_AUDIO_STREAM, nullptr, _audioType.Get());
+
+	_audioType.Reset();
+	HRESULT hr = _sourceReader->GetCurrentMediaType(MF_SOURCE_READER_FIRST_AUDIO_STREAM, _audioType.GetAddressOf());
+	if (S_OK == hr) {
+
+		//MFCreateWaveFormatExFromMFMediaType(_audioType.Get(), &_waveFormat, nullptr);
+		_audioData.clear();
+
+		while (true) {
+			ComPtr<IMFSample> sample;
+			DWORD dwStreamFlags = 0;
+			_sourceReader->ReadSample(MF_SOURCE_READER_FIRST_AUDIO_STREAM, 0, nullptr, &dwStreamFlags, nullptr, sample.GetAddressOf());
+
+			if (dwStreamFlags & MF_SOURCE_READERF_ENDOFSTREAM) break;
+
+			ComPtr<IMFMediaBuffer> mediaBuffer;
+			sample->ConvertToContiguousBuffer(mediaBuffer.GetAddressOf());
+
+			BYTE* buffer = nullptr;
+			DWORD cbCurrentLength = 0;
+			mediaBuffer->Lock(&buffer, nullptr, &cbCurrentLength);
+
+			_audioData.resize(_audioData.size() + cbCurrentLength);
+			memcpy(_audioData.data() + _audioData.size() - cbCurrentLength, buffer, cbCurrentLength);
+
+			mediaBuffer->Unlock();
+		}
+	}
+}
 
 //mp4などのデータをTextureとして読み込むための下準備
 void Video::InitializeVideo(ID3D11Device* device) {
@@ -262,7 +306,7 @@ void Video::InitializeVideo(ID3D11Device* device) {
 	textureDesc.MipLevels = 1;
 
 	std::vector<UINT32> dummyData;
-	dummyData.resize(_videoSize.x * _videoSize.y, 0xffffffff);
+	dummyData.resize(_videoSize.x * _videoSize.y, 0);
 	D3D11_SUBRESOURCE_DATA texSubresourceData = {};
 	texSubresourceData.pSysMem = dummyData.data();
 	texSubresourceData.SysMemPitch = _videoSize.x * sizeof(UINT32);
@@ -329,7 +373,7 @@ void Video::LoadFrame(ID3D11DeviceContext* deviceContext) {
 			DWORD maxlen, currentlen;
 			yuvBuffer->Lock(&bBuffer, &maxlen, &currentlen);
 
-			moveUV(bBuffer, maxlen, _videoSize.x, _videoSize.y);
+			moveUV(bBuffer, maxlen, _videoSize.x, _videoSize.y, &_movePos);
 
 			yuvBuffer->Unlock();
 
@@ -375,7 +419,7 @@ void Video::LoadFrame(ID3D11DeviceContext* deviceContext) {
 
 				D3D11_MAPPED_SUBRESOURCE subresource;
 				deviceContext->Map(_texture.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &subresource);
-				memcpy(subresource.pData, bBuffer, subresource.DepthPitch);
+				memcpy(subresource.pData, bBuffer, maxlen);
 				deviceContext->Unmap(_texture.Get(), 0);
 
 				hr = buffer->Unlock();
@@ -389,6 +433,7 @@ void Video::LoadFrame(ID3D11DeviceContext* deviceContext) {
 				hr = nv12Buffer->Lock(&bBuffer, &maxlen, &currentlen);
 
 				std::vector<BYTE> rgbBuffer(_videoSize.x * _videoSize.y * 4);
+				moveUV(bBuffer, maxlen, _videoSize.x, _videoSize.y);
 				NV12ToRGB(rgbBuffer.data(), bBuffer, _videoSize.x, _videoSize.y);
 
 				D3D11_MAPPED_SUBRESOURCE subresource;
@@ -416,10 +461,14 @@ void Video::LoadFrame(ID3D11DeviceContext* deviceContext) {
 	}
 }
 
-void Video::Play(bool loop) {
-	_isPlay = true;
-	_isLoop = loop;
-	_pauseTime = Timer::Instance().TimeStamp() + _timeStamp == 0 ? 0 : _timeStamp * -0.1f;
+bool Video::Play(bool loop) {
+	if (!_isPlay) {
+		_isPlay = true;
+		_isLoop = loop;
+		_pauseTime = Timer::Instance().TimeStamp() + _timeStamp * -0.0000001f;
+		return true;
+	}
+	return false;
 }
 
 void Video::Pause() {
@@ -432,6 +481,7 @@ inline void Video::Stop() {
 }
 
 void Video::SeekPosition(LONGLONG seekTime) {
+	if (_sourceReader.Get() == nullptr)return;
 	_timeStamp = seekTime;
 	PROPVARIANT time;
 	PropVariantInit(&time);
@@ -439,6 +489,11 @@ void Video::SeekPosition(LONGLONG seekTime) {
 	time.lVal = seekTime;
 	_sourceReader->SetCurrentPosition(GUID_NULL, time);
 	PropVariantClear(&time);
+	_pauseTime = Timer::Instance().TimeStamp() + _timeStamp * -0.0000001f;
+}
+
+void Video::SeekPositionSec(float seekTimeSec) {
+	SeekPosition(seekTimeSec * 10000000);
 }
 
 void VideoManager::Update() {
@@ -458,20 +513,19 @@ void VideoManager::Draw(size_t num, DirectX::XMFLOAT2 dPos, DirectX::XMFLOAT2 dS
 	}
 }
 
-void VideoManager::Draw(size_t num, DirectX::XMFLOAT2 dPos, DirectX::XMFLOAT2 dSize) {
+void VideoManager::Draw(size_t num, DirectX::XMFLOAT2 dPos, DirectX::XMFLOAT2 dSize, DirectX::XMFLOAT4 color) {
 	try {
-		if (_videos.at(num).Empty()) ErrorLogger::Log("VideoManager: Video is not loaded");
-		_videos.at(num).Render(Graphics::Instance().deviceContext.Get(), dPos, dSize);
+		_videos.at(num).Render(Graphics::Instance().deviceContext.Get(), dPos, dSize, color);
 	}
 	catch (std::out_of_range& ex) {
 		ErrorLogger::Log("VideoManager: out of range");
 	}
 }
 
-void VideoManager::Play(size_t num, bool loop) {
+//threadの中で呼ばれると始まるときTimer関係がずれるためUpdateなどで呼んで
+bool VideoManager::Play(size_t num, bool loop) {
 	try {
-		if (_videos.at(num).Empty()) ErrorLogger::Log("VideoManager: Video is not loaded");
-		_videos.at(num).Play(loop);
+		return _videos.at(num).Play(loop);
 	}
 	catch (std::out_of_range& ex) {
 		ErrorLogger::Log("VideoManager: out of range");
@@ -480,7 +534,6 @@ void VideoManager::Play(size_t num, bool loop) {
 
 void VideoManager::Pause(size_t num) {
 	try {
-		if (_videos.at(num).Empty()) ErrorLogger::Log("VideoManager: Video is not loaded");
 		_videos.at(num).Pause();
 	}
 	catch (std::out_of_range& ex) {
@@ -490,7 +543,6 @@ void VideoManager::Pause(size_t num) {
 
 void VideoManager::Stop(size_t num) {
 	try {
-		if (_videos.at(num).Empty()) ErrorLogger::Log("VideoManager: Video is not loaded");
 		_videos.at(num).Stop();
 	}
 	catch (std::out_of_range& ex) {
@@ -498,10 +550,9 @@ void VideoManager::Stop(size_t num) {
 	}
 }
 
-void VideoManager::SeekPosition(size_t num, LONGLONG time) {
+void VideoManager::SeekPosition(size_t num, float timeSec) {
 	try {
-		if (_videos.at(num).Empty()) ErrorLogger::Log("VideoManager: Video is not loaded");
-		_videos.at(num).SeekPosition(time);
+		_videos.at(num).SeekPositionSec(timeSec);
 	}
 	catch (std::out_of_range& ex) {
 		ErrorLogger::Log("VideoManager: out of range");
@@ -521,5 +572,14 @@ void VideoManager::Clear(size_t num) {
 
 	_videos.erase(_videos.begin() + num);
 	_videos.insert(_videos.begin() + num, Video());
+}
+
+Video& VideoManager::GetVideo(size_t num) {
+	try {
+		return _videos.at(num);
+	}
+	catch (std::out_of_range& ex) {
+		ErrorLogger::Log("VideoManager: out of range");
+	}
 }
 
