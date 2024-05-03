@@ -76,6 +76,8 @@ private:
 
 	float optionAngle = 0;
 
+	float invicibleTime = 0.2f;
+
 
 	//入力
 	//using InputVariant = std::variant<bool, int, float, DirectX::XMFLOAT2>;

@@ -19,6 +19,7 @@ WaveScript wave1Script[] =
 	SET_ENEMY(13.0f, EREA2, ENEMY_3),
 	SET_OnLight(15.0f),					// ライトON
 	SET_EnemyDestory(15.0f),			// 全ての敵破壊
+	SET_ObstacleDestory(15.0f),			// 破壊を許可している障害物の破壊
 
 	SET_END								// ウェーブ終了
 
@@ -32,6 +33,55 @@ WaveScript wave2Script[] =
 	SET_ENEMY(3.0f, EREA0, ENEMY_0),
 
 	SET_EnemyDestory(15.0f),			// 全ての敵破壊
+	SET_ObstacleDestory(15.0f),			// 破壊を許可している障害物の破壊
 
+	SET_END								// ウェーブ終了
+};
+
+// ウェーブ3
+WaveScript wave3Script[] =
+{
+	SET_END								// ウェーブ終了
+};
+
+// ウェーブ4
+WaveScript wave4Script[] =
+{
+	SET_END								// ウェーブ終了
+};
+
+// ウェーブ5
+WaveScript wave5Script[] =
+{
+	SET_END								// ウェーブ終了
+};
+
+// ウェーブ6
+WaveScript wave6Script[] =
+{
+	SET_END								// ウェーブ終了
+};
+
+// ウェーブ7
+WaveScript wave7Script[] =
+{
+	SET_END								// ウェーブ終了
+};
+
+// ウェーブ8
+WaveScript wave8Script[] =
+{
+	SET_END								// ウェーブ終了
+};
+
+// ウェーブ9
+WaveScript wave9Script[] =
+{
+	SET_END								// ウェーブ終了
+};
+
+// ウェーブ10
+WaveScript wave10Script[] =
+{
 	SET_END								// ウェーブ終了
 };

@@ -127,12 +127,21 @@ struct SciptDestoryEnemy : public ScriptData
 	}
 };
 
+struct ScriptDestoryObstacle : public ScriptData
+{
+	ScriptDestoryObstacle() {}
+	void Execute() override
+	{
+		ObstacleManager::Instance().WaveClear();
+	}
+};
 
 #define SET_ENEMY(time, spawnType, enemyType) {(time), std::unique_ptr<ScriptData>(new ScriptEnemy(spawnType, enemyType))}
 #define SET_MARUNOKO(time, marunokoType, posX, posY, posZ, speed) {(time), std::unique_ptr<ScriptData>(new ScriptMarunoko(marunokoType, {posX, posY, posZ}, speed))}
 #define SET_OnLight(time) {(time), std::unique_ptr<ScriptData>(new ScriptOnLight())}
 #define SET_OffLight(time) {(time), std::unique_ptr<ScriptData>(new ScriptOffLight())}
 #define SET_EnemyDestory(time) {(time), std::unique_ptr<ScriptData>(new SciptDestoryEnemy())}
+#define SET_ObstacleDestory(time) {(time), std::unique_ptr<ScriptData>(new ScriptDestoryObstacle())}
 #define SET_END		{0,nullptr}
 
 class Wave

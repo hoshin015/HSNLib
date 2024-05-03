@@ -66,6 +66,17 @@ void ObstacleManager::Clear()
 	obstacles.clear();
 }
 
+// ウェーブ用削除
+void ObstacleManager::WaveClear()
+{
+	for (Obstacle* obstacle : obstacles)
+	{
+		if (!obstacle->isWaveDestory) continue;
+		// 破棄リストに追加
+		removes.insert(obstacle);
+	}
+}
+
 void ObstacleManager::CollisionObstacleVSObstacle()
 {
 	for (Obstacle* obsA : obstacles)

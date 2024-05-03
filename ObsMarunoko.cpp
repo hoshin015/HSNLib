@@ -9,6 +9,7 @@ ObsMarunoko::ObsMarunoko(const char* filePath, int type, float speed)
 	moveSpeed = speed;
 
 	hitDamae = 1;
+	isWaveDestory = true;
 
 	SetRadius(3.0f);
 

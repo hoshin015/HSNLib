@@ -36,6 +36,9 @@ public:
 	// 障害物全削除
 	void Clear();
 
+	// ウェーブ用全削除
+	void WaveClear();
+
 	// 障害物数取得
 	int GetObstacleCount() const { return static_cast<int>(obstacles.size()); }
 

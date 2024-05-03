@@ -77,4 +77,6 @@ public:
 	bool isCollision = true;
 
 	int hitDamae = 0;	// プレイヤーと衝突したときに与えるダメージ
+
+	bool isWaveDestory = false;	// ウェーブフラグで破壊するかどうか
 };

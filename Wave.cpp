@@ -8,6 +8,14 @@ WaveScript* waveScript[] =
 {
 	wave1Script,
 	wave2Script,
+	wave3Script,
+	wave4Script,
+	wave5Script,
+	wave6Script,
+	wave7Script,
+	wave8Script,
+	wave9Script,
+	wave10Script,
 	nullptr,
 };
 
