@@ -101,10 +101,20 @@ struct ScriptOffLight : public ScriptData
 	}
 };
 
+struct SciptDestoryEnemy : public ScriptData
+{
+	SciptDestoryEnemy() {}
+	void Execute() override
+	{
+		SpinningTopEnemyManager::Instance().Clear();
+	}
+};
+
 
 #define SET_ENEMY(time, spawnType, enemyType) {(time), std::unique_ptr<ScriptData>(new ScriptEnemy(spawnType, enemyType))}
 #define SET_OnLight(time) {(time), std::unique_ptr<ScriptData>(new ScriptOnLight())}
 #define SET_OffLight(time) {(time), std::unique_ptr<ScriptData>(new ScriptOffLight())}
+#define SET_EnemyDestory(time) {(time), std::unique_ptr<ScriptData>(new SciptDestoryEnemy())}
 #define SET_END		{0,nullptr}
 
 class Wave

@@ -43,5 +43,5 @@ private:
 	float canGoPlayerTime = 1.0f;
 
 	float toPlayerDistance = 10.0f;	// ƒvƒŒƒCƒ„[‚ÉŒü‚©‚¤‚Æ”»’f‚·‚é‹——£
-	float goPlayerSpeed = 12.0f;
+	float goPlayerSpeed = 20.0f;
 };
