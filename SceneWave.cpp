@@ -41,12 +41,12 @@ void SceneWave::Initialize()
 	}
 
 	// マルのこ
-	for (int i = 0; i < 3; i++)
-	{
-		ObsMarunoko* obstacle = new_ ObsMarunoko("Data/FBX/StMarunoko/StMarunoko.fbx");
-		obstacle->SetPosition({ i * 30.0f - 45.0f, 0, 6.0f });
-		ObstacleManager::Instance().Register(obstacle);
-	}
+	//for (int i = 0; i < 3; i++)
+	//{
+	//	ObsMarunoko* obstacle = new_ ObsMarunoko("Data/FBX/StMarunoko/StMarunoko.fbx", ObsMarunoko::MarunokoType::HORIZONTAL);
+	//	obstacle->SetPosition({ i * 30.0f - 45.0f, 0, 6.0f });
+	//	ObstacleManager::Instance().Register(obstacle);
+	//}
 
 	// ステージ初期化
 	StageManager& stageManager = StageManager::Instance();

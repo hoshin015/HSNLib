@@ -5,6 +5,8 @@
 #include "StEnemy.h"
 #include "StEnemyData.h"
 #include "LightManager.h"
+#include "ObsMarunoko.h"
+#include "ObstacleManager.h"
 
 struct ScriptData
 {
@@ -48,6 +50,21 @@ struct ScriptEnemy : public ScriptData
 		// スポーン座標設定
 		enemy->spawnPosition = { enemy->GetPosition().x, 0, enemy->GetPosition().z };
 		SpinningTopEnemyManager::Instance().Register(enemy);
+	}
+};
+
+struct ScriptMarunoko : public ScriptData
+{
+	ScriptMarunoko(int mType, DirectX::XMFLOAT3 pos, float speed) : type(mType), position(pos), moveSpeed(speed) {};
+	int type;
+	DirectX::XMFLOAT3 position;
+	float moveSpeed;
+
+	void Execute() override
+	{
+		ObsMarunoko* obstacle = new ObsMarunoko("Data/FBX/StMarunoko/StMarunoko.fbx", type, moveSpeed);
+		obstacle->SetPosition(position);
+		ObstacleManager::Instance().Register(obstacle);
 	}
 };
 
@@ -112,6 +129,7 @@ struct SciptDestoryEnemy : public ScriptData
 
 
 #define SET_ENEMY(time, spawnType, enemyType) {(time), std::unique_ptr<ScriptData>(new ScriptEnemy(spawnType, enemyType))}
+#define SET_MARUNOKO(time, marunokoType, posX, posY, posZ, speed) {(time), std::unique_ptr<ScriptData>(new ScriptMarunoko(marunokoType, {posX, posY, posZ}, speed))}
 #define SET_OnLight(time) {(time), std::unique_ptr<ScriptData>(new ScriptOnLight())}
 #define SET_OffLight(time) {(time), std::unique_ptr<ScriptData>(new ScriptOffLight())}
 #define SET_EnemyDestory(time) {(time), std::unique_ptr<ScriptData>(new SciptDestoryEnemy())}

@@ -1,8 +1,15 @@
 #include "WaveData_1.h"
+#include "ObsMarunoko.h"
+
+// ステージのサイズは 100 x 100　(-50 ~ +50 の間)
 
 // ウェーブ１
 WaveScript wave1Script[] =
 {
+	SET_MARUNOKO(0.0f, ObsMarunoko::MarunokoType::NO_MOVE, 20, 0, 0, 0),		// 回転刃生成 
+	SET_MARUNOKO(0.0f, ObsMarunoko::MarunokoType::HORIZONTAL, 36, 0, 10, 3),	// 回転刃生成 
+	SET_MARUNOKO(0.0f, ObsMarunoko::MarunokoType::VERTICAL, 10, 0, -60, 10),	// 回転刃生成 
+
 	SET_ENEMY(3.0f, EREA0, ENEMY_0),
 	SET_ENEMY(6.0f, EREA1, ENEMY_1),
 	SET_ENEMY(9.0f, EREA2, ENEMY_3),

@@ -90,7 +90,7 @@ void ObstacleManager::CollisionObstacleVSObstacle()
 			{
 				// 当たり判定のない障害物のみ velocityに影響を与える(現状ではパーツのみだから、もし増やしたら変更が必要)
 				if (!obsA->isCollision) obsA->velocity = outPositionA;
-				if (!obsA->isCollision) obsB->velocity = outPositionB;
+				if (!obsB->isCollision) obsB->velocity = outPositionB;
 			}
 		}
 	}
