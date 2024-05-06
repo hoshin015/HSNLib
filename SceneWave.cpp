@@ -20,6 +20,7 @@
 #include "DataManager.h"
 #include "DamageTextManager.h"
 #include "Library/Text/DispString.h"
+#include "Library/Effekseer/EffectManager.h"
 
 void SceneWave::Initialize()
 {
@@ -35,18 +36,13 @@ void SceneWave::Initialize()
 	// Cylinder
 	for (int i = 0; i < 3; i++)
 	{
-		ObsStaticObj* obstacle = new_ ObsStaticObj("Data/FBX/cylinder/cylinder.fbx");
+		ObsStaticObj* obstacle = new_ ObsStaticObj("Data/FBX/StGaitou/StGaitou.fbx");
+		obstacle->SetScale({ 5, 1, 5 });
 		obstacle->SetPosition({ i * 30.0f - 45.0f, 0, -6.0f });
+		obstacle->SetRadius(0.4f);
 		ObstacleManager::Instance().Register(obstacle);
 	}
 
-	// マルのこ
-	//for (int i = 0; i < 3; i++)
-	//{
-	//	ObsMarunoko* obstacle = new_ ObsMarunoko("Data/FBX/StMarunoko/StMarunoko.fbx", ObsMarunoko::MarunokoType::HORIZONTAL);
-	//	obstacle->SetPosition({ i * 30.0f - 45.0f, 0, 6.0f });
-	//	ObstacleManager::Instance().Register(obstacle);
-	//}
 
 	// ステージ初期化
 	StageManager& stageManager = StageManager::Instance();
@@ -73,8 +69,12 @@ void SceneWave::Initialize()
 
 	Camera::Instance().cameraType = Camera::CAMERA::TargetStPlayer;
 
+
 	// Wave初期化
 	Wave::Instance().Init();
+
+	// ポーズ画面
+	pause = std::make_unique<Pause>();
 }
 
 void SceneWave::Finalize()
@@ -94,6 +94,14 @@ void SceneWave::Finalize()
 
 void SceneWave::Update()
 {
+	pause->Update();
+
+	if (pause->isPause)
+	{
+		return;
+	}
+
+
 	// カメラコントローラー更新処理
 	Camera::Instance().Update();
 
@@ -196,6 +204,7 @@ void SceneWave::Render()
 
 	SpinningTopPlayerManager::Instance().Render();
 
+	EffectManager::Instance().Render(Camera::Instance().GetView(), Camera::Instance().GetProjection());
 
 	//gfx.SetDepthStencil(DEPTHSTENCIL_STATE::ZT_OFF_ZW_OFF);
 	gfx.SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);
@@ -261,6 +270,10 @@ void SceneWave::Render()
 #else
 	gfx.bitBlockTransfer->blit(gfx.bloomBuffer->shaderResourceViews[0].GetAddressOf(), 0, 1);
 #endif
+
+	// --- ui 描画 ----
+	pause->Render();
+	
 
 	// --- デバッグ描画 ---
 	DrawDebugGUI();

@@ -226,6 +226,8 @@ void StEnemy::OnDead()
 	ObsParts* middle = nullptr;
 	ObsParts* bottom = nullptr;
 
+	Effect::Instance().Play(EffectType::DestoryStEnemy, GetPosition(), { 0,0,0 }, 1.0f);
+
 	switch (behaviorType)
 	{
 	case pursuit:

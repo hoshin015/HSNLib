@@ -183,4 +183,5 @@ public:
 	float animationBlendTime = 0.0f;
 	float animationBlendSeconds = 0.0f;
 	int blendAnimationIndex = -1;			// 遷移前のアニメーション番号
+
 };

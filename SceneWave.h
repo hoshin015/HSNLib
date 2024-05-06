@@ -3,6 +3,8 @@
 #include "Scene.h"
 #include "Library/3D/SkinnedMesh.h"
 #include "Library/3D/SkyMap.h"
+#include "Library/2D/Sprite.h"
+#include "Pause.h"
 
 // テストシーン
 class SceneWave : public Scene
@@ -29,6 +31,9 @@ public:
 private:
 	std::unique_ptr<SkyMap> skyMap;
 
-
 	float gaussianPower = 16.0f;
+
+	// --- ポーズ画面 ---
+	bool isPause = false;
+	std::unique_ptr<Pause> pause;
 };

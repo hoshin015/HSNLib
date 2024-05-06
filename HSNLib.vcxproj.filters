@@ -91,6 +91,12 @@
     <Filter Include="シェーダーファイル">
       <UniqueIdentifier>{2038c7ac-d674-4263-9908-800fa4c3fbf5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\UI">
+      <UniqueIdentifier>{3c7f3e19-5734-432c-b050-9ac433d8be27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Ui">
+      <UniqueIdentifier>{0dd4762a-3bfc-4464-afd6-042fe5fa54d1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Library\Graphics\Graphics.cpp">
@@ -419,6 +425,12 @@
     </ClCompile>
     <ClCompile Include="SceneSTMainMenu.cpp">
       <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="UiSprite.cpp">
+      <Filter>ソース ファイル\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Pause.cpp">
+      <Filter>ソース ファイル\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -775,6 +787,12 @@
     </ClInclude>
     <ClInclude Include="SceneSTMainMenu.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="UiSprite.h">
+      <Filter>ヘッダー ファイル\Ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Pause.h">
+      <Filter>ヘッダー ファイル\Ui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

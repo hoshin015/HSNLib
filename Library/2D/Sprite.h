@@ -13,6 +13,8 @@ public:
 
 	void SprTextOut(std::string s, DirectX::XMFLOAT2 position, DirectX::XMFLOAT2 WH, DirectX::XMFLOAT4 color = { 1,1,1,1 });
 
+
+
 private:
 	Microsoft::WRL::ComPtr<ID3D11VertexShader> vertexShader;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> pixelShader;

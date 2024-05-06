@@ -341,6 +341,8 @@ void StPlayer::UpdateDamaged() {
 			{
 				// 敵がダウン中なら敵を破壊
 				enemy->ApplyDamage(9999, 0);
+
+				Effect::Instance().Play(EffectType::HitStDownEnemy, GetPosition(), { 0,0,0 }, 1.0f);
 			}
 			else
 			{
@@ -353,6 +355,8 @@ void StPlayer::UpdateDamaged() {
 					DamageText* damageText = new DamageText({ GetPosition().x, 1.0f, GetPosition().z }, damageTChar, { 1,0,0,1 });
 					DamageTextManager::Instance().Register(damageText);
 				}
+
+				Effect::Instance().Play(EffectType::HitStVsSt, GetPosition(), {0,0,0}, 1.0f);
 
 				// 敵がダウン中でないならプレイヤーにダメージ
 				ApplyDamage(1, invicibleTime);

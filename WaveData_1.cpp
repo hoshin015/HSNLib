@@ -7,7 +7,7 @@
 WaveScript wave1Script[] =
 {
 	SET_MARUNOKO(0.0f, ObsMarunoko::MarunokoType::NO_MOVE, 20, 0, 0, 0),		// 回転刃生成 
-	SET_MARUNOKO(0.0f, ObsMarunoko::MarunokoType::HORIZONTAL, 36, 0, 10, 3),	// 回転刃生成 
+	SET_MARUNOKO(0.0f, ObsMarunoko::MarunokoType::HORIZONTAL, 60, 0, 10, 3),	// 回転刃生成 
 	SET_MARUNOKO(0.0f, ObsMarunoko::MarunokoType::VERTICAL, 10, 0, -60, 10),	// 回転刃生成 
 
 	SET_ENEMY(3.0f, EREA0, ENEMY_0),
@@ -18,11 +18,12 @@ WaveScript wave1Script[] =
 	SET_ENEMY(12.0f, EREA1, ENEMY_2),
 	SET_ENEMY(13.0f, EREA2, ENEMY_3),
 	SET_OnLight(15.0f),					// ライトON
+
+
 	SET_EnemyDestory(15.0f),			// 全ての敵破壊
 	SET_ObstacleDestory(15.0f),			// 破壊を許可している障害物の破壊
 
 	SET_END								// ウェーブ終了
-
 };
 
 // ウェーブ2
