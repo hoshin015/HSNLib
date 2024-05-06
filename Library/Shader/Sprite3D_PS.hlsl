@@ -7,6 +7,7 @@ SamplerState anisotropicSamplerState : register(s2);
 
 float4 main(VS_OUT pin) : SV_TARGET
 {
-    return colorMap.Sample(linearSamplerState, pin.texcoord) * pin.color;
+    //TODO:Multi‚©‚çAdd‚É•ÏX‚µ‚½
+    return colorMap.Sample(linearSamplerState, pin.texcoord) + pin.color;
     //return pin.color;
 }

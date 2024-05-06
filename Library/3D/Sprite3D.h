@@ -19,7 +19,6 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> indexBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shaderResourceView;
-	D3D11_TEXTURE2D_DESC texture2dDesc;
 
 	struct Vertex
 	{
@@ -32,4 +31,7 @@ private:
 	{
 		DirectX::XMFLOAT4X4 world;
 	};
+
+protected:
+	D3D11_TEXTURE2D_DESC texture2dDesc; //TODO:‰æ‘œ‚ÌƒTƒCƒY‚ğó‚¯æ‚é‚½‚ß‚Étexture2dDesc‚ğprotectred‚É¸Ši
 };

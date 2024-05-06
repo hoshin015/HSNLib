@@ -31,6 +31,5 @@ private:
 	std::unique_ptr<MaskSprite> maskSprite;
 	Primitive2D fadeout;
 	float fadeoutA = 0;
-
 	DirectX::XMFLOAT4 _videoColor = { 1,1,1,1 };
 };

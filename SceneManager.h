@@ -13,6 +13,7 @@
 #include "SceneWave.h"
 #include "SceneSTTitle.h"
 #include "SceneSTMainMenu.h"
+#include "SceneSTTutorial.h"
 #include "Library/MemoryLeak.h"
 
 // シーンマネージャー

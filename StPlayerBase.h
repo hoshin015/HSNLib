@@ -67,15 +67,13 @@ protected:
 	//ダメージ
 
 
-
 	//入力
 	using InputVariant = std::variant<bool, int, float, DirectX::XMFLOAT2>;
 	inline static std::map<std::string, InputVariant> inputMap;
 
 	template<typename T>
-	const T& GetInputMap(std::string str) {
-		T* result = std::get_if<T>(&inputMap[str]);
-		return result ? *result : T();
+	static const T GetInputMap(std::string str) {
+		return std::get<T>(inputMap[str]);
 	}
 
 	//デバッグ用

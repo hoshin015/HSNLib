@@ -154,6 +154,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)Include\DirectXTK-main\Inc;C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.4\include;$(SolutionDir)Include\cereal-master\include;$(SolutionDir)Include\Effekseer170e\include;$(SolutionDir)Include\DirectXTex-main\DirectXTex;$(SolutionDir)Include\json-develop\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <Optimization>MaxSpeed</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -223,6 +224,7 @@
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="LightManager.cpp" />
     <ClCompile Include="Library\2D\MaskSprite.cpp" />
+    <ClCompile Include="MaskPrimitive.cpp" />
     <ClCompile Include="MeshEffect.cpp" />
     <ClCompile Include="ObsMarunoko.cpp" />
     <ClCompile Include="ObsParts.cpp" />
@@ -254,6 +256,7 @@
     <ClCompile Include="SceneSTMainMenu.cpp" />
     <ClCompile Include="SceneSTPlayer.cpp" />
     <ClCompile Include="SceneSTTitle.cpp" />
+    <ClCompile Include="SceneSTTutorial.cpp" />
     <ClCompile Include="SceneTest.cpp" />
     <ClCompile Include="SceneTitle.cpp" />
     <ClCompile Include="Library\3D\Sprite3D.cpp" />
@@ -279,6 +282,7 @@
     <ClCompile Include="StPlayerData.cpp" />
     <ClCompile Include="StPlayerOption.cpp" />
     <ClCompile Include="Video.cpp" />
+    <ClCompile Include="VideoUI.cpp" />
     <ClCompile Include="Wave.cpp" />
     <ClCompile Include="WaveData_1.cpp" />
   </ItemGroup>
@@ -342,6 +346,7 @@
     <ClInclude Include="LightManager.h" />
     <ClInclude Include="Library\2D\MaskSprite.h" />
     <ClInclude Include="macro.h" />
+    <ClInclude Include="MaskPrimitive.h" />
     <ClInclude Include="MeshEffect.h" />
     <ClInclude Include="ObsMarunoko.h" />
     <ClInclude Include="ObsParts.h" />
@@ -374,6 +379,7 @@
     <ClInclude Include="SceneSTMainMenu.h" />
     <ClInclude Include="SceneSTPlayer.h" />
     <ClInclude Include="SceneSTTitle.h" />
+    <ClInclude Include="SceneSTTutorial.h" />
     <ClInclude Include="SceneTest.h" />
     <ClInclude Include="SceneTitle.h" />
     <ClInclude Include="Library\3D\Sprite3D.h" />
@@ -394,11 +400,13 @@
     <ClInclude Include="StEnemy01.h" />
     <ClInclude Include="StEnemy02.h" />
     <ClInclude Include="StEnemyData.h" />
+    <ClInclude Include="StMenuPlayer.h" />
     <ClInclude Include="StPlayer.h" />
     <ClInclude Include="StPlayerBase.h" />
     <ClInclude Include="StPlayerData.h" />
     <ClInclude Include="StPlayerOption.h" />
     <ClInclude Include="Video.h" />
+    <ClInclude Include="VideoUI.h" />
     <ClInclude Include="Wave.h" />
     <ClInclude Include="WaveData_1.h" />
   </ItemGroup>
@@ -424,6 +432,7 @@
     <None Include="Library\Shader\ShadowmapCaster.hlsli" />
     <None Include="Library\Shader\ShadowmapFunctions.hlsli" />
     <None Include="Library\Shader\ParryEffect.hlsli" />
+    <None Include="MaskPrimitive.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Library\Shader\BloomFinalPass_PS.hlsl">
@@ -657,6 +666,18 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="MaskPrimitive_VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="MaskPrimitive_PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

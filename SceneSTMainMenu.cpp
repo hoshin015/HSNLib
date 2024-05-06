@@ -6,16 +6,41 @@
 #include "Library/Text/Text.h"
 #include "Library/Timer.h"
 #include "Library/Input/InputManager.h"
+#include "Library/Framework.h"
 
 #include "Video.h"
 #include "StageManager.h"
 #include "LightManager.h"
+#include "StMenuPlayer.h"
 
 #include <tchar.h>
 #include <filesystem>
 
+enum SPRITENAME {
+	WAVE = 0,
+	TUTORIAL,
+	BACK,
+	MAINMANU,
+};
+
 void SceneSTMainMenu::Initialize() {
-	tutorialS3D = std::make_unique<Sprite3DObject>(L"Data/Texture/tyu-.png", DirectX::XMFLOAT2( 512,256 ));
+	player.SetPosition({ 14,0,0 });
+	S3DObject.emplace_back(std::make_shared<Sprite3DObject>(L"Data/Texture/Wave.png"));
+	S3DObject.emplace_back(std::make_shared<Sprite3DObject>(L"Data/Texture/Tutorial.png"));
+	S3DObject.emplace_back(std::make_shared<Sprite3DObject>(L"Data/Texture/Back.png"));
+	S3DObject.emplace_back(std::make_shared<Sprite3DObject>(L"Data/Texture/MainManu.png"));
+
+	S3DObject[WAVE]->SetPosition({ -7,.05f,0 });
+	S3DObject[WAVE]->SetScaleInAsp(11);
+	S3DObject[TUTORIAL]->SetPosition({ 7,.05f,0 });
+	S3DObject[TUTORIAL]->SetScaleInAsp(11);
+	S3DObject[BACK]->SetPosition({ 12,.05f,8.5f });
+	S3DObject[BACK]->SetAngle({ DirectX::XM_PIDIV2,2.88f,0 });
+	S3DObject[BACK]->SetScaleInAsp(6);
+	S3DObject[MAINMANU]->SetPosition({ 13,.05f,-10.5f });
+	S3DObject[MAINMANU]->SetScaleInAsp(11);
+
+	//sprite.emplace_back(std::make_shared<Sprite>(L"Data"))
 
 	StageManager& stageManager = StageManager::Instance();
 	stageMain = std::make_unique<StageContext>();
@@ -29,12 +54,12 @@ void SceneSTMainMenu::Initialize() {
 
 	// カメラ初期設定
 	Camera::Instance().SetLookAt(
-		DirectX::XMFLOAT3(0, 20, 40),		// カメラ座標
-		DirectX::XMFLOAT3(-90, 0, -30),		// ターゲット(設定しても意味ない)
+		DirectX::XMFLOAT3(0, 30, 25),		// カメラ座標
+		DirectX::XMFLOAT3(0, 0, 0),		// ターゲット(設定しても意味ない)
 		DirectX::XMFLOAT3(0, 1, 0)			// 上方向ベクトル
 	);
-	Camera::Instance().SetAngle({ DirectX::XMConvertToRadians(30), DirectX::XMConvertToRadians(180), 0 });
-	Camera::Instance().cameraType = Camera::CAMERA::TargetStPlayer;
+	Camera::Instance().SetAngle({ DirectX::XMConvertToRadians(50), DirectX::XMConvertToRadians(180), 0 });
+	Camera::Instance().cameraType = Camera::CAMERA::LOCK;
 }
 
 void SceneSTMainMenu::Finalize() {
@@ -44,10 +69,34 @@ void SceneSTMainMenu::Finalize() {
 }
 
 void SceneSTMainMenu::Update() {
+	InputManager& im = InputManager::Instance();
+
 	Camera::Instance().Update();
 	player.Update();
+	DirectX::XMFLOAT4 defaultColor = { 0,0,0,0 };
+	DirectX::XMFLOAT4 selectColor = { -1,-1,0,0 };
 
-	tutorialS3D->SetColor({ (float)!tutorialS3D->HitToPoint(player.GetPosition()), 1, 1, 1 });
+	for (auto& obj : S3DObject)
+		obj->SetColor(defaultColor);
+
+	if (S3DObject[WAVE]->CircleHitToPoint(player.GetPosition())) {
+		S3DObject[WAVE]->SetColor(selectColor);
+	}
+
+	if (S3DObject[TUTORIAL]->CircleHitToPoint(player.GetPosition())) {
+		S3DObject[TUTORIAL]->SetColor(selectColor);
+		if (im.GetKeyPressed(Keyboard::Enter))SceneManager::Instance().ChangeScene(new SceneLoading(new SceneSTTutorial));
+	}
+
+	if (S3DObject[BACK]->RectHitToPoint(player.GetPosition())) {
+		S3DObject[BACK]->SetColor(selectColor);
+		if (im.GetKeyPressed(Keyboard::Enter))
+			SceneManager::Instance().ChangeScene(new SceneLoading(new SceneSTTitle));
+	}
+
+	XMFLOAT3 position = player.GetPosition();
+	if (!isPlayerMove && (position.x != 14 || position.y != 0))
+		isPlayerMove = true;
 }
 
 void SceneSTMainMenu::Render() {
@@ -119,7 +168,16 @@ void SceneSTMainMenu::Render() {
 
 	StageManager::Instance().Render();
 	player.Render();
-	tutorialS3D->Draw();
+	for (auto& obj:S3DObject) obj->Draw();
+
+	float width = Framework::Instance().windowWidth;
+	float height = Framework::Instance().windowHeight;
+	float wRatio = width / 1280;
+	float hRatio = height / 720;
+	float sRatio = wRatio * hRatio;
+	if (!isPlayerMove) {
+		mask.Render(0, 0, width, height, 0, 0, 0, 0.8f, 0, 30 * sRatio, { wRatio * -485 ,0 });
+	}
 
 	// --- デバッグ描画 ---
 	DrawDebugGUI();
@@ -170,22 +228,44 @@ void SceneSTMainMenu::DrawDebugGUI() {
 	}
 
 	if (ImGui::Begin("Sprite3D")) {
-		static DirectX::XMFLOAT3 defPos = tutorialS3D->GetPosition();
-		static DirectX::XMFLOAT3 defAng = tutorialS3D->GetAngle();
-		static DirectX::XMFLOAT3 defScl = tutorialS3D->GetScale();
+		//static DirectX::XMFLOAT3 defPos = S3DObject[0]->GetPosition();
+		//static DirectX::XMFLOAT3 defAng = S3DObject[0]->GetAngle();
+		//static DirectX::XMFLOAT3 defScl = S3DObject[0]->GetScale();
 
-		ImGui::DragFloat3("Position", &tutorialS3D->GetPosition().x, 0.01f);
-		ImGui::DragFloat3("Angle", &tutorialS3D->GetAngle().x, DirectX::XM_PI / 180);
+		int i = 0;
+		for (auto& obj : S3DObject) {
+			ImGui::Text(std::to_string(i).c_str());
+			ImGui::DragFloat3((std::string("Position:") + std::to_string(i)).c_str(), &obj->GetPosition().x, 0.01f);
+			ImGui::DragFloat3((std::string("Angle:") + std::to_string(i)).c_str(), &obj->GetAngle().x, DirectX::XM_PI / 180);
 
-		static float scale = 1;
-		ImGui::DragFloat("Scale", &scale);
-		tutorialS3D->SetScaleInAsp(scale);
-
-		if (ImGui::Button("Reset")) {
-			tutorialS3D->SetPosition(defPos);
-			tutorialS3D->SetAngle(defAng);
-			tutorialS3D->SetScale(defScl);
+			ImGui::DragFloat((std::string("Scale:") + std::to_string(i)).c_str(), &obj->GetScaleAsp());
+			obj->SetScaleInAsp(obj->GetScaleAsp());
+			i++;
 		}
+
+		//if (ImGui::Button("Reset")) {
+		//	S3DObject[0]->SetPosition(defPos);
+		//	S3DObject[0]->SetAngle(defAng);
+		//	S3DObject[0]->SetScale(defScl);
+		//}
+
+		ImGui::End();
+	}
+
+	if (ImGui::Begin("Camera")) {
+		DirectX::XMFLOAT3 eye = Camera::Instance().GetEye();
+		DirectX::XMFLOAT3 focus = Camera::Instance().GetFocus();
+
+
+		ImGui::DragFloat3("Position", &eye.x);
+		ImGui::DragFloat3("Focus", &focus.x);
+
+		ImGui::End();
+	}
+
+	if (ImGui::Begin("Player")) {
+		DirectX::XMFLOAT3 pos = player.GetPosition();
+		ImGui::DragFloat3("Position", &pos.x);
 
 		ImGui::End();
 	}
