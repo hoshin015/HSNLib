@@ -75,6 +75,9 @@ void SceneWave::Initialize()
 
 	// ポーズ画面
 	pause = std::make_unique<Pause>();
+
+	// リザルト画面
+	result = std::make_unique<Result>();
 }
 
 void SceneWave::Finalize()
@@ -94,12 +97,17 @@ void SceneWave::Finalize()
 
 void SceneWave::Update()
 {
-	pause->Update();
+	result->Update();
+	//if (result->isResult) return;
 
-	if (pause->isPause)
+	if (!result->isResult)
 	{
-		return;
+		// リザルト画面中はポーズできない
+		pause->Update();
+
+		if (pause->isPause) return;
 	}
+	
 
 
 	// カメラコントローラー更新処理
@@ -273,6 +281,9 @@ void SceneWave::Render()
 
 	// --- ui 描画 ----
 	pause->Render();
+
+	// --- result 描画 ---
+	result->Render();
 	
 
 	// --- デバッグ描画 ---

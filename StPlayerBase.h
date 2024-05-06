@@ -38,6 +38,9 @@ private:
 	//void UpdateDamaged();
 	//void RenderDebugPrimitive();
 
+public:
+	bool isDead = false;
+
 protected:
 	void UpdateAttack();
 	void RenderDebugPrimitive();

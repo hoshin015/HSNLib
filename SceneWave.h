@@ -5,6 +5,7 @@
 #include "Library/3D/SkyMap.h"
 #include "Library/2D/Sprite.h"
 #include "Pause.h"
+#include "Result.h"
 
 // テストシーン
 class SceneWave : public Scene
@@ -34,6 +35,8 @@ private:
 	float gaussianPower = 16.0f;
 
 	// --- ポーズ画面 ---
-	bool isPause = false;
 	std::unique_ptr<Pause> pause;
+
+	// --- リザルト画面 ---
+	std::unique_ptr<Result> result;
 };

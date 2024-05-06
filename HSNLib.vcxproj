@@ -238,6 +238,7 @@
     <ClCompile Include="ProjectileStraight.cpp" />
     <ClCompile Include="Library\3D\ResourceManager.cpp" />
     <ClCompile Include="Pause.cpp" />
+    <ClCompile Include="Result.cpp" />
     <ClCompile Include="SceneAnimation.cpp" />
     <ClCompile Include="SceneContextBase.cpp" />
     <ClCompile Include="SceneEnemyLevelEditor.cpp" />
@@ -358,6 +359,7 @@
     <ClInclude Include="ProjectileStraight.h" />
     <ClInclude Include="Library\3D\ResourceManager.h" />
     <ClInclude Include="Pause.h" />
+    <ClInclude Include="Result.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneAnimation.h" />
     <ClInclude Include="SceneContextBase.h" />

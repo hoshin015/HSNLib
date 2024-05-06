@@ -32,9 +32,9 @@ protected:
 	void OnDamaged() override;
 	void OnDead() override;
 
-private:
-	bool isDead = false;
 
+
+private:
 	//パラメータは上に,プロパティは下に書いてる
 	//std::vector<SpinningTopEnemy*> nearEnemy;
 
