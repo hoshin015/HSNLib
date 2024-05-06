@@ -7,6 +7,7 @@
 #include "Library/Timer.h"
 #include "Library/Input/InputManager.h"
 #include "Library/Easing.h"
+#include "Library/FrameWork.h"
 
 
 #include "StageManager.h"
@@ -19,16 +20,20 @@
 #include "ObsMarunoko.h"
 #include "DamageTextManager.h"
 
-enum UINAME {
-	PARRY = 0,
-};
-
 void SceneSTTutorial::Initialize() {
 	VideoManager::Instance().LoadFile(PARRY, nullptr);
 	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Enter.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Back.png"));
 	videoUI.SetVideo(&VideoManager::Instance().GetVideo(PARRY));
 	videoUI.SetTextSprite(sprite[PARRY].get());
 	VideoManager::Instance().Play(PARRY,true);
+	stateMap["StopUpdate"] = true;
+	stateMap["DrawVideo"] = false;
+	stateMap["TutorialStart"] = true;
+
+	DirectX::XMFLOAT2 texSize = sprite[1]->GetTexSize();
+	sSize = texSize;
+	sPos = { -sSize.x * .5f,Framework::Instance().windowHeight * .5f };
 
 	DataManager::Instance().LoadEnemyData(enemyData);
 	DataManager::Instance().LoadSpawnEreaData();
@@ -94,23 +99,82 @@ void SceneSTTutorial::Finalize() {
 }
 
 void SceneSTTutorial::Update() {
-	VideoManager::Instance().Update();
-	// カメラコントローラー更新処理
+	UpdateState();
 	Camera::Instance().Update();
+	VideoManager::Instance().Update();
 
-	SpinningTopPlayerManager::Instance().Update();
+	if(!stateMap["StopUpdate"]) {
+		// カメラコントローラー更新処理
 
-	StageManager::Instance().Update();
+		SpinningTopPlayerManager::Instance().Update();
 
-	SpinningTopEnemyManager::Instance().Update();
+		StageManager::Instance().Update();
 
-	ObstacleManager::Instance().Update();
+		SpinningTopEnemyManager::Instance().Update();
 
-	DamageTextManager::Instance().Update();
+		ObstacleManager::Instance().Update();
+
+		DamageTextManager::Instance().Update();
+	}
 }
 
 void SceneSTTutorial::UpdateState() {
+	InputManager& im = InputManager::Instance();
+	float width = Framework::Instance().windowWidth;
+	float height = Framework::Instance().windowHeight;
+	float wRatio = width / 1280;
+	float hRatio = height / 720;
+	float sRatio = wRatio * hRatio;
 
+	if (stateMap["TutorialStart"]) {
+		constexpr float kHalfTime = 1.5f;
+
+		time += Timer::Instance().DeltaTime();
+		if (time < kHalfTime)ease = (sSize.x + width) * 0.5f * Easing(time, kHalfTime, easeCubic, easeOut);
+		else ease = (sSize.x + width) * 0.5f * (1 + Easing(time - kHalfTime, kHalfTime, easeCubic, easeIn));
+		sPos.x = -sSize.x * .5f + ease;
+
+		if (time > kHalfTime * 2) {
+			stateMap["TutorialStart"] = false;
+			stateMap["FirstStart"] = true;
+			stateMap["StopUpdate"] = false;
+			time = 0;
+		}
+		return;
+	}
+	else if(stateMap["FirstStart"]) {
+		time += Timer::Instance().DeltaTime();
+		if (time > 1.0f) {
+			stateMap["DrawVideo"] = true;
+			stateMap["StopUpdate"] = true;
+			stateMap["FirstStart"] = false;
+			time = 0;
+		}
+	}
+
+	if (stateMap["StopUpdate"]) {
+		videoUI.SetPosition({ width * .5f,height * .5f });
+		videoUI.SetSize({ 640 * wRatio,400 * hRatio });
+		if (im.GetKeyPressed(Keyboard::Enter)) {
+			stateMap["StopUpdate"] = false;
+		}
+	}
+	else {
+		videoUI.SetPosition({ width * .87f,height * .15f });
+		videoUI.SetSize({ 256 * wRatio,160 * hRatio });
+	}
+
+	if (tarm == 0) {
+		tState++;
+		if (tState == SPRITESTART - 1) {
+			stateMap["TutorialEnd"] = true;
+			return;
+		}
+
+		videoUI.SetVideo(&VideoManager::Instance().GetVideo(tState));
+		videoUI.SetTextSprite(sprite[tState].get());
+		stateMap["StopUpdate"] = true;
+	}
 }
 
 void SceneSTTutorial::Render() {
@@ -264,15 +328,46 @@ void SceneSTTutorial::Render() {
 	gfx.bitBlockTransfer->blit(gfx.bloomBuffer->shaderResourceViews[0].GetAddressOf(), 0, 1);
 #endif
 
-	videoUI.Draw(pos, size);
+	if (stateMap["DrawVideo"])videoUI.Draw(stateMap["StopUpdate"]);
+	if (stateMap["TutorialStart"]) {
+		rect.Render(0, 0,
+			Framework::Instance().windowWidth, Framework::Instance().windowHeight,
+			0, 0, 0, 0.5f, 0);
+
+		sprite[1]->Render(
+			sPos.x - sSize.x * .5f, sPos.y - sSize.y * .5f,
+			sSize.x, sSize.y,
+			1, 1, 1, 1, 0
+		);
+
+	}
 	// --- デバッグ描画 ---
 	DrawDebugGUI();
 }
 
 void SceneSTTutorial::DrawDebugGUI() {
-	if (ImGui::Begin("VideoUI")) {
-		ImGui::DragFloat2("pos", &pos.x);
-		ImGui::DragFloat2("size", &size.x);
+	if (ImGui::Begin("Easing")) {
+		ImGui::Text("time:%f", time);
+		ImGui::Text("easing:%f", ease);
+		if (ImGui::Button("reset")) {
+			time = 0;
+		}
+
+		const char* Estr[] = {
+			"easeSine",
+			"easeQuad",
+			"easeCubic",
+			"easeQuart",
+			"easeQuint",
+			"easeExpo",
+			"easeCirc",
+			"easeBack",
+			"easeElastic",
+			"easeBounce",
+			"easeEnd",
+		};
+
+		ImGui::ListBox("EasingFunc", &Efunc, Estr, 11);
 		ImGui::End();
 	}
 }

@@ -9,9 +9,14 @@ public:
 
 	void SetVideo(Video* video) { _video = video; }
 	void SetTextSprite(Sprite* text) { _text = text; }
-	void Draw(DirectX::XMFLOAT2 position, DirectX::XMFLOAT2 size);
+	void SetPosition(DirectX::XMFLOAT2 pos) { _pos = pos; }
+	void SetSize(DirectX::XMFLOAT2 size) { _size = size; }
+	void Draw(bool drawBG = false);
 private:
 	Video* _video;
 	Sprite* _text;
 	Primitive2D _rect;
+
+	DirectX::XMFLOAT2 _pos;
+	DirectX::XMFLOAT2 _size;
 };

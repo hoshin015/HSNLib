@@ -9,7 +9,7 @@
 #include "VideoUI.h"
 
 #include <memory>
-
+#include <map>
 
 class SceneSTTutorial : public Scene {
 public:
@@ -33,14 +33,30 @@ public:
 	void DrawDebugGUI();
 
 private:
+	enum TUTORIALSTATE {
+		PARRY = 0,
+
+
+		SPRITESTART,
+		TSPR,
+		COUNT
+	};
+	int tState = PARRY;
+
 	std::unique_ptr<SkyMap> skyMap;
 	std::unique_ptr<StageContext> stageMain;
-	std::vector<std::shared_ptr<Sprite>> sprite;
-	VideoUI videoUI;
 	float gaussianPower = 16;
 
-	DirectX::XMFLOAT2 pos = { 640,360 };
-	DirectX::XMFLOAT2 size = { 640,360 };
+	std::vector<std::unique_ptr<Sprite>> sprite;
+	DirectX::XMFLOAT2 sPos = {};
+	DirectX::XMFLOAT2 sSize = {};
+	float time = 0;
+	float ease = 0;
+	int Efunc = 0;
+	int tarm = -1;
 
+	VideoUI videoUI;
 
+	std::map<std::string, bool> stateMap;
+	Primitive2D rect;
 };
