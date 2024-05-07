@@ -7,6 +7,7 @@
 #include "LightManager.h"
 #include "ObsMarunoko.h"
 #include "ObstacleManager.h"
+#include "Library/2D/Sprite.h"
 
 struct ScriptData
 {
