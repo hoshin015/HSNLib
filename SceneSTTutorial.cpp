@@ -54,17 +54,16 @@ void SceneSTTutorial::Initialize() {
 
 
 	// Cylinder
-	for (int i = 0; i < 3; i++) {
-		ObsStaticObj* obstacle = new_ ObsStaticObj("Data/FBX/cylinder/cylinder.fbx");
-		obstacle->SetPosition({ i * 30.0f - 45.0f, 0, -6.0f });
-		ObstacleManager::Instance().Register(obstacle);
-	}
-
-	// マルのこ
-	for (int i = 0; i < 3; i++) {
-		ObsMarunoko* obstacle = new_ ObsMarunoko("Data/FBX/StMarunoko/StMarunoko.fbx");
-		obstacle->SetPosition({ i * 30.0f - 45.0f, 0, 6.0f });
-		ObstacleManager::Instance().Register(obstacle);
+	for (int i = 0; i < 2; i++)
+	{
+		for (int j = 0; j < 2; j++)
+		{
+			ObsStaticObj* obstacle = new_ ObsStaticObj("Data/FBX/StGaitou/StGaitou.fbx");
+			obstacle->SetScale({ 4, 1, 4 });
+			obstacle->SetPosition({ i * 50.0f - 25.0f, 0, j * 50.0f - 25.0f });
+			obstacle->SetRadius(0.4f);
+			ObstacleManager::Instance().Register(obstacle);
+		}
 	}
 
 	// ステージ初期化
