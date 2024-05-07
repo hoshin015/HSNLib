@@ -39,4 +39,21 @@ private:
 
 	// --- ƒŠƒUƒ‹ƒg‰æ–Ê ---
 	std::unique_ptr<Result> result;
+
+	// ƒQ[ƒ€UI
+	std::unique_ptr<Sprite> life3;
+	std::unique_ptr<Sprite> life2;
+	std::unique_ptr<Sprite> life1;
+	std::unique_ptr<Sprite> life0;
+
+	std::unique_ptr<Sprite> sprRotSpeedTop;
+	std::unique_ptr<Sprite> sprRotSpeedMiddle;
+	std::unique_ptr<Sprite> sprRotSpeedMiddleMask;
+	std::unique_ptr<Sprite> sprRotSpeedBottom;
+	
+	std::unique_ptr<Sprite> sprWaveBar;
+	std::unique_ptr<Sprite> sprWaveBarBg;
+	std::unique_ptr<Sprite> sprWave1;
+
+	
 };

@@ -17,12 +17,21 @@ public:
 	bool showUi = false;
 	float timer = 0.0f;
 	float easingTime = 0.3f;
+	
+	// 通常表示用
 	DirectX::XMFLOAT2 hidePosition = {};
 	DirectX::XMFLOAT2 showPosition = {};
 
-
 	void UiUpdate();
 	void UiRender();
+
+	// スコア表示用
+	float startScore = 0;
+	float targetScore = 0;
+	std::string text = "";
+	void UiTextUpdate();
+	void UiTextRender();
+	void UiTextTimeUpdate();
 
 
 	std::unique_ptr<Sprite> sprite;

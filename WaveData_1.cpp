@@ -21,7 +21,7 @@ WaveScript wave1Script[] =
 
 
 	SET_EnemyDestory(15.0f),			// 全ての敵破壊
-	SET_ObstacleDestory(15.0f),			// 破壊を許可している障害物の破壊
+	SET_ObstacleDestory(50.0f),			// 破壊を許可している障害物の破壊
 
 	SET_END								// ウェーブ終了
 };

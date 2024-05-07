@@ -144,8 +144,8 @@ protected:
 	float radius = 0.5f;
 	float height = 1.0f;
 
-	int health = 5;
-	int maxHealth = 5;
+	int health = 3;
+	int maxHealth = 3;
 	float invincibleTimer = 1.0f;
 
 	float friction = 0.25f;
@@ -184,4 +184,10 @@ public:
 	float animationBlendSeconds = 0.0f;
 	int blendAnimationIndex = -1;			// 遷移前のアニメーション番号
 
+public:
+	float aliveTime = 0.0f;		// 生存時間
+	int totalDestoryEnemy = 0;	// 破壊したコマの数
+	int getTotalOption = 0;		// 取得した子機の数
+	int nowWave = 0;			// 現在のウェーブ
+	int totalHitDamage = 0;		// 受けたダメージ
 };

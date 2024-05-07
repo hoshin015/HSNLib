@@ -73,8 +73,6 @@ void StPlayerOption::Update() {
 	domeEffect->SetPosition({ position.x, 0.2f, position.z });
 	domeEffect->Update();
 
-	
-
 
 	angle.y += 360 * Timer::Instance().DeltaTime();
 

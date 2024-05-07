@@ -246,13 +246,17 @@ void StEnemy::OnDead()
 	}
 	}
 
-	top->SetPosition(GetPosition());
-	ObstacleManager::Instance().Register(top);
-	middle->SetPosition(GetPosition());
-	ObstacleManager::Instance().Register(middle);
-	bottom->SetPosition(GetPosition());
-	bottom->SetAngle({ 90,0,0 });
-	ObstacleManager::Instance().Register(bottom);
+	if (createParts)
+	{
+		top->SetPosition(GetPosition());
+		ObstacleManager::Instance().Register(top);
+		middle->SetPosition(GetPosition());
+		ObstacleManager::Instance().Register(middle);
+		bottom->SetPosition(GetPosition());
+		bottom->SetAngle({ 90,0,0 });
+		ObstacleManager::Instance().Register(bottom);
+	}
+	
 	
 
 	Destroy();

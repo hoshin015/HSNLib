@@ -34,13 +34,16 @@ void SceneWave::Initialize()
 
 
 	// Cylinder
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 2; i++)
 	{
-		ObsStaticObj* obstacle = new_ ObsStaticObj("Data/FBX/StGaitou/StGaitou.fbx");
-		obstacle->SetScale({ 5, 1, 5 });
-		obstacle->SetPosition({ i * 30.0f - 45.0f, 0, -6.0f });
-		obstacle->SetRadius(0.4f);
-		ObstacleManager::Instance().Register(obstacle);
+		for (int j = 0; j < 2; j++)
+		{
+			ObsStaticObj* obstacle = new_ ObsStaticObj("Data/FBX/StGaitou/StGaitou.fbx");
+			obstacle->SetScale({ 4, 1, 4 });
+			obstacle->SetPosition({ i * 50.0f - 25.0f, 0, j * 50.0f - 25.0f });
+			obstacle->SetRadius(0.4f);
+			ObstacleManager::Instance().Register(obstacle);
+		}
 	}
 
 
@@ -78,6 +81,21 @@ void SceneWave::Initialize()
 
 	// リザルト画面
 	result = std::make_unique<Result>();
+
+	// ゲームUI
+	life3 = std::make_unique<Sprite>(L"Data/Texture/HP3.png");
+	life2 = std::make_unique<Sprite>(L"Data/Texture/HP2.png");
+	life1 = std::make_unique<Sprite>(L"Data/Texture/HP1.png");
+	life0 = std::make_unique<Sprite>(L"Data/Texture/HP0.png");
+
+	sprRotSpeedTop = std::make_unique<Sprite>(L"Data/Texture/rotSpeedTop.png");
+	sprRotSpeedMiddle = std::make_unique<Sprite>(L"Data/Texture/rotSpeedMiddle.png");
+	sprRotSpeedMiddleMask = std::make_unique<Sprite>(L"Data/Texture/rotSpeedMiddleMask.png");
+	sprRotSpeedBottom = std::make_unique<Sprite>(L"Data/Texture/rotSpeedBottom.png");
+
+	sprWaveBar = std::make_unique<Sprite>(L"Data/Texture/Wave/waveBar.png");
+	sprWaveBarBg = std::make_unique<Sprite>(L"Data/Texture/Wave/waveBarBg.png");
+	sprWave1 = std::make_unique<Sprite>(L"Data/Texture/Wave/Wave1.png");
 }
 
 void SceneWave::Finalize()
@@ -279,7 +297,59 @@ void SceneWave::Render()
 	gfx.bitBlockTransfer->blit(gfx.bloomBuffer->shaderResourceViews[0].GetAddressOf(), 0, 1);
 #endif
 
-	// --- ui 描画 ----
+	// -- ui ---
+	gfx.SetBlend(BLEND_STATE::ALPHA);
+
+	if (SpinningTopPlayerManager::Instance().GetPlayerCount() > 0)
+	{
+		int hp = SpinningTopPlayerManager::Instance().GetPlayer(0)->GetHealth();
+		switch (hp)
+		{
+		case 0: life0->Render(25, 25, 256 * 0.666, 256 * 0.666, 1, 1, 1, 1, 0); break;
+		case 1: life1->Render(25, 25, 256 * 0.666, 256 * 0.666, 1, 1, 1, 1, 0); break;
+		case 2: life2->Render(25, 25, 256 * 0.666, 256 * 0.666, 1, 1, 1, 1, 0); break;
+		case 3: life3->Render(25, 25, 256 * 0.666, 256 * 0.666, 1, 1, 1, 1, 0); break;
+		}
+
+		StPlayerBase* player = SpinningTopPlayerManager::Instance().GetPlayer(0);
+		PlayerData* data = player->GetData();
+		float maxRotSpeed = data->rotateMaxSpeed;
+		float rotSpeed = player->GetRotationSpeed();
+
+		float aspect = rotSpeed / maxRotSpeed;
+
+		// TODO: ここの0.5をaspectに変えると上手くいくはず
+		//float maskWidth = (512 - 22) * 0.666 * 0.5;
+		float maskWidth = (512 - 22) * 0.666 * aspect;
+
+		sprRotSpeedBottom->Render(900, 25, 512 * 0.666, 256 * 0.666, 1, 1, 1, 1, 0);
+		sprRotSpeedMiddleMask->Render(900 + 11*0.666, 25, (512 - 22) * 0.666, 256 * 0.666, 1, 1, 1, 1, 0);
+		sprRotSpeedMiddle->Render(900 + 11*0.666, 25, maskWidth, 256 * 0.666, 1, 1, 1, 1, 0, 0, 0, (512-22)*aspect, 256);
+		sprRotSpeedTop->Render(900, 25, 512 * 0.666, 256 * 0.666, 1, 1, 1, 1, 0);
+	}
+
+	// ウェーブ表記
+	{
+		Wave& waveManager = Wave::Instance();
+		float aspect = waveManager.waveLimitTimer / waveManager.waveLimitTime;
+
+		float width = 327 * aspect;
+		float wPos1 = 313 + (327 * (1.0f - aspect));
+		float wPos2 = 963 - (327 * (1.0f - aspect));
+
+		sprWaveBarBg->Render(290, 650, 350, 20, 1, 1, 1, 1, 0);
+		sprWaveBarBg->Render(990, 650, -350, 20, 1, 1, 1, 1, 0);
+
+		//sprWaveBar->Render(313, 650, width, 20, 1, 1, 1, 1, 0, 0, 0, width, 20);
+		sprWaveBar->Render(wPos1, 650, width, 20, 1, 1, 1, 1, 0, 0, 0, width, 20);
+		sprWaveBar->Render(wPos2, 650, -width, 20, 1, 1, 1, 1, 0, 0, 0, width, 20);
+
+		sprWave1->Render(576, 580, 128, 64, 1, 1, 1, 1, 0);
+	}
+	
+	
+
+	// --- pause 描画 ----
 	pause->Render();
 
 	// --- result 描画 ---
@@ -294,39 +364,39 @@ void SceneWave::Render()
 // デバッグ描画
 void SceneWave::DrawDebugGUI()
 {
-	if (ImGui::BeginMainMenuBar()) {
-		if (ImGui::BeginMenu("File")) {
-			if (ImGui::BeginMenu("Scene")) {
-				if (ImGui::MenuItem("Title"))
-				{
-					SceneManager::Instance().ChangeScene(new SceneTitle);
-				}
-				if (ImGui::MenuItem("Game"))
-				{
-					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
-				}
-				if (ImGui::MenuItem("Animation"))
-				{
-					SceneManager::Instance().ChangeScene(new SceneAnimation);
-				}
-				if (ImGui::MenuItem("ContextBase"))
-				{
-					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneContextBase));
-				}
-				if (ImGui::MenuItem("Test"))
-				{
-					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTest));
-				}
-				if (ImGui::MenuItem("SpinningTop"))
-				{
-					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneWave));
-				}
-				ImGui::EndMenu();
-			}
-			ImGui::EndMenu();
-		}
-		ImGui::EndMainMenuBar();
-	}
+	//if (ImGui::BeginMainMenuBar()) {
+	//	if (ImGui::BeginMenu("File")) {
+	//		if (ImGui::BeginMenu("Scene")) {
+	//			if (ImGui::MenuItem("Title"))
+	//			{
+	//				SceneManager::Instance().ChangeScene(new SceneTitle);
+	//			}
+	//			if (ImGui::MenuItem("Game"))
+	//			{
+	//				SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+	//			}
+	//			if (ImGui::MenuItem("Animation"))
+	//			{
+	//				SceneManager::Instance().ChangeScene(new SceneAnimation);
+	//			}
+	//			if (ImGui::MenuItem("ContextBase"))
+	//			{
+	//				SceneManager::Instance().ChangeScene(new SceneLoading(new SceneContextBase));
+	//			}
+	//			if (ImGui::MenuItem("Test"))
+	//			{
+	//				SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTest));
+	//			}
+	//			if (ImGui::MenuItem("SpinningTop"))
+	//			{
+	//				SceneManager::Instance().ChangeScene(new SceneLoading(new SceneWave));
+	//			}
+	//			ImGui::EndMenu();
+	//		}
+	//		ImGui::EndMenu();
+	//	}
+	//	ImGui::EndMainMenuBar();
+	//}
 
 	SpinningTopEnemyManager::Instance().DrawDebugGui();
 	ObstacleManager::Instance().DrawDebugGui();
