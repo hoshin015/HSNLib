@@ -814,7 +814,7 @@
     </ClInclude>
     <ClInclude Include="VideoUI.h">
       <Filter>ヘッダー ファイル\Video</Filter>
-    </ClCompile>
+    </ClInclude>
     <ClInclude Include="UiSprite.h">
       <Filter>ヘッダー ファイル\Ui</Filter>
     </ClInclude>
