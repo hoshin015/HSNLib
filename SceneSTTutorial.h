@@ -25,6 +25,7 @@ public:
 	// çXêV
 	void Update() override;
 	void UpdateState();
+	void UpdateTutorial();
 
 	// ï`âÊ
 	void Render() override;
@@ -35,10 +36,12 @@ public:
 private:
 	enum TUTORIALSTATE {
 		PARRY = 0,
-
-
-		SPRITESTART,
-		TSPR,
+		ATTACK,
+		GAUGEATTACK,
+		GETOPTION,
+		SPSTART,
+		START,
+		CLEAR,
 		COUNT
 	};
 	int tState = PARRY;

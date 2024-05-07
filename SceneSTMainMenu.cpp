@@ -180,7 +180,7 @@ void SceneSTMainMenu::Render() {
 	}
 
 	// --- デバッグ描画 ---
-	DrawDebugGUI();
+	//DrawDebugGUI();
 }
 
 void SceneSTMainMenu::DrawDebugGUI() {

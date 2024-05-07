@@ -25,13 +25,14 @@ public:
 	PlayerData* GetData() { return data.get(); }
 	float parryDamageRadius = 0;
 	float parryGaugeDamageRadius = 0;
-	
+
 	int partsCount = 0;
 
 	// 子機
 	virtual void AddOption() {};
 	virtual void EraseOption() {};
 
+	static void SetRotateSpeed(float speed) { rotateSpeed = speed; }
 private:
 	//void UpdateRotate();
 	//void UpdateMove();
@@ -68,6 +69,7 @@ protected:
 
 
 	//入力
+public:
 	using InputVariant = std::variant<bool, int, float, DirectX::XMFLOAT2>;
 	inline static std::map<std::string, InputVariant> inputMap;
 
@@ -76,6 +78,7 @@ protected:
 		return std::get<T>(inputMap[str]);
 	}
 
+protected:
 	//デバッグ用
 	using debugVariant = std::variant<bool, int, float, DirectX::XMFLOAT2>;
 	std::map<std::string, debugVariant> debugValue;

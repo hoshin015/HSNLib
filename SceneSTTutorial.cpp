@@ -9,10 +9,10 @@
 #include "Library/Easing.h"
 #include "Library/FrameWork.h"
 
-
 #include "StageManager.h"
 #include "LightManager.h"
 #include "SpinningTopEnemyManager.h"
+#include "StEnemy.h"
 #include "SpinningTopPlayerManager.h"
 #include "DataManager.h"
 #include "ObstacleManager.h"
@@ -20,9 +20,18 @@
 #include "ObsMarunoko.h"
 #include "DamageTextManager.h"
 
+#include <random>
+
 void SceneSTTutorial::Initialize() {
 	VideoManager::Instance().LoadFile(PARRY, nullptr);
+	VideoManager::Instance().LoadFile(ATTACK, nullptr);
+	VideoManager::Instance().LoadFile(GAUGEATTACK, nullptr);
+	VideoManager::Instance().LoadFile(GETOPTION, nullptr);
 	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Enter.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Parry.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Enter.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Enter.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Back.png"));
 	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Back.png"));
 	videoUI.SetVideo(&VideoManager::Instance().GetVideo(PARRY));
 	videoUI.SetTextSprite(sprite[PARRY].get());
@@ -31,7 +40,7 @@ void SceneSTTutorial::Initialize() {
 	stateMap["DrawVideo"] = false;
 	stateMap["TutorialStart"] = true;
 
-	DirectX::XMFLOAT2 texSize = sprite[1]->GetTexSize();
+	DirectX::XMFLOAT2 texSize = sprite[START - 1]->GetTexSize();
 	sSize = texSize;
 	sPos = { -sSize.x * .5f,Framework::Instance().windowHeight * .5f };
 
@@ -40,6 +49,7 @@ void SceneSTTutorial::Initialize() {
 
 	// プレイヤー初期化
 	StPlayerBase* player = new StPlayer();
+	player->SetRotateSpeed(1);
 	SpinningTopPlayerManager::Instance().Register(player);
 
 
@@ -100,6 +110,7 @@ void SceneSTTutorial::Finalize() {
 
 void SceneSTTutorial::Update() {
 	UpdateState();
+	UpdateTutorial();
 	Camera::Instance().Update();
 	VideoManager::Instance().Update();
 
@@ -119,6 +130,7 @@ void SceneSTTutorial::Update() {
 }
 
 void SceneSTTutorial::UpdateState() {
+	constexpr float kHalfTime = 1.5f;
 	InputManager& im = InputManager::Instance();
 	float width = Framework::Instance().windowWidth;
 	float height = Framework::Instance().windowHeight;
@@ -127,7 +139,6 @@ void SceneSTTutorial::UpdateState() {
 	float sRatio = wRatio * hRatio;
 
 	if (stateMap["TutorialStart"]) {
-		constexpr float kHalfTime = 1.5f;
 
 		time += Timer::Instance().DeltaTime();
 		if (time < kHalfTime)ease = (sSize.x + width) * 0.5f * Easing(time, kHalfTime, easeCubic, easeOut);
@@ -157,6 +168,8 @@ void SceneSTTutorial::UpdateState() {
 		videoUI.SetSize({ 640 * wRatio,400 * hRatio });
 		if (im.GetKeyPressed(Keyboard::Enter)) {
 			stateMap["StopUpdate"] = false;
+			stateMap["UpdateTarm"] = true;
+			SpinningTopPlayerManager::Instance().GetPlayer(0)->SetPosition({ 0,0,0 });
 		}
 	}
 	else {
@@ -164,17 +177,82 @@ void SceneSTTutorial::UpdateState() {
 		videoUI.SetSize({ 256 * wRatio,160 * hRatio });
 	}
 
-	if (tarm == 0) {
-		tState++;
-		if (tState == SPRITESTART - 1) {
+	if (tarm == 0 && !stateMap["TutorialClear"]) {
+		tarm = -1;
+		if (tState == SPSTART) {
 			stateMap["TutorialEnd"] = true;
 			return;
 		}
-
-		videoUI.SetVideo(&VideoManager::Instance().GetVideo(tState));
-		videoUI.SetTextSprite(sprite[tState].get());
-		stateMap["StopUpdate"] = true;
+		stateMap["TutorialClear"] = true;
 	}
+
+	if (stateMap["TutorialClear"]) {
+		time += Timer::Instance().DeltaTime();
+		if (time < kHalfTime)ease = (sSize.x + width) * 0.5f * Easing(time, kHalfTime, easeCubic, easeOut);
+		else ease = (sSize.x + width) * 0.5f * (1 + Easing(time - kHalfTime, kHalfTime, easeCubic, easeIn));
+		sPos.x = -sSize.x * .5f + ease;
+		if (time > kHalfTime * 2) {
+			stateMap["TutorialClear"] = false;
+			stateMap["StopUpdate"] = true;
+			tState++;
+
+			videoUI.SetVideo(&VideoManager::Instance().GetVideo(tState));
+			videoUI.SetTextSprite(sprite[tState].get());
+			VideoManager::Instance().Play(tState, true);
+
+			time = 0;
+		}
+	}
+
+}
+
+void SceneSTTutorial::UpdateTutorial() {
+	switch (tState) {
+	case SceneSTTutorial::PARRY:
+		if (stateMap["UpdateTarm"])tarm = 5;
+		if (StPlayerBase::GetInputMap<bool>("Attack"))
+			tarm--;
+		break;
+
+	case SceneSTTutorial::ATTACK:
+		if (stateMap["UpdateTarm"]) {
+			for (size_t i = 0; i < 4; i++) {
+				std::random_device rd;  // 真の乱数生成器を初期化
+				std::mt19937 gen(rd()); // メルセンヌ・ツイスタ乱数生成器を初期化
+				std::uniform_real_distribution<float> dis(5, 10); // 0からenemySpawnErea[i].radiusの間の一様乱数生成器を作成
+
+				StEnemy* enemy = new StEnemy(0);
+
+				float xPos = SpinningTopPlayerManager::Instance().GetPlayer(0)->GetPosition().x;
+				float zPos = SpinningTopPlayerManager::Instance().GetPlayer(0)->GetPosition().x;
+
+				float rad = DirectX::XMConvertToRadians(rand() % 360);
+				float dist = dis(gen);
+
+				xPos += cosf(rad) * dist;
+				zPos += sinf(rad) * dist;
+
+				enemy->SetPosition({ xPos, 10, zPos });
+				SpinningTopEnemyManager::Instance().Register(enemy);
+				tarm = SpinningTopEnemyManager::Instance().GetEnemyCount();
+			}
+		}
+		if (tarm > 0)
+			tarm = SpinningTopEnemyManager::Instance().GetEnemyCount();
+		break;
+
+	case SceneSTTutorial::GAUGEATTACK:
+		if (stateMap["UpdateTarm"])tarm = 1;
+		break;
+
+	case SceneSTTutorial::GETOPTION:
+		if (stateMap["UpdateTarm"])tarm = 5;
+		break;
+
+	default:
+		break;
+	}
+	stateMap["UpdateTarm"] = false;
 }
 
 void SceneSTTutorial::Render() {
@@ -334,13 +412,21 @@ void SceneSTTutorial::Render() {
 			Framework::Instance().windowWidth, Framework::Instance().windowHeight,
 			0, 0, 0, 0.5f, 0);
 
-		sprite[1]->Render(
+		sprite[START - 1]->Render(
 			sPos.x - sSize.x * .5f, sPos.y - sSize.y * .5f,
 			sSize.x, sSize.y,
 			1, 1, 1, 1, 0
 		);
 
 	}
+	if (stateMap["TutorialClear"]) {
+		sprite[CLEAR - 1]->Render(
+			sPos.x - sSize.x * .5f, sPos.y - sSize.y * .5f,
+			sSize.x, sSize.y,
+			1, 1, 1, 1, 0
+		);
+	}
+
 	// --- デバッグ描画 ---
 	DrawDebugGUI();
 }
@@ -369,5 +455,11 @@ void SceneSTTutorial::DrawDebugGUI() {
 
 		ImGui::ListBox("EasingFunc", &Efunc, Estr, 11);
 		ImGui::End();
+
+		ImGui::Text("Tarm:%d", tarm);
+		if (ImGui::Button("tarmClear")) {
+			tarm = 0;
+		}
 	}
+
 }

@@ -11,7 +11,7 @@
 #include "ObsParts.h"
 
 StEnemy::StEnemy(int enemyKind)
-{	
+{
 	pF = std::make_unique<ParryEffect>(3);
 
 	this->enemyKind = enemyKind;
@@ -26,7 +26,7 @@ StEnemy::StEnemy(int enemyKind)
 	pursuitRadius = data.pursuitRadius;
 	searchRadius = data.searchRadius;
 	notSearchRadius = data.notSearchRadius;
-	
+
 	CreateModel();
 
 	// aiTree ‚Ì\’z
@@ -184,11 +184,11 @@ void StEnemy::CreateAiTree()
 		aiTree->AddNode((int)KIND::NONE, (int)KIND::ROOT, 0, IBTree::RULE::Priority, this);
 		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Generate, 0, IBTree::RULE::Non, this);
 		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Down, 1, IBTree::RULE::Non, this);
-		
-		
-		//aiTree->AddNode((int)KIND::ROOT, (int)KIND::DEBUG_STOP, 2, IBTree::RULE::Non, this);
-		
-		
+
+
+		aiTree->AddNode((int)KIND::ROOT, (int)KIND::DEBUG_STOP, 2, IBTree::RULE::Non, this);
+
+
 		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Normal, 2, IBTree::RULE::Priority, this);
 		aiTree->AddNode((int)KIND::Normal, (int)KIND::PlayerPursuit, 0, IBTree::RULE::Sequence, this);
 		aiTree->AddNode((int)KIND::PlayerPursuit, (int)KIND::PlayerPositionGet, 0, IBTree::RULE::Non, this);
@@ -207,8 +207,8 @@ void StEnemy::CreateAiTree()
 		aiTree->AddNode((int)KIND::NONE, (int)KIND::ROOT, 0, IBTree::RULE::Priority, this);
 		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Generate, 0, IBTree::RULE::Non, this);
 		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Down, 1, IBTree::RULE::Non, this);
-		
-		///aiTree->AddNode((int)KIND::ROOT, (int)KIND::DEBUG_STOP, 2, IBTree::RULE::Non, this);
+
+		aiTree->AddNode((int)KIND::ROOT, (int)KIND::DEBUG_STOP, 2, IBTree::RULE::Non, this);//TODO:“G‚ðŽ~‚ß‚éƒR[ƒh
 
 		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Normal, 2, IBTree::RULE::Priority, this);
 
@@ -251,7 +251,7 @@ void StEnemy::OnDead()
 	bottom->SetPosition(GetPosition());
 	bottom->SetAngle({ 90,0,0 });
 	ObstacleManager::Instance().Register(bottom);
-	
+
 
 	Destroy();
 }
