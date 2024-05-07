@@ -1,41 +1,62 @@
 #pragma once
 #include "Library/3D/Sprite3D.h"
+#include "Library/2D/Sprite.h"
+#include "Library/2D/Primitive2D.h"
 
 #include "Scene.h"
 #include "StageContext.h"
-#include "SpinningTopPlayerManager.h"
+#include "StMenuPlayer.h"
 #include "Collision.h"
+#include "MaskPrimitive.h"
 
 #include <memory>
 
 class Sprite3DObject :public Sprite3D {
 public:
-	Sprite3DObject(const wchar_t* filePath, DirectX::XMFLOAT2 sourceSize = { 1,1 }) :
-		Sprite3D(filePath), _aspectRatio({ 1,sourceSize.x / sourceSize.y }) {}
+	Sprite3DObject(const wchar_t* filePath) :
+		Sprite3D(filePath){
+		_aspectRatio = { 1,float(texture2dDesc.Height) / texture2dDesc.Width };
+	}
 
 	void Draw() {
 		UpdateTransform();
 		Render(_transform, _color);
 	}
 
-	//XŽ²‚ÆZŽ²‚Ì‚Ý
-	bool HitToPoint(DirectX::XMFLOAT3 point) {
-		DirectX::XMFLOAT2 lt = { _position.x - _scale.y * .5f,_position.z - _scale.x * .5f };
-		DirectX::XMFLOAT2 rb = { _position.x + _scale.y * .5f,_position.z + _scale.x * .5f };
+	//ŽlŠpŒ`XŽ²‚ÆZŽ²‚Ì‚Ý
+	bool RectHitToPoint(DirectX::XMFLOAT3 point) {
+		using namespace DirectX;
+		XMFLOAT2 lt = { -_scale.x * .5f ,-_scale.y * .5f};
+		XMFLOAT2 rb = { +_scale.x * .5f ,+_scale.y * .5f};
 
-		return (point.x > lt.x && point.x < rb.x) && (point.z > lt.y && point.z < rb.y);
+		XMFLOAT3 localPoint;
+		XMStoreFloat3(&localPoint, XMVector3Transform(XMLoadFloat3(&point) - XMLoadFloat3(&_position),XMMatrixRotationY(-_angle.y)));
+
+		return (localPoint.x > lt.x && localPoint.x < rb.x) && (localPoint.z > lt.y && localPoint.z < rb.y);
+	}
+
+	bool CircleHitToPoint(DirectX::XMFLOAT3 point) {
+		using namespace DirectX;
+		float direction;
+		direction = XMVectorGetZ(XMVector3Length(XMLoadFloat3(&point) - XMLoadFloat3(&_position)));
+
+		return (direction < _scale.x * .5f);
 	}
 
 	void SetPosition(DirectX::XMFLOAT3 pos) { _position = pos; }
 	void SetAngle(DirectX::XMFLOAT3 angle) {  _angle = angle; }
 	void SetScale(DirectX::XMFLOAT3 scale) { _scale = scale; }
-	void SetScaleInAsp(float scale) { _scale = { _aspectRatio.x * scale,_aspectRatio.y * scale,0 }; }
+	void SetScaleInAsp(float scale) {
+		_scale = { _aspectRatio.x * scale,_aspectRatio.y * scale,0 };
+		_scaleAsp = scale;
+	}
 	void SetColor(DirectX::XMFLOAT4 color) { _color = color; }
 
 	DirectX::XMFLOAT3& GetPosition() { return _position; }
 	DirectX::XMFLOAT3& GetAngle() { return _angle; }
 	DirectX::XMFLOAT3& GetScale() { return _scale; }
 	DirectX::XMFLOAT4& GetColor() { return _color; }
+	float& GetScaleAsp() { return _scaleAsp; }
 
 private:
 	void UpdateTransform() {
@@ -59,6 +80,7 @@ private:
 	DirectX::XMFLOAT3 _scale = { 1,1,1 };
 	DirectX::XMFLOAT4 _color = { 1,1,1,1 };
 	DirectX::XMFLOAT2 _aspectRatio;
+	float _scaleAsp = 1;
 
 };
 
@@ -83,8 +105,12 @@ public:
 	void DrawDebugGUI();
 
 private:
-	std::unique_ptr<Sprite3DObject> tutorialS3D;
+	std::vector<std::shared_ptr<Sprite3DObject>> S3DObject;
+	std::vector<std::shared_ptr<Sprite>> sprite;
+	//std::vector<Primitive2D> mask;
 	std::unique_ptr<StageContext> stageMain;
-	StPlayer player;
+	StMenuPlayer player;
+	MaskPrimitive mask;
 
+	bool isPlayerMove = false;
 };

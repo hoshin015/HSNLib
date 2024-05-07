@@ -26,13 +26,14 @@ public:
 	float GetRotationSpeed() { return rotateSpeed; }
 	float parryDamageRadius = 0;
 	float parryGaugeDamageRadius = 0;
-	
+
 	int partsCount = 0;
 
 	// 子機
 	virtual void AddOption() {};
 	virtual void EraseOption() {};
 
+	static void SetRotateSpeed(float speed) { rotateSpeed = speed; }
 private:
 	//void UpdateRotate();
 	//void UpdateMove();
@@ -73,17 +74,17 @@ protected:
 	//ダメージ
 
 
-
 	//入力
+public:
 	using InputVariant = std::variant<bool, int, float, DirectX::XMFLOAT2>;
 	inline static std::map<std::string, InputVariant> inputMap;
 
 	template<typename T>
-	const T& GetInputMap(std::string str) {
-		T* result = std::get_if<T>(&inputMap[str]);
-		return result ? *result : T();
+	static const T GetInputMap(std::string str) {
+		return std::get<T>(inputMap[str]);
 	}
 
+protected:
 	//デバッグ用
 	using debugVariant = std::variant<bool, int, float, DirectX::XMFLOAT2>;
 	std::map<std::string, debugVariant> debugValue;

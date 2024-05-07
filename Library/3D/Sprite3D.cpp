@@ -25,10 +25,10 @@ Sprite3D::Sprite3D(const wchar_t* filename)
 	//--- < 頂点情報のセット > ---
 	Vertex vertices[] =
 	{
-		{{ -1.0f,  1.0f, 0 }, { 1, 1, 1, 1 }, { 0, 0 }},	// Top Left			- [0]
-		{{  1.0f,  1.0f, 0 }, { 1, 0, 0, 1 }, { 1, 0 }},	// Top Right		- [1]
-		{{ -1.0f, -1.0f, 0 }, { 0, 1, 0, 1 }, { 0, 1 }},	// Bottom Left		- [2]
-		{{  1.0f, -1.0f, 0 }, { 0, 0, 1, 1 }, { 1, 1 }},	// Bottom Right		- [3]
+		{{ -0.5f,  0.5f, 0 }, { 1, 1, 1, 1 }, { 0, 0 }},	// Top Left			- [0]
+		{{  0.5f,  0.5f, 0 }, { 1, 0, 0, 1 }, { 1, 0 }},	// Top Right		- [1]
+		{{ -0.5f, -0.5f, 0 }, { 0, 1, 0, 1 }, { 0, 1 }},	// Bottom Left		- [2]
+		{{  0.5f, -0.5f, 0 }, { 0, 0, 1, 1 }, { 1, 1 }},	// Bottom Right		- [3]
 	};
 
 	DWORD indices[] =
@@ -109,34 +109,43 @@ void Sprite3D::Render(const DirectX::XMFLOAT4X4& world, DirectX::XMFLOAT4 color,
 {
 	Graphics* gfx = &Graphics::Instance();
 
-	float dw = sw;
-	float dh = sh;
+	//TODO:1対1にするなら必要ないので消した
+	//float dw = sw;
+	//float dh = sh;
 
-	float w = 1;
-	float h = 1;
+	//float w = 1;
+	//float h = 1;
 
-	// 横幅のほうが大きい場合
-	if (dw > dh)
-	{
-		w = 1;
-		h = dh / dw;
-	}
-	// 縦幅のほうが大きい場合
-	else
-	{
-		h = 1;
-		w = dw / dh;
-	}
+	//// 横幅のほうが大きい場合
+	//if (dw > dh)
+	//{
+	//	w = 1;
+	//	h = dh / dw;
+	//}
+	//// 縦幅のほうが大きい場合
+	//else
+	//{
+	//	h = 1;
+	//	w = dw / dh;
+	//}
 
-	float x0 = (0 - w * 0.5f) * 2;
-	float y0 = (0 - h * 0.5f) * -2;
-	float x1 = (0 + w * 0.5f) * 2;
-	float y1 = (0 - h * 0.5f) * -2;
-	float x2 = (0 - w * 0.5f) * 2;
-	float y2 = (0 + h * 0.5f) * -2;
-	float x3 = (0 + w * 0.5f) * 2;
-	float y3 = (0 + h * 0.5f) * -2;
 	
+	//float x0 = (0 - w * 0.5f) * 2;
+	//float y0 = (0 - h * 0.5f) * -2;
+	//float x1 = (0 + w * 0.5f) * 2;
+	//float y1 = (0 - h * 0.5f) * -2;
+	//float x2 = (0 - w * 0.5f) * 2;
+	//float y2 = (0 + h * 0.5f) * -2;
+	//float x3 = (0 + w * 0.5f) * 2;
+	//float y3 = (0 + h * 0.5f) * -2;
+	float x0 = -.5f;
+	float y0 = .5f;
+	float x1 = .5f;
+	float y1 = .5f;
+	float x2 = -.5f;
+	float y2 = -.5f;
+	float x3 = .5f;
+	float y3 = -.5f;
 
 	//--- < テクセル座標系からUV座標系への変換 > ---
 	float u0 = sx / texture2dDesc.Width;

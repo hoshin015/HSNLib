@@ -98,10 +98,10 @@ private:
 	//	return std::get<T>(debugValue[str]);
 	//}
 
-	template<typename T>
-	T GetDebugValue(std::string str) {
-		return std::get<T>(debugValue[str]);
-	}
+	//template<typename T>
+	//T GetDebugValue(std::string str) {
+	//	return std::get<T>(debugValue[str]);
+	//}
 
 
 public:

@@ -11,7 +11,7 @@
 #include "ObsParts.h"
 
 StEnemy::StEnemy(int enemyKind)
-{	
+{
 	pF = std::make_unique<ParryEffect>(3);
 
 	this->enemyKind = enemyKind;
@@ -19,17 +19,17 @@ StEnemy::StEnemy(int enemyKind)
 
 	paryEffect = ResourceManager::Instance().LoadModelResource("Data/Fbx/paryEffectTest/paryEffectTest.fbx");
 
-	// “Gƒf[ƒ^‚Ìİ’è
+	// æ•µãƒ‡ãƒ¼ã‚¿ã®è¨­å®š
 	EnemyData data = enemyData[enemyKind];
 	behaviorType = data.behaviorType;
 	radius = data.radius;
 	pursuitRadius = data.pursuitRadius;
 	searchRadius = data.searchRadius;
 	notSearchRadius = data.notSearchRadius;
-	
+
 	CreateModel();
 
-	// aiTree ‚Ì\’z
+	// aiTree ã®æ§‹ç¯‰
 	CreateAiTree();
 
 	health = 3;
@@ -41,7 +41,7 @@ StEnemy::~StEnemy()
 
 void StEnemy::Update()
 {
-	// ‰ñ“]
+	// å›è»¢
 	DirectX::XMFLOAT3 ang = GetAngle();
 	ang.y += rotationSpeed * Timer::Instance().DeltaTime();
 	//ang.x = 10;
@@ -51,14 +51,14 @@ void StEnemy::Update()
 
 	aiTree->Update();
 
-	// ‘¬—ÍXVˆ—
+	// é€ŸåŠ›æ›´æ–°å‡¦ç†
 	UpdateVelocity();
-	// –³“GŠÔXV
+	// ç„¡æ•µæ™‚é–“æ›´æ–°
 	UpdateInvincibleTimer();
 
 	//UpdateAnimation();
 
-	// ƒIƒuƒWƒFƒNƒgs—ñXV
+	// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆè¡Œåˆ—æ›´æ–°
 	UpdateTransform();
 }
 
@@ -67,46 +67,46 @@ void StEnemy::Render(bool drawShadow)
 	model->Render(transform, { 1,1,1,1 }, &keyFrame);
 }
 
-// ƒfƒoƒbƒOƒvƒŠƒ~ƒeƒBƒu•`‰æ
+// ãƒ‡ãƒãƒƒã‚°ãƒ—ãƒªãƒŸãƒ†ã‚£ãƒ–æç”»
 void StEnemy::DrawDebugPrimitive()
 {
-	//DebugPrimitive::Instance().AddSphere(plPosition, 0.5f, { 1,1,0,1 });		// ƒXƒ|[ƒ“’n“_
+	//DebugPrimitive::Instance().AddSphere(plPosition, 0.5f, { 1,1,0,1 });		// ã‚¹ãƒãƒ¼ãƒ³åœ°ç‚¹
 	//
-	//DebugPrimitive::Instance().AddSphere(targetPosition, 0.2f, { 0,1,0,1 });	// ƒ^[ƒQƒbƒgÀ•W
-	//DebugPrimitive::Instance().AddSphere(spawnPosition, 0.2f, { 0,1,1,1 });		// ƒXƒ|[ƒ“’n“_
+	//DebugPrimitive::Instance().AddSphere(targetPosition, 0.2f, { 0,1,0,1 });	// ã‚¿ãƒ¼ã‚²ãƒƒãƒˆåº§æ¨™
+	//DebugPrimitive::Instance().AddSphere(spawnPosition, 0.2f, { 0,1,1,1 });		// ã‚¹ãƒãƒ¼ãƒ³åœ°ç‚¹
 	//
 	//DebugPrimitive::Instance().AddCylinder(position, pursuitRadius, 0.2, { 0,1,0,1 });
 	//DebugPrimitive::Instance().AddCylinder(position, searchRadius, 0.2, { 1,0,0,1 });
 	//DebugPrimitive::Instance().AddCylinder(position, notSearchRadius, 0.2, { 0,0,1,1 });
 }
 
-// TargetPosition XV
+// TargetPosition æ›´æ–°
 void StEnemy::UpdateTargetPosition()
 {
-	// --- Graphics æ“¾ ---
+	// --- Graphics å–å¾— ---
 	Graphics& gfx = Graphics::Instance();
 
-	// ƒrƒ…[ƒ|[ƒg
+	// ãƒ“ãƒ¥ãƒ¼ãƒãƒ¼ãƒˆ
 	D3D11_VIEWPORT viewport;
 	UINT numViewports = 1;
 	gfx.deviceContext->RSGetViewports(&numViewports, &viewport);
 
-	// •ÏŠ·s—ñ
+	// å¤‰æ›è¡Œåˆ—
 	DirectX::XMMATRIX View = DirectX::XMLoadFloat4x4(&Camera::Instance().GetView());
 	DirectX::XMMATRIX Projection = DirectX::XMLoadFloat4x4(&Camera::Instance().GetProjection());
 	DirectX::XMMATRIX World = DirectX::XMMatrixIdentity();
-	// ƒGƒlƒ~[”z’uˆ—
+	// ã‚¨ãƒãƒŸãƒ¼é…ç½®å‡¦ç†
 	InputManager& input = InputManager::Instance();
 	if (input.GetMousePress(MOUSEBUTTON_STATE::leftButton))
 	{
-		// ƒ}ƒEƒXƒJ[ƒ\ƒ‹À•W‚ğæ“¾
+		// ãƒã‚¦ã‚¹ã‚«ãƒ¼ã‚½ãƒ«åº§æ¨™ã‚’å–å¾—
 		DirectX::XMFLOAT3 screenPosition;
 		screenPosition.x = static_cast<int>(input.GetCursorPosX());
 		screenPosition.y = static_cast<int>(input.GetCursorPosY());
 
 		DirectX::XMVECTOR ScreenPosition, WorldPosition;
 
-		// ƒŒƒC‚Ìn“_‚ğZo
+		// ãƒ¬ã‚¤ã®å§‹ç‚¹ã‚’ç®—å‡º
 		screenPosition.z = 0.0f;
 		ScreenPosition = DirectX::XMLoadFloat3(&screenPosition);
 
@@ -125,7 +125,7 @@ void StEnemy::UpdateTargetPosition()
 		DirectX::XMFLOAT3 rayStart;
 		DirectX::XMStoreFloat3(&rayStart, WorldPosition);
 
-		// ƒŒƒC‚ÌI“_‚ğZo
+		// ãƒ¬ã‚¤ã®çµ‚ç‚¹ã‚’ç®—å‡º
 		screenPosition.z = 1.0f;
 		ScreenPosition = DirectX::XMLoadFloat3(&screenPosition);
 
@@ -144,11 +144,11 @@ void StEnemy::UpdateTargetPosition()
 		DirectX::XMFLOAT3 rayEnd;
 		DirectX::XMStoreFloat3(&rayEnd, WorldPosition);
 
-		// ƒŒƒCƒLƒƒƒXƒg
+		// ãƒ¬ã‚¤ã‚­ãƒ£ã‚¹ãƒˆ
 		HitResult hit;
 		if (StageManager::Instance().RayCast(rayStart, rayEnd, hit))
 		{
-			// “G‚ğ”z’u
+			// æ•µã‚’é…ç½®
 			//targetPosition = hit.position;
 			plPosition = hit.position;
 		}
@@ -178,17 +178,17 @@ void StEnemy::CreateAiTree()
 	{
 	case pursuit:
 	{
-		// BehaviorTree‚ğ\’z
+		// BehaviorTreeã‚’æ§‹ç¯‰
 		aiTree = std::make_unique <BTree>(this);
 
 		aiTree->AddNode((int)KIND::NONE, (int)KIND::ROOT, 0, IBTree::RULE::Priority, this);
 		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Generate, 0, IBTree::RULE::Non, this);
 		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Down, 1, IBTree::RULE::Non, this);
-		
-		
-		//aiTree->AddNode((int)KIND::ROOT, (int)KIND::DEBUG_STOP, 2, IBTree::RULE::Non, this);
-		
-		
+
+
+		aiTree->AddNode((int)KIND::ROOT, (int)KIND::DEBUG_STOP, 2, IBTree::RULE::Non, this);
+
+
 		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Normal, 2, IBTree::RULE::Priority, this);
 		aiTree->AddNode((int)KIND::Normal, (int)KIND::PlayerPursuit, 0, IBTree::RULE::Sequence, this);
 		aiTree->AddNode((int)KIND::PlayerPursuit, (int)KIND::PlayerPositionGet, 0, IBTree::RULE::Non, this);
@@ -201,14 +201,14 @@ void StEnemy::CreateAiTree()
 	}
 	case chase:
 	{
-		// BehaviorTree‚ğ\’z
+		// BehaviorTreeã‚’æ§‹ç¯‰
 		aiTree = std::make_unique <BTree>(this);
 
 		aiTree->AddNode((int)KIND::NONE, (int)KIND::ROOT, 0, IBTree::RULE::Priority, this);
 		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Generate, 0, IBTree::RULE::Non, this);
 		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Down, 1, IBTree::RULE::Non, this);
-		
-		///aiTree->AddNode((int)KIND::ROOT, (int)KIND::DEBUG_STOP, 2, IBTree::RULE::Non, this);
+
+		aiTree->AddNode((int)KIND::ROOT, (int)KIND::DEBUG_STOP, 2, IBTree::RULE::Non, this);//TODO:æ•µã‚’æ­¢ã‚ã‚‹ã‚³ãƒ¼ãƒ‰
 
 		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Normal, 2, IBTree::RULE::Priority, this);
 
@@ -219,7 +219,7 @@ void StEnemy::CreateAiTree()
 	}
 }
 
-// €–Sˆ—
+// æ­»äº¡å‡¦ç†
 void StEnemy::OnDead()
 {
 	ObsParts* top = nullptr;
@@ -256,8 +256,6 @@ void StEnemy::OnDead()
 		bottom->SetAngle({ 90,0,0 });
 		ObstacleManager::Instance().Register(bottom);
 	}
-	
-	
 
 	Destroy();
 }

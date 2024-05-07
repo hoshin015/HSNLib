@@ -287,6 +287,7 @@ void StPlayer::UpdateMove() {
 	if (XMVectorGetX(XMVector2Length(inputVec)) > 1) {
 		inputVec = XMVector2Normalize(inputVec);
 	}
+	debugValue["inputVec"] = input;
 
 	//‘¬“xŒvŽZ
 	if (fabsf(input.x) > 0.00001f || fabsf(input.y) > 0.00001f) {

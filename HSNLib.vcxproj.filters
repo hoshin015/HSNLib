@@ -426,6 +426,18 @@
     <ClCompile Include="SceneSTMainMenu.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="StMenuPlayer.cpp">
+      <Filter>ソース ファイル\SpinningTopBase</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneSTTutorial.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="MaskPrimitive.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoUI.cpp">
+      <Filter>ソース ファイル\Video</Filter>
+    </ClCompile>
     <ClCompile Include="UiSprite.cpp">
       <Filter>ソース ファイル\UI</Filter>
     </ClCompile>
@@ -791,6 +803,18 @@
     <ClInclude Include="SceneSTMainMenu.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="StMenuPlayer.h">
+      <Filter>ヘッダー ファイル\SpinningTopBase</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneSTTutorial.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="MaskPrimitive.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoUI.h">
+      <Filter>ヘッダー ファイル\Video</Filter>
+    </ClCompile>
     <ClInclude Include="UiSprite.h">
       <Filter>ヘッダー ファイル\Ui</Filter>
     </ClInclude>
@@ -909,6 +933,12 @@
     <FxCompile Include="Library\Shader\ParryEffect_VS.hlsl">
       <Filter>シェーダーファイル</Filter>
     </FxCompile>
+    <FxCompile Include="MaskPrimitive_VS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="MaskPrimitive_PS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Library\Shader\Primitive2D.hlsli">
@@ -963,6 +993,9 @@
       <Filter>シェーダーファイル</Filter>
     </None>
     <None Include="Library\Shader\ParryEffect.hlsli">
+      <Filter>シェーダーファイル</Filter>
+    </None>
+    <None Include="MaskPrimitive.hlsli">
       <Filter>シェーダーファイル</Filter>
     </None>
   </ItemGroup>

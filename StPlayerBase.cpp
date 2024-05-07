@@ -44,6 +44,7 @@ void StPlayerBase::Input() {
 	}
 
 	inputMap["Move"] = movefloat2;
+	debugValue["Move"] = movefloat2;
 
 	//Attack
 	bool enter = im.GetKeyPressed(Keyboard::Enter) || im.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a);
