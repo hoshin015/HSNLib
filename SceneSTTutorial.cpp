@@ -21,18 +21,22 @@
 #include "DamageTextManager.h"
 
 #include <random>
+#include <string>
 
 void SceneSTTutorial::Initialize() {
-	VideoManager::Instance().LoadFile(PARRY, L"D:/etc/youtube_download/歌うbot - 足立レイ [FT5hOOlQjyM].mp4");
-	VideoManager::Instance().LoadFile(ATTACK, L"D:/etc/youtube_download/人マニア - 重音テト [HTxwOxFt5d4].mp4");
-	VideoManager::Instance().LoadFile(GAUGEATTACK, L"D:/etc/youtube_download/イガク - 重音テト [F38EuG2dAyM].mp4");
-	VideoManager::Instance().LoadFile(GETOPTION, L"D:/etc/youtube_download/ミニ偏 - 重音テト [4ztXhkdlKHg].mp4");
+	VideoManager::Instance().LoadFile(PARRY, L"Data/Video/Parry.mp4");
+	VideoManager::Instance().LoadFile(ATTACK, L"Data/Video/Attack.mp4");
+	VideoManager::Instance().LoadFile(GAUGEATTACK, L"Data/Video/GaugeAttack.mp4");
+	VideoManager::Instance().LoadFile(GETOPTION, L"Data/Video/Option.mp4");
 	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Enter.png"));
 	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Parry.png"));
-	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Enter.png"));
-	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Enter.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/GaugeParry.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/BodyBlow.png"));
 	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/チュートリアル文字.png"));
 	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Back.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/BackToTutorial.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/決定移動.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/決定移動コントローラー.png"));
 	videoUI.SetVideo(&VideoManager::Instance().GetVideo(PARRY));
 	videoUI.SetTextSprite(sprite[PARRY].get());
 	VideoManager::Instance().Play(PARRY,true);
@@ -166,9 +170,10 @@ void SceneSTTutorial::UpdateState() {
 		videoUI.SetPosition({ width * .5f,height * .5f });
 		videoUI.SetSize({ 640 * wRatio,400 * hRatio });
 		//videoUI.SetSize(sSize);
-		if (im.GetKeyPressed(Keyboard::Enter)) {
+		if (im.GetKeyPressed(Keyboard::Enter) || im.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a)) {
 			stateMap["StopUpdate"] = false;
 			stateMap["UpdateTarm"] = true;
+			stateMap["DrawText"] = true;
 			SpinningTopPlayerManager::Instance().GetPlayer(0)->SetPosition({ 0,0,0 });
 		}
 	}
@@ -179,11 +184,8 @@ void SceneSTTutorial::UpdateState() {
 
 	if (tarm == 0 && !stateMap["TutorialClear"]) {
 		tarm = -1;
-		if (tState == SPSTART) {
-			stateMap["TutorialEnd"] = true;
-			return;
-		}
 		stateMap["TutorialClear"] = true;
+		stateMap["DrawText"] = false;
 	}
 
 	if (stateMap["TutorialClear"]) {
@@ -193,14 +195,18 @@ void SceneSTTutorial::UpdateState() {
 		sPos.x = -sSize.x * .5f + ease;
 		if (time > kHalfTime * 2) {
 			stateMap["TutorialClear"] = false;
-			stateMap["StopUpdate"] = true;
 			tState++;
+			if (tState == SPSTART) {
+				stateMap["TutorialEnd"] = true;
+			}
+			else {
+				stateMap["StopUpdate"] = true;
 
-			videoUI.SetVideo(&VideoManager::Instance().GetVideo(tState));
-			videoUI.SetTextSprite(sprite[tState].get());
-			VideoManager::Instance().Play(tState, true);
-			VideoManager::Instance().Stop(tState - 1);
-
+				videoUI.SetVideo(&VideoManager::Instance().GetVideo(tState));
+				videoUI.SetTextSprite(sprite[tState].get());
+				VideoManager::Instance().Play(tState, true);
+				VideoManager::Instance().Stop(tState - 1);
+			}
 			time = 0;
 		}
 	}
@@ -250,6 +256,8 @@ void SceneSTTutorial::UpdateTutorial() {
 		}
 		if (tarm > 0)
 			tarm = SpinningTopEnemyManager::Instance().GetEnemyCount();
+
+		StPlayerBase::SetRotateSpeed(1);
 		break;
 
 	case SceneSTTutorial::GAUGEATTACK:
@@ -284,12 +292,12 @@ void SceneSTTutorial::UpdateTutorial() {
 	case SceneSTTutorial::GETOPTION:
 		if (stateMap["UpdateTarm"]) {
 			tarm = 5;
-
+			text = 5;
 		}
-		if (!SpinningTopEnemyManager::Instance().GetEnemyCount()) {
+		if (SpinningTopEnemyManager::Instance().GetEnemyCount() == 0) {
 			std::random_device rd;
 			std::mt19937 gen(rd());
-			std::uniform_real_distribution<float> dis(5, 10);
+			std::uniform_real_distribution<float> dis(4, 8);
 
 			StEnemy* enemy = new StEnemy(0);
 
@@ -465,10 +473,24 @@ void SceneSTTutorial::Render() {
 	gfx.bitBlockTransfer->blit(gfx.bloomBuffer->shaderResourceViews[0].GetAddressOf(), 0, 1);
 #endif
 
-	if (stateMap["DrawVideo"])videoUI.Draw({0.25f,0.640625f,0.875f,1}, stateMap["StopUpdate"]);
+	float width = Framework::Instance().windowWidth;
+	float height = Framework::Instance().windowHeight;
+	float wRatio = width / 1280;
+	float hRatio = height / 720;
+	float sRatio = wRatio * hRatio;
+
+	if (stateMap["DrawVideo"]) {
+		DirectX::XMFLOAT2 cPos = { 1170 * wRatio,650 * hRatio };
+		DirectX::XMFLOAT2 cSize = { 160 * wRatio,99 * hRatio };
+		sprite[(InputManager::Instance().IsGamePadConnected() ? CONTROLLER : KEYBORD) - 1]->Render(
+			cPos.x - cSize.x * .5f, cPos.y - cSize.y * .5f,
+			cSize.x, cSize.y,
+			1, 1, 1, 1, 0);
+		videoUI.Draw({ 0.25f,0.640625f,0.875f,1 }, stateMap["StopUpdate"]);
+	}
 	if (stateMap["TutorialStart"]) {
 		rect.Render(0, 0,
-			Framework::Instance().windowWidth, Framework::Instance().windowHeight,
+			width, height,
 			0, 0, 0, 0.5f, 0);
 
 		sprite[START - 1]->Render(
@@ -486,11 +508,21 @@ void SceneSTTutorial::Render() {
 		);
 	}
 	if (stateMap["DrawText"]) {
-		DispString::Instance().Draw(L"", {},32,TEXT_ALIGN::UPPER_MIDDLE);
+		std::wstring str = std::to_wstring(text - tarm) + L"/" + std::to_wstring(text);
+		DispString::Instance().Draw(str.c_str(), { width * .5f ,height }, 32, TEXT_ALIGN::LOWER_MIDDLE, { 0,0,0,1 });
+	}
+	if (stateMap["TutorialEnd"]) {
+		DirectX::XMFLOAT2 cPos = { 640 * wRatio,535 * hRatio };
+		DirectX::XMFLOAT2 cSize = { 488 * wRatio,91.2f * hRatio };
+		sprite[BACKTOTUTORIAL - 1]->Render(
+			cPos.x - cSize.x * .5f, cPos.y - cSize.y * .5f,
+			cSize.x, cSize.y,
+			1, 1, 1, 1, 0
+		);
 	}
 
 	// --- デバッグ描画 ---
-	DrawDebugGUI();
+	//DrawDebugGUI();
 }
 
 void SceneSTTutorial::DrawDebugGUI() {
@@ -529,8 +561,8 @@ void SceneSTTutorial::DrawDebugGUI() {
 			}
 		}
 
-		ImGui::DragFloat2("size", &sSize.x);
-		ImGui::DragFloat2("pos", &sPos.x);
+		ImGui::DragFloat2("size", &dSize.x);
+		ImGui::DragFloat2("pos", &dPos.x);
 	}
 
 }

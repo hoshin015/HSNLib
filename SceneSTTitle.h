@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <vector>
 #include "Scene.h"
 #include "Library/2D/Sprite.h"
 #include "Library/2D/MaskSprite.h"
@@ -27,9 +28,15 @@ public:
 	void DrawDebugGUI();
 
 private:
-	std::unique_ptr<Sprite> titleSprite;
+	std::vector<std::unique_ptr<Sprite>> sprite;
 	std::unique_ptr<MaskSprite> maskSprite;
 	Primitive2D fadeout;
 	float fadeoutA = 0;
 	DirectX::XMFLOAT4 _videoColor = { 1,1,1,1 };
+	float rotate = 0;
+
+	DirectX::XMFLOAT2 dPos = {};
+	DirectX::XMFLOAT2 dPos2 = {};
+	DirectX::XMFLOAT2 dSize = {};
+	DirectX::XMFLOAT2 dSize2 = {};
 };

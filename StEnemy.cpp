@@ -186,7 +186,7 @@ void StEnemy::CreateAiTree()
 		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Down, 1, IBTree::RULE::Non, this);
 
 
-		aiTree->AddNode((int)KIND::ROOT, (int)KIND::DEBUG_STOP, 2, IBTree::RULE::Non, this);
+		//aiTree->AddNode((int)KIND::ROOT, (int)KIND::DEBUG_STOP, 2, IBTree::RULE::Non, this);
 
 
 		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Normal, 2, IBTree::RULE::Priority, this);
@@ -208,7 +208,7 @@ void StEnemy::CreateAiTree()
 		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Generate, 0, IBTree::RULE::Non, this);
 		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Down, 1, IBTree::RULE::Non, this);
 
-		aiTree->AddNode((int)KIND::ROOT, (int)KIND::DEBUG_STOP, 2, IBTree::RULE::Non, this);//TODO:敵を止めるコード
+		//aiTree->AddNode((int)KIND::ROOT, (int)KIND::DEBUG_STOP, 2, IBTree::RULE::Non, this);//TODO:敵を止めるコード
 
 		aiTree->AddNode((int)KIND::ROOT, (int)KIND::Normal, 2, IBTree::RULE::Priority, this);
 

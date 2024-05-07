@@ -43,6 +43,9 @@ private:
 		SPSTART,
 		START,
 		CLEAR,
+		BACKTOTUTORIAL,
+		KEYBORD,
+		CONTROLLER,
 		COUNT
 	};
 	int tState = PARRY;
@@ -53,7 +56,10 @@ private:
 
 	std::vector<std::unique_ptr<Sprite>> sprite;
 	DirectX::XMFLOAT2 sPos = {};
+	DirectX::XMFLOAT2 dPos = {};
 	DirectX::XMFLOAT2 sSize = {};
+	DirectX::XMFLOAT2 dSize = {};
+	
 	float time = 0;
 	float ease = 0;
 	int Efunc = 0;

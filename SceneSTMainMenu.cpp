@@ -28,7 +28,7 @@ void SceneSTMainMenu::Initialize() {
 	S3DObject.emplace_back(std::make_shared<Sprite3DObject>(L"Data/Texture/Wave.png"));
 	S3DObject.emplace_back(std::make_shared<Sprite3DObject>(L"Data/Texture/Tutorial.png"));
 	S3DObject.emplace_back(std::make_shared<Sprite3DObject>(L"Data/Texture/Back.png"));
-	S3DObject.emplace_back(std::make_shared<Sprite3DObject>(L"Data/Texture/MainManu.png"));
+	S3DObject.emplace_back(std::make_shared<Sprite3DObject>(L"Data/Texture/MainMenu.png"));
 
 	S3DObject[WAVE]->SetPosition({ -7,.05f,0 });
 	S3DObject[WAVE]->SetScaleInAsp(11);
@@ -40,7 +40,8 @@ void SceneSTMainMenu::Initialize() {
 	S3DObject[MAINMANU]->SetPosition({ 13,.05f,-10.5f });
 	S3DObject[MAINMANU]->SetScaleInAsp(11);
 
-	//sprite.emplace_back(std::make_shared<Sprite>(L"Data"))
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/決定移動.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/決定移動コントローラー.png"));
 
 	StageManager& stageManager = StageManager::Instance();
 	stageMain = std::make_unique<StageContext>();
@@ -74,7 +75,7 @@ void SceneSTMainMenu::Update() {
 	Camera::Instance().Update();
 	player.Update();
 	DirectX::XMFLOAT4 defaultColor = { 0,0,0,0 };
-	DirectX::XMFLOAT4 selectColor = { -1,-1,0,0 };
+	DirectX::XMFLOAT4 selectColor = { 0,0,-.8f,0 };
 
 	for (auto& obj : S3DObject)
 		obj->SetColor(defaultColor);
@@ -85,12 +86,13 @@ void SceneSTMainMenu::Update() {
 
 	if (S3DObject[TUTORIAL]->CircleHitToPoint(player.GetPosition())) {
 		S3DObject[TUTORIAL]->SetColor(selectColor);
-		if (im.GetKeyPressed(Keyboard::Enter))SceneManager::Instance().ChangeScene(new SceneLoading(new SceneSTTutorial));
+		if (im.GetKeyPressed(Keyboard::Enter) || im.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a))
+			SceneManager::Instance().ChangeScene(new SceneLoading(new SceneSTTutorial));
 	}
 
 	if (S3DObject[BACK]->RectHitToPoint(player.GetPosition())) {
 		S3DObject[BACK]->SetColor(selectColor);
-		if (im.GetKeyPressed(Keyboard::Enter))
+		if (im.GetKeyPressed(Keyboard::Enter) || im.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a))
 			SceneManager::Instance().ChangeScene(new SceneLoading(new SceneSTTitle));
 	}
 
@@ -179,8 +181,15 @@ void SceneSTMainMenu::Render() {
 		mask.Render(0, 0, width, height, 0, 0, 0, 0.8f, 0, 30 * sRatio, { wRatio * -485 ,0 });
 	}
 
+	DirectX::XMFLOAT2 cPos = { 1170 * wRatio,650 * hRatio };
+	DirectX::XMFLOAT2 cSize = { 160 * wRatio,99 * hRatio };
+	sprite[InputManager::Instance().IsGamePadConnected() ? 1 : 0]->Render(
+		cPos.x - cSize.x * .5f, cPos.y - cSize.y * .5f,
+		cSize.x, cSize.y,
+		1, 1, 1, 1, 0);
+
 	// --- デバッグ描画 ---
-	//DrawDebugGUI();
+	DrawDebugGUI();
 }
 
 void SceneSTMainMenu::DrawDebugGUI() {
@@ -231,7 +240,7 @@ void SceneSTMainMenu::DrawDebugGUI() {
 		//static DirectX::XMFLOAT3 defPos = S3DObject[0]->GetPosition();
 		//static DirectX::XMFLOAT3 defAng = S3DObject[0]->GetAngle();
 		//static DirectX::XMFLOAT3 defScl = S3DObject[0]->GetScale();
-
+		//ImGui::ColorEdit4("color", &selectColor.x);
 		int i = 0;
 		for (auto& obj : S3DObject) {
 			ImGui::Text(std::to_string(i).c_str());
