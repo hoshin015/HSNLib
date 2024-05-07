@@ -10,6 +10,9 @@ enum class EffectType
 	PowerUp,
 	Sleep,
 	Test1,
+	HitStVsSt,
+	HitStDownEnemy,
+	DestoryStEnemy,
 	LAST,
 };
 

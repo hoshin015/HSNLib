@@ -239,6 +239,8 @@
     <ClCompile Include="ProjectileManager.cpp" />
     <ClCompile Include="ProjectileStraight.cpp" />
     <ClCompile Include="Library\3D\ResourceManager.cpp" />
+    <ClCompile Include="Pause.cpp" />
+    <ClCompile Include="Result.cpp" />
     <ClCompile Include="SceneAnimation.cpp" />
     <ClCompile Include="SceneContextBase.cpp" />
     <ClCompile Include="SceneEnemyLevelEditor.cpp" />
@@ -281,6 +283,7 @@
     <ClCompile Include="StPlayerBase.cpp" />
     <ClCompile Include="StPlayerData.cpp" />
     <ClCompile Include="StPlayerOption.cpp" />
+    <ClCompile Include="UiSprite.cpp" />
     <ClCompile Include="Video.cpp" />
     <ClCompile Include="VideoUI.cpp" />
     <ClCompile Include="Wave.cpp" />
@@ -361,6 +364,8 @@
     <ClInclude Include="ProjectileManager.h" />
     <ClInclude Include="ProjectileStraight.h" />
     <ClInclude Include="Library\3D\ResourceManager.h" />
+    <ClInclude Include="Pause.h" />
+    <ClInclude Include="Result.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneAnimation.h" />
     <ClInclude Include="SceneContextBase.h" />
@@ -405,6 +410,7 @@
     <ClInclude Include="StPlayerBase.h" />
     <ClInclude Include="StPlayerData.h" />
     <ClInclude Include="StPlayerOption.h" />
+    <ClInclude Include="UiSprite.h" />
     <ClInclude Include="Video.h" />
     <ClInclude Include="VideoUI.h" />
     <ClInclude Include="Wave.h" />

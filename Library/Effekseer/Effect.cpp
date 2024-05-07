@@ -11,6 +11,9 @@ void Effect::Initialize()
 	CreateEffect(EffectType::PowerUp, "Data/Effect/PowerUp.efk");
 	CreateEffect(EffectType::Sleep, "Data/Effect/Sleep.efk");
 	CreateEffect(EffectType::Test1, "Data/Effect/Test1.efk");
+	CreateEffect(EffectType::HitStVsSt, "Data/Effect/HitStVsSt.efk");
+	CreateEffect(EffectType::HitStDownEnemy, "Data/Effect/HitDownStEnemy.efk");
+	CreateEffect(EffectType::DestoryStEnemy, "Data/Effect/DestoryStEnemy.efk");
 }
 
 // ÉfÅ[É^çÏê¨

@@ -2,12 +2,21 @@
 #include "Library/Timer.h"
 
 #include "WaveData_1.h"
+#include "SpinningTopPlayerManager.h"
 
 // ウェーブデータ
 WaveScript* waveScript[] =
 {
 	wave1Script,
 	wave2Script,
+	wave3Script,
+	wave4Script,
+	wave5Script,
+	wave6Script,
+	wave7Script,
+	wave8Script,
+	wave9Script,
+	wave10Script,
 	nullptr,
 };
 
@@ -17,6 +26,8 @@ void Wave::Init()
 	state = 0;
 
 	ppScript = waveScript;
+
+	sprWaveCut1 = std::make_unique<Sprite>(L"Data/Texture/Wave/WaveCut1.png");
 }
 
 void Wave::Update()
@@ -27,11 +38,29 @@ void Wave::Update()
 	{
 		pScript = *ppScript;
 		timer = 0.0f;
+		waveLimitTimer = waveLimitTime;
+		nowWave++;
 		state++;
 		break;
 	}
-	case 1:	// ウェーブ進行
+	case 1:	// ウェーブ表示
 	{
+
+
+		state++;
+		break;
+	}
+	case 2:	// ウェーブ進行
+	{
+		// プレイヤー死亡チェック
+		if (SpinningTopPlayerManager::Instance().GetPlayer(0)->isDead)
+		{
+			state = 4;
+			break;
+		}
+		SpinningTopPlayerManager::Instance().GetPlayer(0)->aliveTime += Timer::Instance().DeltaTime();
+
+		waveLimitTimer -= Timer::Instance().DeltaTime();
 		timer += Timer::Instance().DeltaTime();
 		while (pScript->time <= timer)
 		{
@@ -48,13 +77,17 @@ void Wave::Update()
 		if (pScript->data == nullptr)
 		{
 			ppScript++;
-			state = *ppScript ? 0 : 2;
+			state = *ppScript ? 0 : 3;
 		}
 
 		break;
 	}
-	case 2:	// 全ウェーブ終了
+	case 3:	// 全ウェーブ終了
 	{
+		break;
+	}
+	case 4:	// プレイヤー死亡
+	{	
 		break;
 	}
 	}

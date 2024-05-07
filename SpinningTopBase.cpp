@@ -3,6 +3,7 @@
 #include "Library/ImGui/ConsoleData.h"
 #include "Library/3D/DebugPrimitive.h"
 #include "StageManager.h"
+#include "SpinningTopPlayerManager.h"
 
 // 行列更新処理
 void SpinningTopBase::UpdateTransform()
@@ -38,10 +39,17 @@ bool SpinningTopBase::ApplyDamage(int damage, float invincibleTime)
 
 	// ダメージ処理
 	health -= damage;
+	totalHitDamage++;
 
 	// 死亡通知
 	if (health <= 0)
 	{
+		if (this != SpinningTopPlayerManager::Instance().GetPlayer(0))
+		{
+			SpinningTopPlayerManager::Instance().GetPlayer(0)->totalDestoryEnemy++;
+		}
+			
+			
 		OnDead();
 	}
 	// ダメージ通知

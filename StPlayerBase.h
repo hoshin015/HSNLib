@@ -23,6 +23,7 @@ public:
 	bool GetParryGauge() { return parryGauge; }
 	bool GetParry() { return parry; }
 	PlayerData* GetData() { return data.get(); }
+	float GetRotationSpeed() { return rotateSpeed; }
 	float parryDamageRadius = 0;
 	float parryGaugeDamageRadius = 0;
 
@@ -38,6 +39,11 @@ private:
 	//void UpdateMove();
 	//void UpdateDamaged();
 	//void RenderDebugPrimitive();
+
+public:
+	bool isDead = false;
+
+	
 
 protected:
 	void UpdateAttack();

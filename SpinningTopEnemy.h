@@ -63,6 +63,8 @@ public:
 	bool isGenerateFinish = false;	// 生成が終わってるかどうか
 	bool isPursuit = false;			// プレイヤーに突っ込んでいる最中かどうか
 
+	bool createParts = false;	// 破壊時にパーツを生成するかどうか
+
 	// プレイヤーとの距離
 	float playerDistance;
 	DirectX::XMFLOAT3 plPosition = { 0,0,0 };	// TODO: デバッグ用だから削除する

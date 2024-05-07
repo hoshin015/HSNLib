@@ -4,7 +4,7 @@
 #include "SpinningTopPlayerManager.h"
 #include "ObstacleManager.h"
 
-ObsParts::ObsParts(const char* filePath)
+ObsParts::ObsParts(const char* filePath, bool pParts)
 {
 	model = ResourceManager::Instance().LoadModelResource(filePath);
 
@@ -27,6 +27,8 @@ ObsParts::ObsParts(const char* filePath)
 
 	// “–‚½‚è”»’è
 	isCollision = false;
+	isWaveDestory = true;
+	playerParts = pParts;
 
 	color.w = 0.5f;
 }
@@ -108,6 +110,8 @@ void ObsParts::TranslationGoPlayer()
 
 void ObsParts::UpdateGoPlayer()
 {
+	if (playerParts) return;
+
 	DirectX::XMVECTOR PL = DirectX::XMLoadFloat3(&SpinningTopPlayerManager::Instance().GetPlayer(0)->GetPosition());
 	DirectX::XMVECTOR POS = DirectX::XMLoadFloat3(&position);
 	DirectX::XMVECTOR V = DirectX::XMVectorSubtract(PL, POS);

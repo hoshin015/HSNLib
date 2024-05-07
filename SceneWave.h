@@ -3,6 +3,9 @@
 #include "Scene.h"
 #include "Library/3D/SkinnedMesh.h"
 #include "Library/3D/SkyMap.h"
+#include "Library/2D/Sprite.h"
+#include "Pause.h"
+#include "Result.h"
 
 // テストシーン
 class SceneWave : public Scene
@@ -29,6 +32,28 @@ public:
 private:
 	std::unique_ptr<SkyMap> skyMap;
 
-
 	float gaussianPower = 16.0f;
+
+	// --- ポーズ画面 ---
+	std::unique_ptr<Pause> pause;
+
+	// --- リザルト画面 ---
+	std::unique_ptr<Result> result;
+
+	// ゲームUI
+	std::unique_ptr<Sprite> life3;
+	std::unique_ptr<Sprite> life2;
+	std::unique_ptr<Sprite> life1;
+	std::unique_ptr<Sprite> life0;
+
+	std::unique_ptr<Sprite> sprRotSpeedTop;
+	std::unique_ptr<Sprite> sprRotSpeedMiddle;
+	std::unique_ptr<Sprite> sprRotSpeedMiddleMask;
+	std::unique_ptr<Sprite> sprRotSpeedBottom;
+	
+	std::unique_ptr<Sprite> sprWaveBar;
+	std::unique_ptr<Sprite> sprWaveBarBg;
+	std::unique_ptr<Sprite> sprWave1;
+
+	
 };

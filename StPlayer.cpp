@@ -340,20 +340,28 @@ void StPlayer::UpdateDamaged() {
 			
 			if (enemy->isDown)
 			{
+				enemy->createParts = true;
 				// 敵がダウン中なら敵を破壊
 				enemy->ApplyDamage(9999, 0);
+
+				Effect::Instance().Play(EffectType::HitStDownEnemy, GetPosition(), { 0,0,0 }, 1.0f);
 			}
 			else
 			{
-				// 敵がダウン中でないならプレイヤーにダメージ
-				ApplyDamage(1, 0);
-
 				// ダメージ表示
-				int damage = 2;
-				std::wstring damageString = std::to_wstring(damage);
-				const TCHAR* damageTChar = damageString.c_str();
-				DamageText* damageText = new DamageText({ GetPosition().x, 1.0f, GetPosition().z }, damageTChar, { 1,0,0,1 });
-				DamageTextManager::Instance().Register(damageText);
+				if (invincibleTimer <= 0.0f)
+				{
+					int damage = 1;
+					std::wstring damageString = std::to_wstring(damage);
+					const TCHAR* damageTChar = damageString.c_str();
+					DamageText* damageText = new DamageText({ GetPosition().x, 1.0f, GetPosition().z }, damageTChar, { 1,0,0,1 });
+					DamageTextManager::Instance().Register(damageText);
+
+					Effect::Instance().Play(EffectType::HitStVsSt, GetPosition(), { 0,0,0 }, 1.0f);
+				}
+
+				// 敵がダウン中でないならプレイヤーにダメージ
+				ApplyDamage(1, invicibleTime);
 			}
 			
 
@@ -382,7 +390,7 @@ void StPlayer::UpdateObstacleCollision()
 			obs->GetPosition(),
 			obs->GetRadius(),
 			velocityA,
-			60
+			120
 		))
 		{
 			// 押し出し後の位置設定
@@ -398,15 +406,18 @@ void StPlayer::UpdateObstacleCollision()
 
 			if (obs->hitDamae > 0)
 			{
-				ApplyDamage(obs->hitDamae, 0.0f);
+				if (invincibleTimer <= 0.0f)
+				{
+					// ダメージ表示
+					std::wstring damageString = std::to_wstring(obs->hitDamae);
+					const TCHAR* damageTChar = damageString.c_str();
+					DamageText* damageText = new DamageText({ GetPosition().x, 1.0f, GetPosition().z }, damageTChar, { 1,0,0,1 });
+					DamageTextManager::Instance().Register(damageText);
 
-				// ダメージ表示
-				std::wstring damageString = std::to_wstring(obs->hitDamae);
-				const TCHAR* damageTChar = damageString.c_str();
-				DamageText* damageText = new DamageText({ GetPosition().x, 1.0f, GetPosition().z }, damageTChar, { 1,0,0,1 });
-				DamageTextManager::Instance().Register(damageText);
+					Effect::Instance().Play(EffectType::HitStVsSt, GetPosition(), { 0,0,0 }, 1.0f);
+				}
+				ApplyDamage(obs->hitDamae, invicibleTime);	
 			}
-
 			break;
 		}
 	}
@@ -442,6 +453,7 @@ void StPlayer::UpdateOption() {
 }
 
 void StPlayer::AddOption() {
+	getTotalOption++;
 	StPlayerOption* o = new StPlayerOption(childModel,optionData);
 	option.emplace_back(o);
 	SpinningTopPlayerManager::Instance().Register(o);
@@ -465,15 +477,15 @@ void StPlayer::OnDead() {
 	ObsParts* middle;
 	ObsParts* bottom;
 
-	top = new ObsParts("Data/Fbx/StPlayer/Top/StPlayerTop.fbx");
+	top = new ObsParts("Data/Fbx/StPlayer/Top/StPlayerTop.fbx", true);
 	top->SetPosition(GetPosition());
 	ObstacleManager::Instance().Register(top);
 
-	middle = new ObsParts("Data/Fbx/StPlayer/Middle/StPlayerMiddle.fbx");
+	middle = new ObsParts("Data/Fbx/StPlayer/Middle/StPlayerMiddle.fbx", true);
 	middle->SetPosition(GetPosition());
 	ObstacleManager::Instance().Register(middle);
 
-	bottom = new ObsParts("Data/Fbx/StPlayer/Bottom/StPlayerBottom.fbx");
+	bottom = new ObsParts("Data/Fbx/StPlayer/Bottom/StPlayerBottom.fbx", true);
 	bottom->SetPosition(GetPosition());
 	bottom->SetAngle({ 90,0,0 });
 	ObstacleManager::Instance().Register(bottom);

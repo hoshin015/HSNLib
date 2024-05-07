@@ -5,6 +5,8 @@
 #include "StEnemy.h"
 #include "StEnemyData.h"
 #include "LightManager.h"
+#include "ObsMarunoko.h"
+#include "ObstacleManager.h"
 
 struct ScriptData
 {
@@ -51,6 +53,21 @@ struct ScriptEnemy : public ScriptData
 	}
 };
 
+struct ScriptMarunoko : public ScriptData
+{
+	ScriptMarunoko(int mType, DirectX::XMFLOAT3 pos, float speed) : type(mType), position(pos), moveSpeed(speed) {};
+	int type;
+	DirectX::XMFLOAT3 position;
+	float moveSpeed;
+
+	void Execute() override
+	{
+		ObsMarunoko* obstacle = new ObsMarunoko("Data/FBX/StMarunoko/StMarunoko.fbx", type, moveSpeed);
+		obstacle->SetPosition(position);
+		ObstacleManager::Instance().Register(obstacle);
+	}
+};
+
 // ライトON
 struct ScriptOnLight : public ScriptData
 {
@@ -87,13 +104,16 @@ struct ScriptOffLight : public ScriptData
 
 		// 点光源追加
 		{
-			for (int i = 0; i < 3; i++)
+			for (int i = 0; i < 2; i++)
 			{
-				Light* light = new Light(LightType::Point);
-				light->SetPosition({ i * 30.0f - 45.0f, 5, -4 });
-				light->SetColor(DirectX::XMFLOAT4(1, 1, 1, 1));
-				light->SetRange(30.0f);
-				LightManager::Instance().Register(light);
+				for (int j = 0; j < 2; j++)
+				{
+					Light* light = new Light(LightType::Point);
+					light->SetPosition({ i * 50.0f - 25.0f, 7, j * 50.0f - 25.0f });
+					light->SetColor(DirectX::XMFLOAT4(1, 1, 1, 1));
+					light->SetRange(30.0f);
+					LightManager::Instance().Register(light);
+				}
 			}
 		}
 
@@ -101,10 +121,30 @@ struct ScriptOffLight : public ScriptData
 	}
 };
 
+struct SciptDestoryEnemy : public ScriptData
+{
+	SciptDestoryEnemy() {}
+	void Execute() override
+	{
+		SpinningTopEnemyManager::Instance().Clear();
+	}
+};
+
+struct ScriptDestoryObstacle : public ScriptData
+{
+	ScriptDestoryObstacle() {}
+	void Execute() override
+	{
+		ObstacleManager::Instance().WaveClear();
+	}
+};
 
 #define SET_ENEMY(time, spawnType, enemyType) {(time), std::unique_ptr<ScriptData>(new ScriptEnemy(spawnType, enemyType))}
+#define SET_MARUNOKO(time, marunokoType, posX, posY, posZ, speed) {(time), std::unique_ptr<ScriptData>(new ScriptMarunoko(marunokoType, {posX, posY, posZ}, speed))}
 #define SET_OnLight(time) {(time), std::unique_ptr<ScriptData>(new ScriptOnLight())}
 #define SET_OffLight(time) {(time), std::unique_ptr<ScriptData>(new ScriptOffLight())}
+#define SET_EnemyDestory(time) {(time), std::unique_ptr<ScriptData>(new SciptDestoryEnemy())}
+#define SET_ObstacleDestory(time) {(time), std::unique_ptr<ScriptData>(new ScriptDestoryObstacle())}
 #define SET_END		{0,nullptr}
 
 class Wave
@@ -133,5 +173,14 @@ public:
 	WaveScript* pScript = nullptr;
 	WaveScript** ppScript = nullptr;
 
-	
+	int nowWave = 0;				// 現在のウェーブ
+	float waveLimitTime = 50.0f;	// ウェーブの時間50秒
+	float waveLimitTimer = 0.0f;	// ウェーブの残り時間タイマー
+
+	// ウェーブ表示用
+	float showWaveTextEaseTime = 0.3f;	// イージングに使用する時間
+	float showWaveTextWaitTime = 1.2f;	// 中央でゆっくり移動する時間
+	float showWaveTextTimer = 0.0f;		// ウェーブ表示の全体時間の管理用タイマー
+
+	std::unique_ptr<Sprite> sprWaveCut1;
 };
