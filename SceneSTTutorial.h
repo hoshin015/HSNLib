@@ -2,6 +2,7 @@
 #include "Library/3D/SkinnedMesh.h"
 #include "Library/3D/SkyMap.h"
 #include "Library/2D/Primitive2D.h"
+#include "Library/Text/DispString.h"
 
 #include "Scene.h"
 #include "StageContext.h"
@@ -57,6 +58,7 @@ private:
 	float ease = 0;
 	int Efunc = 0;
 	int tarm = -1;
+	int text = 0;
 
 	VideoUI videoUI;
 

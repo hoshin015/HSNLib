@@ -11,7 +11,7 @@ public:
 	void SetTextSprite(Sprite* text) { _text = text; }
 	void SetPosition(DirectX::XMFLOAT2 pos) { _pos = pos; }
 	void SetSize(DirectX::XMFLOAT2 size) { _size = size; }
-	void Draw(bool drawBG = false);
+	void Draw(DirectX::XMFLOAT4 color = { 1,1,1,1 }, bool drawBG = false);
 private:
 	Video* _video;
 	Sprite* _text;

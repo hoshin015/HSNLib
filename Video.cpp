@@ -219,6 +219,8 @@ void Video::InitializeVideo(ID3D11Device* device) {
 	//ソースの情報を取得
 	HRESULT hr = {};
 	ComPtr<IMFMediaType> nativeType;
+	ComPtr<IMFMediaType> videoTypeNV12;
+	ComPtr<IMFMediaType> videoTypeARGB;
 	GUID subtype;
 	UINT32 avgBitrate;
 	UINT32 interlace;
@@ -239,8 +241,8 @@ void Video::InitializeVideo(ID3D11Device* device) {
 	_videoSize = { static_cast<float>(width),static_cast<float>(height) };
 	_framerate = static_cast<float>(frame) / ratio;
 
-	MFCreateMediaType(_videoTypeNV12.GetAddressOf());
-	nativeType->CopyAllItems(_videoTypeNV12.Get());
+	MFCreateMediaType(videoTypeNV12.GetAddressOf());
+	nativeType->CopyAllItems(videoTypeNV12.Get());
 	//hr = _videoTypeNV12->SetUINT32(MF_MT_AVG_BITRATE, avgBitrate);
 	//hr = _videoTypeNV12->SetUINT32(MF_MT_ALL_SAMPLES_INDEPENDENT, TRUE);
 	//hr = _videoTypeNV12->SetUINT32(MF_MT_FIXED_SIZE_SAMPLES, TRUE);
@@ -250,17 +252,17 @@ void Video::InitializeVideo(ID3D11Device* device) {
 	//hr = _videoTypeNV12->SetUINT32(MF_MT_VIDEO_CHROMA_SITING, MFVideoChromaSubsampling_MPEG2);
 
 	//MediaTypeの設定(下は必須)
-	hr = _videoTypeNV12->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Video);
-	hr = _videoTypeNV12->SetGUID(MF_MT_SUBTYPE, MFVideoFormat_NV12);
-	hr = _videoTypeNV12->SetUINT32(MF_MT_DEFAULT_STRIDE, width);
-	hr = _videoTypeNV12->SetUINT32(MF_MT_AVG_BITRATE, avgBitrate);
-	hr = MFSetAttributeRatio((IMFAttributes*)_videoTypeNV12.Get(), MF_MT_FRAME_RATE, frame, ratio);
-	hr = MFSetAttributeRatio((IMFAttributes*)_videoTypeNV12.Get(), MF_MT_FRAME_SIZE, width, height);
-	hr = MFSetAttributeRatio((IMFAttributes*)_videoTypeNV12.Get(), MF_MT_PIXEL_ASPECT_RATIO, 1, 1);
-	hr = _sourceReader->SetCurrentMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, nullptr, _videoTypeNV12.Get());
+	hr = videoTypeNV12->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Video);
+	hr = videoTypeNV12->SetGUID(MF_MT_SUBTYPE, MFVideoFormat_NV12);
+	hr = videoTypeNV12->SetUINT32(MF_MT_DEFAULT_STRIDE, width);
+	hr = videoTypeNV12->SetUINT32(MF_MT_AVG_BITRATE, avgBitrate);
+	hr = MFSetAttributeRatio((IMFAttributes*)videoTypeNV12.Get(), MF_MT_FRAME_RATE, frame, ratio);
+	hr = MFSetAttributeRatio((IMFAttributes*)videoTypeNV12.Get(), MF_MT_FRAME_SIZE, width, height);
+	hr = MFSetAttributeRatio((IMFAttributes*)videoTypeNV12.Get(), MF_MT_PIXEL_ASPECT_RATIO, 1, 1);
+	hr = _sourceReader->SetCurrentMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, nullptr, videoTypeNV12.Get());
 
-	MFCreateMediaType(_videoTypeARGB.GetAddressOf());
-	nativeType->CopyAllItems(_videoTypeARGB.Get());
+	MFCreateMediaType(videoTypeARGB.GetAddressOf());
+	nativeType->CopyAllItems(videoTypeARGB.Get());
 	//hr = _videoTypeARGB->SetUINT32(MF_MT_AVG_BITRATE, avgBitrate);
 	//hr = _videoTypeARGB->SetUINT32(MF_MT_ALL_SAMPLES_INDEPENDENT, TRUE);
 	//hr = _videoTypeARGB->SetUINT32(MF_MT_FIXED_SIZE_SAMPLES, TRUE);
@@ -270,13 +272,13 @@ void Video::InitializeVideo(ID3D11Device* device) {
 	//hr = _videoTypeARGB->SetUINT32(MF_MT_VIDEO_CHROMA_SITING, MFVideoChromaSubsampling_MPEG2);
 
 	//MediaTypeの設定(下は必須)
-	hr = _videoTypeARGB->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Video);
-	hr = _videoTypeARGB->SetGUID(MF_MT_SUBTYPE, MFVideoFormat_ARGB32);
-	hr = _videoTypeARGB->SetUINT32(MF_MT_DEFAULT_STRIDE, width * 4);//値を入れないと何故か反転するくせに最大値入れなければ何でもいい謎
-	hr = _videoTypeARGB->SetUINT32(MF_MT_AVG_BITRATE, avgBitrate);
-	hr = MFSetAttributeRatio((IMFAttributes*)_videoTypeARGB.Get(), MF_MT_FRAME_RATE, frame, ratio);
-	hr = MFSetAttributeRatio((IMFAttributes*)_videoTypeARGB.Get(), MF_MT_FRAME_SIZE, width, height);
-	hr = MFSetAttributeRatio((IMFAttributes*)_videoTypeARGB.Get(), MF_MT_PIXEL_ASPECT_RATIO, 1, 1);
+	hr = videoTypeARGB->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Video);
+	hr = videoTypeARGB->SetGUID(MF_MT_SUBTYPE, MFVideoFormat_ARGB32);
+	hr = videoTypeARGB->SetUINT32(MF_MT_DEFAULT_STRIDE, width * 4);//値を入れないと何故か反転するくせに最大値入れなければ何でもいい謎
+	hr = videoTypeARGB->SetUINT32(MF_MT_AVG_BITRATE, avgBitrate);
+	hr = MFSetAttributeRatio((IMFAttributes*)videoTypeARGB.Get(), MF_MT_FRAME_RATE, frame, ratio);
+	hr = MFSetAttributeRatio((IMFAttributes*)videoTypeARGB.Get(), MF_MT_FRAME_SIZE, width, height);
+	hr = MFSetAttributeRatio((IMFAttributes*)videoTypeARGB.Get(), MF_MT_PIXEL_ASPECT_RATIO, 1, 1);
 
 	//MFT
 	IMFActivate** activates = nullptr;
@@ -296,8 +298,8 @@ void Video::InitializeVideo(ID3D11Device* device) {
 	activates[0]->Release();
 	CoTaskMemFree(activates);
 
-	hr = _transform->SetInputType(0, _videoTypeNV12.Get(), 0);
-	hr = _transform->SetOutputType(0, _videoTypeARGB.Get(), 0);
+	hr = _transform->SetInputType(0, videoTypeNV12.Get(), 0);
+	hr = _transform->SetOutputType(0, videoTypeARGB.Get(), 0);
 
 	//テクスチャの作成
 	CD3D11_TEXTURE2D_DESC textureDesc(DXGI_FORMAT_B8G8R8A8_UNORM, _videoSize.x, _videoSize.y);
@@ -315,6 +317,14 @@ void Video::InitializeVideo(ID3D11Device* device) {
 
 	CD3D11_SHADER_RESOURCE_VIEW_DESC srvDesc(D3D11_SRV_DIMENSION_TEXTURE2D, DXGI_FORMAT_B8G8R8A8_UNORM, 0, 1);
 	hr = device->CreateShaderResourceView(_texture.Get(), &srvDesc, _textureView.GetAddressOf());
+
+	CreateCommonBuffer(device);
+}
+
+void Video::CreateCommonBuffer(ID3D11Device* device) {
+	static bool isCreated = false;
+	if (isCreated)return;
+	HRESULT hr = {};
 
 	//頂点
 	Vertex vertices[] =
@@ -351,6 +361,7 @@ void Video::InitializeVideo(ID3D11Device* device) {
 
 	shaderFile = "./Data/Shader/Sprite_PS.cso";
 	CreatePsFromCso(shaderFile, _pixelShader.GetAddressOf());
+	isCreated = true;
 }
 
 void Video::LoadFrame(ID3D11DeviceContext* deviceContext) {
@@ -373,7 +384,7 @@ void Video::LoadFrame(ID3D11DeviceContext* deviceContext) {
 			DWORD maxlen, currentlen;
 			yuvBuffer->Lock(&bBuffer, &maxlen, &currentlen);
 
-			moveUV(bBuffer, maxlen, _videoSize.x, _videoSize.y, &_movePos);
+			moveUV(bBuffer, maxlen, _videoSize.x, _videoSize.y, &_moveUVPos);
 
 			yuvBuffer->Unlock();
 
@@ -433,7 +444,7 @@ void Video::LoadFrame(ID3D11DeviceContext* deviceContext) {
 				hr = nv12Buffer->Lock(&bBuffer, &maxlen, &currentlen);
 
 				std::vector<BYTE> rgbBuffer(_videoSize.x * _videoSize.y * 4);
-				moveUV(bBuffer, maxlen, _videoSize.x, _videoSize.y);
+				moveUV(bBuffer, maxlen, _videoSize.x, _videoSize.y, &_moveUVPos);
 				NV12ToRGB(rgbBuffer.data(), bBuffer, _videoSize.x, _videoSize.y);
 
 				D3D11_MAPPED_SUBRESOURCE subresource;

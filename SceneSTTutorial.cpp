@@ -23,15 +23,15 @@
 #include <random>
 
 void SceneSTTutorial::Initialize() {
-	VideoManager::Instance().LoadFile(PARRY, nullptr);
-	VideoManager::Instance().LoadFile(ATTACK, nullptr);
-	VideoManager::Instance().LoadFile(GAUGEATTACK, nullptr);
-	VideoManager::Instance().LoadFile(GETOPTION, nullptr);
+	VideoManager::Instance().LoadFile(PARRY, L"D:/etc/youtube_download/歌うbot - 足立レイ [FT5hOOlQjyM].mp4");
+	VideoManager::Instance().LoadFile(ATTACK, L"D:/etc/youtube_download/人マニア - 重音テト [HTxwOxFt5d4].mp4");
+	VideoManager::Instance().LoadFile(GAUGEATTACK, L"D:/etc/youtube_download/イガク - 重音テト [F38EuG2dAyM].mp4");
+	VideoManager::Instance().LoadFile(GETOPTION, L"D:/etc/youtube_download/ミニ偏 - 重音テト [4ztXhkdlKHg].mp4");
 	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Enter.png"));
 	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Parry.png"));
 	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Enter.png"));
 	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Enter.png"));
-	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Back.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/チュートリアル文字.png"));
 	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Back.png"));
 	videoUI.SetVideo(&VideoManager::Instance().GetVideo(PARRY));
 	videoUI.SetTextSprite(sprite[PARRY].get());
@@ -108,8 +108,6 @@ void SceneSTTutorial::Finalize() {
 }
 
 void SceneSTTutorial::Update() {
-	UpdateState();
-	UpdateTutorial();
 	Camera::Instance().Update();
 	VideoManager::Instance().Update();
 
@@ -126,10 +124,12 @@ void SceneSTTutorial::Update() {
 
 		DamageTextManager::Instance().Update();
 	}
+	UpdateState();
+	UpdateTutorial();
 }
 
 void SceneSTTutorial::UpdateState() {
-	constexpr float kHalfTime = 1.5f;
+	constexpr float kHalfTime = .9f;
 	InputManager& im = InputManager::Instance();
 	float width = Framework::Instance().windowWidth;
 	float height = Framework::Instance().windowHeight;
@@ -165,6 +165,7 @@ void SceneSTTutorial::UpdateState() {
 	if (stateMap["StopUpdate"]) {
 		videoUI.SetPosition({ width * .5f,height * .5f });
 		videoUI.SetSize({ 640 * wRatio,400 * hRatio });
+		//videoUI.SetSize(sSize);
 		if (im.GetKeyPressed(Keyboard::Enter)) {
 			stateMap["StopUpdate"] = false;
 			stateMap["UpdateTarm"] = true;
@@ -172,8 +173,8 @@ void SceneSTTutorial::UpdateState() {
 		}
 	}
 	else {
-		videoUI.SetPosition({ width * .87f,height * .15f });
-		videoUI.SetSize({ 256 * wRatio,160 * hRatio });
+		videoUI.SetPosition({ 1060 * wRatio,144 * hRatio });
+		videoUI.SetSize({ 425 * wRatio,281 * hRatio });
 	}
 
 	if (tarm == 0 && !stateMap["TutorialClear"]) {
@@ -198,27 +199,37 @@ void SceneSTTutorial::UpdateState() {
 			videoUI.SetVideo(&VideoManager::Instance().GetVideo(tState));
 			videoUI.SetTextSprite(sprite[tState].get());
 			VideoManager::Instance().Play(tState, true);
+			VideoManager::Instance().Stop(tState - 1);
 
 			time = 0;
 		}
 	}
 
+	if (SpinningTopPlayerManager::Instance().GetPlayer(0)->isDead) {
+		SpinningTopPlayerManager::Instance().Clear();
+		StPlayer* player = new StPlayer();
+		player->SetPosition({ 0,0,0 });
+		SpinningTopPlayerManager::Instance().Register(player);
+	}
 }
 
 void SceneSTTutorial::UpdateTutorial() {
 	switch (tState) {
 	case SceneSTTutorial::PARRY:
-		if (stateMap["UpdateTarm"])tarm = 5;
+		if (stateMap["UpdateTarm"]) {
+			tarm = 5;
+			text = 5;
+		}
 		if (StPlayerBase::GetInputMap<bool>("Attack"))
 			tarm--;
 		break;
 
 	case SceneSTTutorial::ATTACK:
 		if (stateMap["UpdateTarm"]) {
-			for (size_t i = 0; i < 4; i++) {
-				std::random_device rd;  // 真の乱数生成器を初期化
-				std::mt19937 gen(rd()); // メルセンヌ・ツイスタ乱数生成器を初期化
-				std::uniform_real_distribution<float> dis(5, 10); // 0からenemySpawnErea[i].radiusの間の一様乱数生成器を作成
+			for (size_t i = 0; i < 4; i++){
+				std::random_device rd;
+				std::mt19937 gen(rd());
+				std::uniform_real_distribution<float> dis(5, 10);
 
 				StEnemy* enemy = new StEnemy(0);
 
@@ -234,6 +245,7 @@ void SceneSTTutorial::UpdateTutorial() {
 				enemy->SetPosition({ xPos, 10, zPos });
 				SpinningTopEnemyManager::Instance().Register(enemy);
 				tarm = SpinningTopEnemyManager::Instance().GetEnemyCount();
+				text = 4;
 			}
 		}
 		if (tarm > 0)
@@ -241,11 +253,59 @@ void SceneSTTutorial::UpdateTutorial() {
 		break;
 
 	case SceneSTTutorial::GAUGEATTACK:
-		if (stateMap["UpdateTarm"])tarm = 1;
+		if (stateMap["UpdateTarm"]) {
+			std::random_device rd;
+			std::mt19937 gen(rd());
+			std::uniform_real_distribution<float> dis(5, 10);
+
+			StEnemy* enemy = new StEnemy(0);
+
+			float xPos = SpinningTopPlayerManager::Instance().GetPlayer(0)->GetPosition().x;
+			float zPos = SpinningTopPlayerManager::Instance().GetPlayer(0)->GetPosition().x;
+
+			float rad = DirectX::XMConvertToRadians(rand() % 360);
+			float dist = dis(gen);
+
+			xPos += cosf(rad) * dist;
+			zPos += sinf(rad) * dist;
+
+			enemy->SetPosition({ xPos, 10, zPos });
+			SpinningTopEnemyManager::Instance().Register(enemy);
+			tarm = SpinningTopEnemyManager::Instance().GetEnemyCount();
+			auto* player = SpinningTopPlayerManager::Instance().GetPlayer(0);
+			player->SetRotateSpeed(player->GetData()->rotateMaxSpeed);
+			text = 1;
+		}
+		if (tarm > 0)
+			tarm = SpinningTopEnemyManager::Instance().GetEnemyCount();
+
 		break;
 
 	case SceneSTTutorial::GETOPTION:
-		if (stateMap["UpdateTarm"])tarm = 5;
+		if (stateMap["UpdateTarm"]) {
+			tarm = 5;
+
+		}
+		if (!SpinningTopEnemyManager::Instance().GetEnemyCount()) {
+			std::random_device rd;
+			std::mt19937 gen(rd());
+			std::uniform_real_distribution<float> dis(5, 10);
+
+			StEnemy* enemy = new StEnemy(0);
+
+			float xPos = SpinningTopPlayerManager::Instance().GetPlayer(0)->GetPosition().x;
+			float zPos = SpinningTopPlayerManager::Instance().GetPlayer(0)->GetPosition().x;
+
+			float rad = DirectX::XMConvertToRadians(rand() % 360);
+			float dist = dis(gen);
+
+			xPos += cosf(rad) * dist;
+			zPos += sinf(rad) * dist;
+
+			enemy->SetPosition({ xPos, 10, zPos });
+			SpinningTopEnemyManager::Instance().Register(enemy);
+			tarm--;
+		}
 		break;
 
 	default:
@@ -405,7 +465,7 @@ void SceneSTTutorial::Render() {
 	gfx.bitBlockTransfer->blit(gfx.bloomBuffer->shaderResourceViews[0].GetAddressOf(), 0, 1);
 #endif
 
-	if (stateMap["DrawVideo"])videoUI.Draw(stateMap["StopUpdate"]);
+	if (stateMap["DrawVideo"])videoUI.Draw({0.25f,0.640625f,0.875f,1}, stateMap["StopUpdate"]);
 	if (stateMap["TutorialStart"]) {
 		rect.Render(0, 0,
 			Framework::Instance().windowWidth, Framework::Instance().windowHeight,
@@ -424,6 +484,9 @@ void SceneSTTutorial::Render() {
 			sSize.x, sSize.y,
 			1, 1, 1, 1, 0
 		);
+	}
+	if (stateMap["DrawText"]) {
+		DispString::Instance().Draw(L"", {},32,TEXT_ALIGN::UPPER_MIDDLE);
 	}
 
 	// --- デバッグ描画 ---
@@ -459,6 +522,15 @@ void SceneSTTutorial::DrawDebugGUI() {
 		if (ImGui::Button("tarmClear")) {
 			tarm = 0;
 		}
+
+		if (tState == ATTACK) {
+			if (ImGui::Button("EnemyCrear")) {
+				SpinningTopEnemyManager::Instance().Clear();
+			}
+		}
+
+		ImGui::DragFloat2("size", &sSize.x);
+		ImGui::DragFloat2("pos", &sPos.x);
 	}
 
 }

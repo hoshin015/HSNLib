@@ -112,5 +112,5 @@ private:
 	StMenuPlayer player;
 	MaskPrimitive mask;
 
-	bool isPlayerMove = false;
+	inline static bool isPlayerMove = false;
 };
