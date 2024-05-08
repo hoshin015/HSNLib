@@ -148,7 +148,7 @@ void Framework::CreateHSNWindow(HINSTANCE hInstance)
 		0,					// 拡張ウィンドウスタイル
 		windowName,			// ウィンドウクラス名
 		windowName,			// ウィンドウタイトル名
-		WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SYSMENU | WS_THICKFRAME, 	// ウィンドウスタイル
+		WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, 	// ウィンドウスタイル
 		wr.left,			// ウィンドウのX座標
 		wr.top,				// ウィンドウのY座標
 		wr.right - wr.left,	// ウィンドウの幅
@@ -209,19 +209,6 @@ LRESULT Framework::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
-	case WM_SIZE:
-	{
-		if (Graphics::Instance().device != nullptr)
-		{
-			// ウィンドウの新しいサイズを取得
-			int width = LOWORD(lParam);
-			int height = HIWORD(lParam);
-			Framework::Instance().windowWidth = width;
-			Framework::Instance().windowHeight = height;
-			// swapchain の再構築
-			Graphics::Instance().CreateSwapchain(hwnd, width, height);
-		}
-	}
 	case WM_KEYDOWN:
 		if (wParam == VK_ESCAPE)
 		{

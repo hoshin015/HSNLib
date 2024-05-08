@@ -29,6 +29,8 @@ private:
 	const wchar_t* windowName = L"HSNLib";
 	const int screenWidth = 1280;
 	const int screenHeight = 720;
+
+	BOOL isFullScreen = FALSE;
 public:
 	// ‰Šú‰»
 	bool Initialize(HINSTANCE hInstance);

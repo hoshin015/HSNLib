@@ -1,14 +1,16 @@
 #pragma once
 
+#include <memory>
 #include <vector>
 #include <set>
 #include "DamageText.h"
+#include "Library/2D/Sprite.h"
 
 // ダメージテキストマネージャー
 class DamageTextManager
 {
 private:
-	DamageTextManager() {}
+	DamageTextManager() { textSpr = std::make_unique<Sprite>(L"Data/Font/fontDamage.png"); }
 	~DamageTextManager() {}
 
 public:
@@ -43,7 +45,10 @@ public:
 	// デバッグ用GUI描画
 	void DrawDebugGui();
 
+	std::unique_ptr<Sprite> textSpr;
 private:
 	std::vector<DamageText*> damageTexts;
 	std::set<DamageText*> removes;
+
+
 };

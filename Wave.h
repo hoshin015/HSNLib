@@ -30,22 +30,60 @@ struct ScriptEnemy : public ScriptData
 
 	void Execute() override
 	{
-		// 乱数生成器の設定
-		std::random_device rd;  // 真の乱数生成器を初期化
-		std::mt19937 gen(rd()); // メルセンヌ・ツイスタ乱数生成器を初期化
-		std::uniform_real_distribution<float> dis(0.0f, enemySpawnErea[spawnType].radius); // 0からenemySpawnErea[i].radiusの間の一様乱数生成器を作成
-
 		StEnemy* enemy = new StEnemy(enemyType);
+		float xPos;
+		float zPos;
 
-		float xPos = enemySpawnErea[spawnType].position.x;
-		float zPos = enemySpawnErea[spawnType].position.z;
+		bool noObstacleHit = false;
 
-		float rad = DirectX::XMConvertToRadians(rand() % 360);
-		float dist = dis(gen);
+		while (true)
+		{
+			noObstacleHit = false;
 
-		xPos += cosf(rad) * dist;
-		zPos += sinf(rad) * dist;
+			// 乱数生成器の設定
+			std::random_device rd;  // 真の乱数生成器を初期化
+			std::mt19937 gen(rd()); // メルセンヌ・ツイスタ乱数生成器を初期化
+			std::uniform_real_distribution<float> dis(0.0f, enemySpawnErea[spawnType].radius); // 0からenemySpawnErea[i].radiusの間の一様乱数生成器を作成
 
+			xPos = enemySpawnErea[spawnType].position.x;
+			zPos = enemySpawnErea[spawnType].position.z;
+
+			float rad = DirectX::XMConvertToRadians(rand() % 360);
+			float dist = dis(gen);
+
+			xPos += cosf(rad) * dist;
+			zPos += sinf(rad) * dist;
+
+			DirectX::XMFLOAT3 pos = { xPos, 0, zPos };
+
+			// obsと衝突していないか確認
+			int obsCount = ObstacleManager::Instance().GetObstacleCount();
+			for (int i = 0; i < obsCount; i++)
+			{
+				Obstacle* obs = ObstacleManager::Instance().GetObstacle(i);
+
+				if (!obs->isCollision) continue;
+
+				// 衝突処理
+				DirectX::XMFLOAT3 velocityA;
+				if (Collision::StaticRepulsionSphereVsSphere(
+					pos,
+					enemy->GetRadius(),
+					obs->GetPosition(),
+					obs->GetRadius(),
+					velocityA,
+					120
+				))
+				{
+					noObstacleHit = true;
+					break;
+				}
+			}
+
+			// 衝突していなければ抜ける
+			if (!noObstacleHit) break;
+		}
+		
 		enemy->SetPosition({ xPos, 10, zPos });
 
 		// スポーン座標設定

@@ -104,11 +104,6 @@ public:
 	}
 
 
-	IDXGIDevice1* pDXGI = NULL;
-	IDXGIAdapter* pAdapter = NULL;
-	IDXGIFactory* pFactory = NULL;
-	void CreateSwapchain(HWND hwnd, int windowWidth, int windowHeight);
-
 	// ミューテックス取得
 	std::mutex& GetMutex() { return mutex; }
 

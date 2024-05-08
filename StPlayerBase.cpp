@@ -193,10 +193,11 @@ void StPlayerBase::UpdateAttack() {
 					enemy->ApplyDamage(1, 0.0f);
 
 					// ダメージ表示
-					int damage = 1;
-					std::wstring damageString = std::to_wstring(damage);
-					const TCHAR* damageTChar = damageString.c_str();
-					DamageText* damageText = new DamageText({ enemy->GetPosition().x, 1.0f, enemy->GetPosition().z }, damageTChar, { 0.62,1,1,1});
+					//int damage = 1;
+					//std::wstring damageString = std::to_wstring(damage);
+					//const TCHAR* damageTChar = damageString.c_str();
+					//DamageText* damageText = new DamageText({ enemy->GetPosition().x, 1.0f, enemy->GetPosition().z }, damageTChar, { 0.62,1,1,1});
+					DamageText* damageText = new DamageText({ enemy->GetPosition().x, 1.0f, enemy->GetPosition().z }, "1", { 1,0,0,1 });
 					DamageTextManager::Instance().Register(damageText);
 
 #endif

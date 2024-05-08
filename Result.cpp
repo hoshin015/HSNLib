@@ -88,7 +88,7 @@ void Result::Update()
 	if (InputManager::Instance().GetKeyReleased(Keyboard::Enter))
 	{
 		if(resultFinish)
-			SceneManager::Instance().ChangeScene(new SceneSTTitle);
+			SceneManager::Instance().ChangeScene(new SceneSTMainMenu);
 	}
 
 	if (isResult)

@@ -351,10 +351,11 @@ void StPlayer::UpdateDamaged() {
 				// ダメージ表示
 				if (invincibleTimer <= 0.0f)
 				{
-					int damage = 1;
-					std::wstring damageString = std::to_wstring(damage);
-					const TCHAR* damageTChar = damageString.c_str();
-					DamageText* damageText = new DamageText({ GetPosition().x, 1.0f, GetPosition().z }, damageTChar, { 1,0,0,1 });
+					//int damage = 1;
+					//std::wstring damageString = std::to_wstring(damage);
+					//const TCHAR* damageTChar = damageString.c_str();
+					//DamageText* damageText = new DamageText({ GetPosition().x, 1.0f, GetPosition().z }, damageTChar, { 1,0,0,1 });
+					DamageText* damageText = new DamageText({ GetPosition().x, 1.0f, GetPosition().z }, "1", {1,0,0,1});
 					DamageTextManager::Instance().Register(damageText);
 
 					Effect::Instance().Play(EffectType::HitStVsSt, GetPosition(), { 0,0,0 }, 1.0f);
@@ -409,9 +410,10 @@ void StPlayer::UpdateObstacleCollision()
 				if (invincibleTimer <= 0.0f)
 				{
 					// ダメージ表示
-					std::wstring damageString = std::to_wstring(obs->hitDamae);
-					const TCHAR* damageTChar = damageString.c_str();
-					DamageText* damageText = new DamageText({ GetPosition().x, 1.0f, GetPosition().z }, damageTChar, { 1,0,0,1 });
+					//std::wstring damageString = std::to_wstring(obs->hitDamae);
+					//const TCHAR* damageTChar = damageString.c_str();
+					//DamageText* damageText = new DamageText({ GetPosition().x, 1.0f, GetPosition().z }, damageTChar, { 1,0,0,1 });
+					DamageText* damageText = new DamageText({ GetPosition().x, 1.0f, GetPosition().z }, "1", { 1,0,0,1 });
 					DamageTextManager::Instance().Register(damageText);
 
 					Effect::Instance().Play(EffectType::HitStVsSt, GetPosition(), { 0,0,0 }, 1.0f);

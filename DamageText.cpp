@@ -25,7 +25,9 @@ void DamageText::Update()
 // •`‰æˆ—
 void DamageText::Render()
 {
-	DispString::Instance().Draw(text, { drawPosition.x, drawPosition.y }, size, TEXT_ALIGN::MIDDLE, color, false, { 0,0,0,1 }, 2);
+	float fontSize = 40;
+	DamageTextManager::Instance().textSpr->SprTextOut(strText, { drawPosition.x - fontSize*0.5f, drawPosition.y - fontSize*0.5f }, { fontSize, fontSize });
+	//DispString::Instance().Draw(text, { drawPosition.x, drawPosition.y }, size, TEXT_ALIGN::MIDDLE, color, false, { 0,0,0,1 }, 2);
 }
 
 // ”jŠü

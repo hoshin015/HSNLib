@@ -96,6 +96,9 @@ void SceneWave::Initialize()
 	sprWaveBar = std::make_unique<Sprite>(L"Data/Texture/Wave/waveBar.png");
 	sprWaveBarBg = std::make_unique<Sprite>(L"Data/Texture/Wave/waveBarBg.png");
 	sprWave1 = std::make_unique<Sprite>(L"Data/Texture/Wave/Wave1.png");
+	sprWave2 = std::make_unique<Sprite>(L"Data/Texture/Wave/Wave2.png");
+	sprWave3 = std::make_unique<Sprite>(L"Data/Texture/Wave/Wave3.png");
+	sprWave4 = std::make_unique<Sprite>(L"Data/Texture/Wave/Wave4.png");
 }
 
 void SceneWave::Finalize()
@@ -237,7 +240,7 @@ void SceneWave::Render()
 
 	DamageTextManager::Instance().Render();
 
-	DispString::Instance().Draw(L"HO感SHＨIN LiうB", { 800, 60 }, 32, TEXT_ALIGN::MIDDLE, { 0, 0, 0, 1 });
+	//DispString::Instance().Draw(L"HO感SHＨIN LiうB", { 800, 60 }, 32, TEXT_ALIGN::MIDDLE, { 0, 0, 0, 1 });
 
 	// --- デバッグ描画 ---
 	DebugPrimitive::Instance().Render();
@@ -300,15 +303,17 @@ void SceneWave::Render()
 	// -- ui ---
 	gfx.SetBlend(BLEND_STATE::ALPHA);
 
+	float hpBairitu = 0.75;
+
 	if (SpinningTopPlayerManager::Instance().GetPlayerCount() > 0)
 	{
 		int hp = SpinningTopPlayerManager::Instance().GetPlayer(0)->GetHealth();
 		switch (hp)
 		{
-		case 0: life0->Render(25, 25, 256 * 0.666, 256 * 0.666, 1, 1, 1, 1, 0); break;
-		case 1: life1->Render(25, 25, 256 * 0.666, 256 * 0.666, 1, 1, 1, 1, 0); break;
-		case 2: life2->Render(25, 25, 256 * 0.666, 256 * 0.666, 1, 1, 1, 1, 0); break;
-		case 3: life3->Render(25, 25, 256 * 0.666, 256 * 0.666, 1, 1, 1, 1, 0); break;
+		case 0: life0->Render(25, 25, 256 * 0.666 * hpBairitu, 256 * 0.666 * hpBairitu, 1, 1, 1, 1, 0); break;
+		case 1: life1->Render(25, 25, 256 * 0.666 * hpBairitu, 256 * 0.666 * hpBairitu, 1, 1, 1, 1, 0); break;
+		case 2: life2->Render(25, 25, 256 * 0.666 * hpBairitu, 256 * 0.666 * hpBairitu, 1, 1, 1, 1, 0); break;
+		case 3: life3->Render(25, 25, 256 * 0.666 * hpBairitu, 256 * 0.666 * hpBairitu, 1, 1, 1, 1, 0); break;
 		}
 
 		StPlayerBase* player = SpinningTopPlayerManager::Instance().GetPlayer(0);
@@ -316,35 +321,49 @@ void SceneWave::Render()
 		float maxRotSpeed = data->rotateMaxSpeed;
 		float rotSpeed = player->GetRotationSpeed();
 
-		float aspect = rotSpeed / maxRotSpeed;
+		float hAspect = rotSpeed / maxRotSpeed;
 
-		// TODO: ここの0.5をaspectに変えると上手くいくはず
-		//float maskWidth = (512 - 22) * 0.666 * 0.5;
-		float maskWidth = (512 - 22) * 0.666 * aspect;
+		hAspect = 0.5f;
+		float height = (320-26) * (1.0f- hAspect);
 
-		sprRotSpeedBottom->Render(900, 25, 512 * 0.666, 256 * 0.666, 1, 1, 1, 1, 0);
-		sprRotSpeedMiddleMask->Render(900 + 11*0.666, 25, (512 - 22) * 0.666, 256 * 0.666, 1, 1, 1, 1, 0);
-		sprRotSpeedMiddle->Render(900 + 11*0.666, 25, maskWidth, 256 * 0.666, 1, 1, 1, 1, 0, 0, 0, (512-22)*aspect, 256);
-		sprRotSpeedTop->Render(900, 25, 512 * 0.666, 256 * 0.666, 1, 1, 1, 1, 0);
+		DirectX::XMFLOAT2 rotUiPos = { 30, 200 };
+
+		float rotSpeedBairitu = 0.75f;
+
+		sprRotSpeedBottom->Render(rotUiPos.x, rotUiPos.y, 56 * rotSpeedBairitu, 320 * rotSpeedBairitu, 1, 1, 1, 1, 0);
+		sprRotSpeedMiddle->Render(rotUiPos.x, rotUiPos.y + 13, 56 * rotSpeedBairitu, 294 * rotSpeedBairitu, 1, 1, 1, 1, 0);
+		sprRotSpeedMiddleMask->Render(rotUiPos.x, rotUiPos.y + 13, 56 * rotSpeedBairitu, height * rotSpeedBairitu, 1, 1, 1, 1, 0, 0, 0, 56, (320 - 13) * (1.0f - hAspect));
+		sprRotSpeedTop->Render(rotUiPos.x, rotUiPos.y, 56 * rotSpeedBairitu, 320 * rotSpeedBairitu, 1, 1, 1, 1, 0);
 	}
 
 	// ウェーブ表記
 	{
+		float waveTimeBairitu = 0.75f;
+
 		Wave& waveManager = Wave::Instance();
 		float aspect = waveManager.waveLimitTimer / waveManager.waveLimitTime;
 
 		float width = 327 * aspect;
-		float wPos1 = 313 + (327 * (1.0f - aspect));
-		float wPos2 = 963 - (327 * (1.0f - aspect));
+		float wPos1 = (640 - 327 * waveTimeBairitu) + (327 * (1.0f - aspect)* waveTimeBairitu);
+		float wPos2 = (640 + 327 * waveTimeBairitu) - (327 * (1.0f - aspect)* waveTimeBairitu);
 
-		sprWaveBarBg->Render(290, 650, 350, 20, 1, 1, 1, 1, 0);
-		sprWaveBarBg->Render(990, 650, -350, 20, 1, 1, 1, 1, 0);
+		sprWaveBarBg->Render((640 - 350 * waveTimeBairitu), 90, 350 * waveTimeBairitu, 20 * waveTimeBairitu, 1, 1, 1, 1, 0);
+		sprWaveBarBg->Render((640 + 350 * waveTimeBairitu), 90, -350 * waveTimeBairitu, 20 * waveTimeBairitu, 1, 1, 1, 1, 0);
 
 		//sprWaveBar->Render(313, 650, width, 20, 1, 1, 1, 1, 0, 0, 0, width, 20);
-		sprWaveBar->Render(wPos1, 650, width, 20, 1, 1, 1, 1, 0, 0, 0, width, 20);
-		sprWaveBar->Render(wPos2, 650, -width, 20, 1, 1, 1, 1, 0, 0, 0, width, 20);
+		sprWaveBar->Render(wPos1, 90, width * waveTimeBairitu, 20 * waveTimeBairitu, 1, 1, 1, 1, 0, 0, 0, width, 20);
+		sprWaveBar->Render(wPos2, 90, -width * waveTimeBairitu, 20 * waveTimeBairitu, 1, 1, 1, 1, 0, 0, 0, width, 20);
 
-		sprWave1->Render(576, 580, 128, 64, 1, 1, 1, 1, 0);
+		int wave = Wave::Instance().nowWave;
+		switch (wave)
+		{
+		case 1:	sprWave1->Render((640 - 128 * 0.5f * waveTimeBairitu), 20, 128 * waveTimeBairitu, 64 * waveTimeBairitu, 1, 1, 1, 1, 0);	break;
+		case 2:	sprWave2->Render((640 - 128 * 0.5f * waveTimeBairitu), 20, 128 * waveTimeBairitu, 64 * waveTimeBairitu, 1, 1, 1, 1, 0);	break;
+		case 3:	sprWave3->Render((640 - 128 * 0.5f * waveTimeBairitu), 20, 128 * waveTimeBairitu, 64 * waveTimeBairitu, 1, 1, 1, 1, 0);	break;
+		case 4:	sprWave4->Render((640 - 128 * 0.5f * waveTimeBairitu), 20, 128 * waveTimeBairitu, 64 * waveTimeBairitu, 1, 1, 1, 1, 0);	break;
+		default:
+			break;
+		}
 	}
 	
 	

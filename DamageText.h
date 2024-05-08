@@ -2,6 +2,7 @@
 
 #include <DirectXMath.h>
 #include <tchar.h>
+#include <string>
 
 class DamageText
 {
@@ -13,6 +14,12 @@ public:
 		// 文字列の長さ + 1（null 終端文字分）のメモリを動的に確保し、文字列をコピーする
 		text = new TCHAR[_tcslen(str) + 1];
 		_tcscpy_s(const_cast<TCHAR*>(text), _tcslen(str) + 1, str);
+	}
+	DamageText(DirectX::XMFLOAT3 pos, std::string str, DirectX::XMFLOAT4 c = { 1,1,1,1 })
+	{
+		position = pos;
+		color = c;
+		strText = str;
 	}
 	~DamageText()  {}
 
@@ -46,6 +53,7 @@ private:
 	DirectX::XMFLOAT4 color = { 1,1,1,1 };
 	DirectX::XMFLOAT3 position;
 	DirectX::XMFLOAT2 drawPosition = { 0,0 };
+	std::string strText;
 	const TCHAR* text;
 	float size = 32;
 

@@ -81,6 +81,8 @@ void SceneSTMainMenu::Update() {
 
 	if (S3DObject[WAVE]->CircleHitToPoint(player.GetPosition())) {
 		S3DObject[WAVE]->SetColor(selectColor);
+		if (im.GetKeyPressed(Keyboard::Enter))
+			SceneManager::Instance().ChangeScene(new SceneLoading(new SceneWave));
 	}
 
 	if (S3DObject[TUTORIAL]->CircleHitToPoint(player.GetPosition())) {

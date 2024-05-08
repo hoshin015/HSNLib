@@ -54,4 +54,7 @@ private:
 	std::unique_ptr<Sprite> sprWaveBar;
 	std::unique_ptr<Sprite> sprWaveBarBg;
 	std::unique_ptr<Sprite> sprWave1;
+	std::unique_ptr<Sprite> sprWave2;
+	std::unique_ptr<Sprite> sprWave3;
+	std::unique_ptr<Sprite> sprWave4;
 };
