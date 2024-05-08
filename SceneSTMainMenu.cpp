@@ -7,6 +7,7 @@
 #include "Library/Timer.h"
 #include "Library/Input/InputManager.h"
 #include "Library/Framework.h"
+#include "Library/Easing.h"
 
 #include "Video.h"
 #include "StageManager.h"
@@ -25,10 +26,10 @@ enum SPRITENAME {
 
 void SceneSTMainMenu::Initialize() {
 	player.SetPosition({ 14,0,0 });
-	S3DObject.emplace_back(std::make_shared<Sprite3DObject>(L"Data/Texture/Wave.png"));
-	S3DObject.emplace_back(std::make_shared<Sprite3DObject>(L"Data/Texture/Tutorial.png"));
-	S3DObject.emplace_back(std::make_shared<Sprite3DObject>(L"Data/Texture/Back.png"));
-	S3DObject.emplace_back(std::make_shared<Sprite3DObject>(L"Data/Texture/MainManu.png"));
+	S3DObject.emplace_back(std::make_shared<Sprite3DObject>(L"Data/Texture/MainMenu/Wave.png"));
+	S3DObject.emplace_back(std::make_shared<Sprite3DObject>(L"Data/Texture/MainMenu/Tutorial.png"));
+	S3DObject.emplace_back(std::make_shared<Sprite3DObject>(L"Data/Texture/MainMenu/Back.png"));
+	S3DObject.emplace_back(std::make_shared<Sprite3DObject>(L"Data/Texture/MainMenu/MainMenu.png"));
 
 	S3DObject[WAVE]->SetPosition({ -7,.05f,0 });
 	S3DObject[WAVE]->SetScaleInAsp(11);
@@ -40,7 +41,9 @@ void SceneSTMainMenu::Initialize() {
 	S3DObject[MAINMANU]->SetPosition({ 13,.05f,-10.5f });
 	S3DObject[MAINMANU]->SetScaleInAsp(11);
 
-	//sprite.emplace_back(std::make_shared<Sprite>(L"Data"))
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Input/Input.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Input/InputController.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/MainMenu/image0.png"));
 
 	StageManager& stageManager = StageManager::Instance();
 	stageMain = std::make_unique<StageContext>();
@@ -74,7 +77,7 @@ void SceneSTMainMenu::Update() {
 	Camera::Instance().Update();
 	player.Update();
 	DirectX::XMFLOAT4 defaultColor = { 0,0,0,0 };
-	DirectX::XMFLOAT4 selectColor = { -1,-1,0,0 };
+	DirectX::XMFLOAT4 selectColor = { 0,0,-.8f,0 };
 
 	for (auto& obj : S3DObject)
 		obj->SetColor(defaultColor);
@@ -87,14 +90,42 @@ void SceneSTMainMenu::Update() {
 
 	if (S3DObject[TUTORIAL]->CircleHitToPoint(player.GetPosition())) {
 		S3DObject[TUTORIAL]->SetColor(selectColor);
-		if (im.GetKeyPressed(Keyboard::Enter))SceneManager::Instance().ChangeScene(new SceneLoading(new SceneSTTutorial));
+		if (im.GetKeyPressed(Keyboard::Enter) || im.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a))
+			SceneManager::Instance().ChangeScene(new SceneLoading(new SceneSTTutorial));
 	}
 
 	if (S3DObject[BACK]->RectHitToPoint(player.GetPosition())) {
 		S3DObject[BACK]->SetColor(selectColor);
-		if (im.GetKeyPressed(Keyboard::Enter))
+		if (im.GetKeyPressed(Keyboard::Enter) || im.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a))
 			SceneManager::Instance().ChangeScene(new SceneLoading(new SceneSTTitle));
 	}
+
+	if (S3DObject[MAINMANU]->RectHitToPoint(player.GetPosition())) {
+		if (im.GetKeyPress(Keyboard::Enter) || im.GetGamePadButtonPress(GAMEPADBUTTON_STATE::a)) {
+			S3DObject[MAINMANU]->SetColor(selectColor);
+		}
+		if (im.GetKeyPressed(Keyboard::Enter) || im.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a))
+			EasterEggCount++;
+	}
+
+#if 1
+	if (EasterEggCount > 51) {
+		EasterEggCount = 0;
+		EasterEgg = true;
+	}
+
+	if (EasterEgg) {
+		EasterEggTime += Timer::Instance().DeltaTime();
+		if (EasterEggTime < 1)EasterEggPosX = 402.5f * Easing(EasterEggTime, 1, easeQuad, easeOut);
+		else {
+			EasterEggPosX = 402.5f * (1 - Easing(EasterEggTime - 1, 1, easeQuad, easeIn));
+			if (EasterEggPosX == 0) {
+				EasterEgg = false;
+				EasterEggTime = 0;
+			}
+		}
+	}
+#endif
 
 	XMFLOAT3 position = player.GetPosition();
 	if (!isPlayerMove && (position.x != 14 || position.y != 0))
@@ -181,8 +212,21 @@ void SceneSTMainMenu::Render() {
 		mask.Render(0, 0, width, height, 0, 0, 0, 0.8f, 0, 30 * sRatio, { wRatio * -485 ,0 });
 	}
 
+	DirectX::XMFLOAT2 cPos = { 1170 * wRatio,650 * hRatio };
+	DirectX::XMFLOAT2 cSize = { 160 * wRatio,99 * hRatio };
+	sprite[InputManager::Instance().IsGamePadConnected() ? 1 : 0]->Render(
+		cPos.x - cSize.x * .5f, cPos.y - cSize.y * .5f,
+		cSize.x, cSize.y,
+		1, 1, 1, 1, 0);
+
+	sprite[2]->Render(
+		(-402.5f + EasterEggPosX) * wRatio, 0,
+		402.5f * wRatio, 722.5f * hRatio,
+		1, 1, 1, 1, 0
+	);
+
 	// --- デバッグ描画 ---
-	//DrawDebugGUI();
+	DrawDebugGUI();
 }
 
 void SceneSTMainMenu::DrawDebugGUI() {
@@ -233,7 +277,7 @@ void SceneSTMainMenu::DrawDebugGUI() {
 		//static DirectX::XMFLOAT3 defPos = S3DObject[0]->GetPosition();
 		//static DirectX::XMFLOAT3 defAng = S3DObject[0]->GetAngle();
 		//static DirectX::XMFLOAT3 defScl = S3DObject[0]->GetScale();
-
+		//ImGui::ColorEdit4("color", &selectColor.x);
 		int i = 0;
 		for (auto& obj : S3DObject) {
 			ImGui::Text(std::to_string(i).c_str());

@@ -8,7 +8,7 @@ constexpr float kBlackRatio = 0.01f;
 constexpr float kVideoRatio = 0.7f;
 constexpr float kTextRatio = 0.3f;
 
-void VideoUI::Draw(bool drawBG) {
+void VideoUI::Draw(DirectX::XMFLOAT4 color, bool drawBG) {
 	Graphics& gfx = Graphics::Instance();
 	float wWidth = Framework::Instance().windowWidth;
 	float wHeight = Framework::Instance().windowHeight;
@@ -30,7 +30,7 @@ void VideoUI::Draw(bool drawBG) {
 	_rect.Render(
 		priVideoPos.x - priVideoSize.x * .5f, priVideoPos.y - priVideoSize.y * .5f,
 		priVideoSize.x, priVideoSize.y,
-		.6f, .6f, .6f, 1,
+		color.x, color.y, color.z, color.w,
 		0
 	);
 
@@ -40,7 +40,7 @@ void VideoUI::Draw(bool drawBG) {
 	_rect.Render(
 		priTextPos.x - priTextSize.x * .5f, priTextPos.y - priTextSize.y * .5f,
 		priTextSize.x, priTextSize.y,
-		.6f, .6f, .6f, 1,
+		color.x, color.y, color.z, color.w,
 		0
 	);
 

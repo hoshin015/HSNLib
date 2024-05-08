@@ -17,7 +17,11 @@
 void SceneSTTitle::Initialize() {
 	VideoManager::Instance().LoadFile(0, nullptr);
 	VideoManager::Instance().Play(0, true);
-	titleSprite = std::make_unique<Sprite>(L"Data/Texture/tyu-.png");
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Title/ÉçÉSOÇ»Çµ.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Title/O1.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Title/O2.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Title/pushenter.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Title/ESC.png"));
 
 }
 
@@ -29,7 +33,7 @@ void SceneSTTitle::Update() {
 	InputManager& im = InputManager::Instance();
 	VideoManager::Instance().Update();
 
-	if (im.GetKeyPressed(Keyboard::Enter)) {
+	if (im.GetKeyPressed(Keyboard::Enter) || im.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a)) {
 		SceneManager::Instance().ChangeScene(new SceneLoading(new SceneSTMainMenu));
 	}
 }
@@ -40,11 +44,56 @@ void SceneSTTitle::Render() {
 	float wRatio = width / 1280;
 	float hRatio = height / 720;
 	float sRatio = wRatio * hRatio;
+	rotate += 720 * Timer::Instance().DeltaTime();
+	if (rotate > 360)rotate -= 360;
 
 	VideoManager::Instance().Draw(0, {0,0}, {width,height}, _videoColor);
-	DispString::Instance().Draw(L"Å`Press EnterÅ`", { width * .5f, height * .8f }, 25 * sRatio, TEXT_ALIGN::MIDDLE, { 0, 0, 0, 1 }, true, { 1,1,1,.5f });
-	DispString::Instance().Draw(L"ESC Quit", { width * .01f, height * .99f }, 25 * sRatio, TEXT_ALIGN::LOWER_LEFT, { 0, 0, 0, 1 }, true, { 1,1,1,.5f });
-	titleSprite->Render(0, 0, wRatio * 300, hRatio * 200, 1, 1, 1, 1, 0);
+	sprite[0]->Render(
+		0, 0,
+		sprite[0]->GetTexSize().x * .5f * wRatio, sprite[0]->GetTexSize().y * .5f * hRatio,
+		1, 1, 1, 1,
+		0
+	);
+	{
+		DirectX::XMFLOAT2 cPos = { 230 * wRatio ,75 * hRatio };
+		DirectX::XMFLOAT2 cSize = { 43.5f * wRatio ,43.5f * hRatio };
+		sprite[1]->Render(
+			cPos.x - cSize.x * .5f, cPos.y - cSize.y * .5f,
+			cSize.x, cSize.y,
+			1, 1, 1, 1,
+			rotate
+		);
+	}
+	{
+		DirectX::XMFLOAT2 cPos = { 190 * wRatio ,83 * hRatio };
+		DirectX::XMFLOAT2 cSize = { 52.5f * wRatio ,52.5f * hRatio };
+		sprite[2]->Render(
+			cPos.x - cSize.x * .5f, cPos.y - cSize.y * .5f,
+			cSize.x, cSize.y,
+			1, 1, 1, 1,
+			rotate * 0.8f
+		);
+	}
+	{
+		DirectX::XMFLOAT2 cPos = { 640 * wRatio ,573 * hRatio };
+		DirectX::XMFLOAT2 cSize = { 562 * wRatio ,54 * hRatio };
+		sprite[3]->Render(
+			cPos.x - cSize.x * .5f, cPos.y - cSize.y * .5f,
+			cSize.x, cSize.y,
+			1, 1, 1, 1,
+			0
+		);
+	}
+	{
+		DirectX::XMFLOAT2 cPos = { 122 * wRatio ,693 * hRatio };
+		DirectX::XMFLOAT2 cSize = { 222 * wRatio ,37 * hRatio };
+		sprite[4]->Render(
+			cPos.x - cSize.x * .5f, cPos.y - cSize.y * .5f,
+			cSize.x, cSize.y,
+			1, 1, 1, 1,
+			0
+		);
+	}
 	fadeout.Render(0, 0, width, height, 0, 0, 0, fadeoutA, 0);
 
 	DrawDebugGUI();
@@ -137,6 +186,14 @@ void SceneSTTitle::DrawDebugGUI() {
 		static float timeSec = 0;
 		ImGui::DragFloat("SeekTime", &timeSec);
 		if (ImGui::Button("Seek"))VideoManager::Instance().SeekPosition(0, timeSec);
+		ImGui::End();
 	}
-	ImGui::End();
+
+	if (ImGui::Begin("image")) {
+		ImGui::DragFloat2("Pos1", &dPos.x);
+		ImGui::DragFloat2("Size1", &dSize.x);
+		ImGui::DragFloat2("Pos2", &dPos2.x);
+		ImGui::DragFloat2("Size2", &dSize2.x);
+		ImGui::End();
+	}
 }

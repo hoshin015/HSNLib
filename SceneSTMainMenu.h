@@ -112,5 +112,9 @@ private:
 	StMenuPlayer player;
 	MaskPrimitive mask;
 
-	bool isPlayerMove = false;
+	inline static bool isPlayerMove = false;
+	int EasterEggCount = 0;
+	float EasterEggTime = 0;
+	float EasterEggPosX = 0;
+	bool EasterEgg = false;
 };

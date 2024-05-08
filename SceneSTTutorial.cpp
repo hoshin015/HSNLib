@@ -21,18 +21,22 @@
 #include "DamageTextManager.h"
 
 #include <random>
+#include <string>
 
 void SceneSTTutorial::Initialize() {
-	VideoManager::Instance().LoadFile(PARRY, nullptr);
-	VideoManager::Instance().LoadFile(ATTACK, nullptr);
-	VideoManager::Instance().LoadFile(GAUGEATTACK, nullptr);
-	VideoManager::Instance().LoadFile(GETOPTION, nullptr);
-	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Enter.png"));
-	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Parry.png"));
-	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Enter.png"));
-	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Enter.png"));
-	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Back.png"));
-	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Back.png"));
+	VideoManager::Instance().LoadFile(PARRY, L"Data/Video/Parry.mp4");
+	VideoManager::Instance().LoadFile(ATTACK, L"Data/Video/Attack.mp4");
+	VideoManager::Instance().LoadFile(GAUGEATTACK, L"Data/Video/GaugeAttack.mp4");
+	VideoManager::Instance().LoadFile(GETOPTION, L"Data/Video/Option.mp4");
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/Enter.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/Parry.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/GaugeParry.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/BodyBlow.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/Tutorial.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/MainMenu/Back.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/BackToTutorial.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Input/Input.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Input/InputController.png"));
 	videoUI.SetVideo(&VideoManager::Instance().GetVideo(PARRY));
 	videoUI.SetTextSprite(sprite[PARRY].get());
 	VideoManager::Instance().Play(PARRY,true);
@@ -89,6 +93,8 @@ void SceneSTTutorial::Initialize() {
 	Camera::Instance().SetAngle({ DirectX::XMConvertToRadians(60), DirectX::XMConvertToRadians(180), 0 });
 
 	Camera::Instance().cameraType = Camera::CAMERA::TargetStPlayer;
+
+	pause = std::make_unique<Pause>();
 }
 
 void SceneSTTutorial::Finalize() {
@@ -108,10 +114,17 @@ void SceneSTTutorial::Finalize() {
 }
 
 void SceneSTTutorial::Update() {
-	UpdateState();
-	UpdateTutorial();
-	Camera::Instance().Update();
 	VideoManager::Instance().Update();
+	pause->Update();
+	if (pause->isPause) {
+		videoUI.GetVideo()->Pause();
+		return;
+	}
+	else {
+		videoUI.GetVideo()->Play(true);
+	}
+
+	Camera::Instance().Update();
 
 	if(!stateMap["StopUpdate"]) {
 		// カメラコントローラー更新処理
@@ -126,10 +139,12 @@ void SceneSTTutorial::Update() {
 
 		DamageTextManager::Instance().Update();
 	}
+	UpdateState();
+	UpdateTutorial();
 }
 
 void SceneSTTutorial::UpdateState() {
-	constexpr float kHalfTime = 1.5f;
+	constexpr float kHalfTime = .9f;
 	InputManager& im = InputManager::Instance();
 	float width = Framework::Instance().windowWidth;
 	float height = Framework::Instance().windowHeight;
@@ -165,24 +180,23 @@ void SceneSTTutorial::UpdateState() {
 	if (stateMap["StopUpdate"]) {
 		videoUI.SetPosition({ width * .5f,height * .5f });
 		videoUI.SetSize({ 640 * wRatio,400 * hRatio });
-		if (im.GetKeyPressed(Keyboard::Enter)) {
+		//videoUI.SetSize(sSize);
+		if (im.GetKeyPressed(Keyboard::Enter) || im.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a)) {
 			stateMap["StopUpdate"] = false;
 			stateMap["UpdateTarm"] = true;
+			stateMap["DrawText"] = true;
 			SpinningTopPlayerManager::Instance().GetPlayer(0)->SetPosition({ 0,0,0 });
 		}
 	}
 	else {
-		videoUI.SetPosition({ width * .87f,height * .15f });
-		videoUI.SetSize({ 256 * wRatio,160 * hRatio });
+		videoUI.SetPosition({ 1060 * wRatio,144 * hRatio });
+		videoUI.SetSize({ 425 * wRatio,281 * hRatio });
 	}
 
 	if (tarm == 0 && !stateMap["TutorialClear"]) {
 		tarm = -1;
-		if (tState == SPSTART) {
-			stateMap["TutorialEnd"] = true;
-			return;
-		}
 		stateMap["TutorialClear"] = true;
+		stateMap["DrawText"] = false;
 	}
 
 	if (stateMap["TutorialClear"]) {
@@ -192,64 +206,118 @@ void SceneSTTutorial::UpdateState() {
 		sPos.x = -sSize.x * .5f + ease;
 		if (time > kHalfTime * 2) {
 			stateMap["TutorialClear"] = false;
-			stateMap["StopUpdate"] = true;
 			tState++;
+			if (tState == SPSTART) {
+				stateMap["TutorialEnd"] = true;
+			}
+			else {
+				stateMap["StopUpdate"] = true;
 
-			videoUI.SetVideo(&VideoManager::Instance().GetVideo(tState));
-			videoUI.SetTextSprite(sprite[tState].get());
-			VideoManager::Instance().Play(tState, true);
-
+				videoUI.SetVideo(&VideoManager::Instance().GetVideo(tState));
+				videoUI.SetTextSprite(sprite[tState].get());
+				VideoManager::Instance().Play(tState, true);
+				VideoManager::Instance().Stop(tState - 1);
+			}
 			time = 0;
+		}
+	}
+
+	if (SpinningTopPlayerManager::Instance().GetPlayer(0)->isDead) {
+		stateMap["DeadPlayer"] = true;
+	}
+
+	if (stateMap["DeadPlayer"]) {
+		spawnTime += Timer::Instance().DeltaTime();
+		if (spawnTime > 2) {
+			SpinningTopPlayerManager::Instance().Clear();
+			StPlayer* player = new StPlayer();
+			player->SetPosition({ 0,0,0 });
+			SpinningTopPlayerManager::Instance().Register(player);
+			stateMap["DeadPlayer"] = false;
+			spawnTime = 0;
 		}
 	}
 
 }
 
 void SceneSTTutorial::UpdateTutorial() {
+	auto enemySpawn = [](float a, float b) {
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_real_distribution<float> dis(a, b);
+
+		StEnemy* enemy = new StEnemy(0);
+
+		float xPos = SpinningTopPlayerManager::Instance().GetPlayer(0)->GetPosition().x;
+		float zPos = SpinningTopPlayerManager::Instance().GetPlayer(0)->GetPosition().x;
+
+		float rad = DirectX::XMConvertToRadians(rand() % 360);
+		float dist = dis(gen);
+
+		xPos += cosf(rad) * dist;
+		zPos += sinf(rad) * dist;
+
+		enemy->SetPosition({ xPos, 10, zPos });
+		SpinningTopEnemyManager::Instance().Register(enemy);
+
+	};
+
 	switch (tState) {
 	case SceneSTTutorial::PARRY:
-		if (stateMap["UpdateTarm"])tarm = 5;
+		if (stateMap["UpdateTarm"]) {
+			tarm = 5;
+			text = 5;
+		}
 		if (StPlayerBase::GetInputMap<bool>("Attack"))
 			tarm--;
 		break;
 
 	case SceneSTTutorial::ATTACK:
 		if (stateMap["UpdateTarm"]) {
-			for (size_t i = 0; i < 4; i++) {
-				std::random_device rd;  // 真の乱数生成器を初期化
-				std::mt19937 gen(rd()); // メルセンヌ・ツイスタ乱数生成器を初期化
-				std::uniform_real_distribution<float> dis(5, 10); // 0からenemySpawnErea[i].radiusの間の一様乱数生成器を作成
-
-				StEnemy* enemy = new StEnemy(0);
-
-				float xPos = SpinningTopPlayerManager::Instance().GetPlayer(0)->GetPosition().x;
-				float zPos = SpinningTopPlayerManager::Instance().GetPlayer(0)->GetPosition().x;
-
-				float rad = DirectX::XMConvertToRadians(rand() % 360);
-				float dist = dis(gen);
-
-				xPos += cosf(rad) * dist;
-				zPos += sinf(rad) * dist;
-
-				enemy->SetPosition({ xPos, 10, zPos });
-				SpinningTopEnemyManager::Instance().Register(enemy);
+			for (size_t i = 0; i < 4; i++){
+				enemySpawn(4, 10);
 				tarm = SpinningTopEnemyManager::Instance().GetEnemyCount();
+				text = 4;
 			}
 		}
 		if (tarm > 0)
 			tarm = SpinningTopEnemyManager::Instance().GetEnemyCount();
+
+		StPlayerBase::SetRotateSpeed(1);
 		break;
 
 	case SceneSTTutorial::GAUGEATTACK:
-		if (stateMap["UpdateTarm"])tarm = 1;
+		if (stateMap["UpdateTarm"]) {
+			enemySpawn(10, 15);
+			tarm = SpinningTopEnemyManager::Instance().GetEnemyCount();
+			auto* player = SpinningTopPlayerManager::Instance().GetPlayer(0);
+			player->SetRotateSpeed(player->GetData()->rotateMaxSpeed);
+			text = 1;
+		}
+		if (tarm > 0)
+			tarm = SpinningTopEnemyManager::Instance().GetEnemyCount();
+
 		break;
 
 	case SceneSTTutorial::GETOPTION:
-		if (stateMap["UpdateTarm"])tarm = 5;
+		if (stateMap["UpdateTarm"]) {
+			tarm = 5;
+			text = 5;
+		}
+		if (SpinningTopEnemyManager::Instance().GetEnemyCount() == 0) {
+			enemySpawn(4, 5);
+			tarm--;
+		}
 		break;
 
 	default:
-		break;
+		if (SpinningTopEnemyManager::Instance().GetEnemyCount() == 0) {
+			for (size_t i = 0; i < 4; i++) {
+				enemySpawn(5, 10);
+				tarm = SpinningTopEnemyManager::Instance().GetEnemyCount();
+				text = 4;
+			}
+		}
 	}
 	stateMap["UpdateTarm"] = false;
 }
@@ -291,7 +359,7 @@ void SceneSTTutorial::Render() {
 
 		StageManager::Instance().Render();
 
-		SpinningTopPlayerManager::Instance().Render();
+		if (!stateMap["DeadPlayer"])SpinningTopPlayerManager::Instance().Render();
 
 		SpinningTopEnemyManager::Instance().Render(true);
 
@@ -337,7 +405,7 @@ void SceneSTTutorial::Render() {
 
 	ObstacleManager::Instance().Render();
 
-	SpinningTopPlayerManager::Instance().Render();
+	if (!stateMap["DeadPlayer"])SpinningTopPlayerManager::Instance().Render();
 
 
 	//gfx.SetDepthStencil(DEPTHSTENCIL_STATE::ZT_OFF_ZW_OFF);
@@ -350,8 +418,6 @@ void SceneSTTutorial::Render() {
 	// --- デバッグ描画 ---
 	//DebugPrimitive::Instance().Render();
 	//LineRenderer::Instance().Render();
-
-
 
 	gfx.bloomBuffer->DeActivate();
 
@@ -405,10 +471,24 @@ void SceneSTTutorial::Render() {
 	gfx.bitBlockTransfer->blit(gfx.bloomBuffer->shaderResourceViews[0].GetAddressOf(), 0, 1);
 #endif
 
-	if (stateMap["DrawVideo"])videoUI.Draw(stateMap["StopUpdate"]);
+	float width = Framework::Instance().windowWidth;
+	float height = Framework::Instance().windowHeight;
+	float wRatio = width / 1280;
+	float hRatio = height / 720;
+	float sRatio = wRatio * hRatio;
+
+	if (stateMap["DrawVideo"]) {
+		DirectX::XMFLOAT2 cPos = { 1170 * wRatio,650 * hRatio };
+		DirectX::XMFLOAT2 cSize = { 160 * wRatio,99 * hRatio };
+		sprite[(InputManager::Instance().IsGamePadConnected() ? CONTROLLER : KEYBORD) - 1]->Render(
+			cPos.x - cSize.x * .5f, cPos.y - cSize.y * .5f,
+			cSize.x, cSize.y,
+			1, 1, 1, 1, 0);
+		videoUI.Draw({ 0.25f,0.640625f,0.875f,1 }, stateMap["StopUpdate"]);
+	}
 	if (stateMap["TutorialStart"]) {
 		rect.Render(0, 0,
-			Framework::Instance().windowWidth, Framework::Instance().windowHeight,
+			width, height,
 			0, 0, 0, 0.5f, 0);
 
 		sprite[START - 1]->Render(
@@ -425,7 +505,20 @@ void SceneSTTutorial::Render() {
 			1, 1, 1, 1, 0
 		);
 	}
-
+	if (stateMap["DrawText"]) {
+		std::wstring str = std::to_wstring(text - tarm) + L"/" + std::to_wstring(text);
+		DispString::Instance().Draw(str.c_str(), { width * .5f ,height }, 32, TEXT_ALIGN::LOWER_MIDDLE, { 0,0,0,1 });
+	}
+	if (stateMap["TutorialEnd"]) {
+		DirectX::XMFLOAT2 cPos = { 640 * wRatio,535 * hRatio };
+		DirectX::XMFLOAT2 cSize = { 488 * wRatio,91.2f * hRatio };
+		sprite[BACKTOTUTORIAL - 1]->Render(
+			cPos.x - cSize.x * .5f, cPos.y - cSize.y * .5f,
+			cSize.x, cSize.y,
+			1, 1, 1, 1, 0
+		);
+	}
+	pause->Render();
 	// --- デバッグ描画 ---
 	DrawDebugGUI();
 }
@@ -453,12 +546,29 @@ void SceneSTTutorial::DrawDebugGUI() {
 		};
 
 		ImGui::ListBox("EasingFunc", &Efunc, Estr, 11);
-		ImGui::End();
 
 		ImGui::Text("Tarm:%d", tarm);
 		if (ImGui::Button("tarmClear")) {
 			tarm = 0;
 		}
-	}
 
+		if (tState == ATTACK) {
+			if (ImGui::Button("EnemyCrear")) {
+				SpinningTopEnemyManager::Instance().Clear();
+			}
+		}
+
+		ImGui::DragFloat2("size", &dSize.x);
+		ImGui::DragFloat2("pos", &dPos.x);
+		XMFLOAT3 playerPos;
+		try {
+			playerPos = SpinningTopPlayerManager::Instance().GetPlayer(0)->GetPosition();
+
+		}
+		catch (const std::out_of_range&) {
+			playerPos = {};
+		}
+		ImGui::DragFloat3("playerPos", &playerPos.x);
+		ImGui::End();
+	}
 }

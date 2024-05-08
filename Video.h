@@ -43,10 +43,12 @@ public:
 	const float& GetSourceFrameRate() { return _framerate; }
 	const LONGLONG& GetTimeStamp() { return _timeStamp; }
 	const float GetTimeStampSec() { return _timeStamp * 0.0000001f; }
+
 private:
 	void LoadAudio();
 
 	void InitializeVideo(ID3D11Device* device);
+	static void CreateCommonBuffer(ID3D11Device* device);
 public:
 
 private:
@@ -55,32 +57,28 @@ private:
 
 	ComPtr<IMFSourceReader> _sourceReader;
 
-	//AudioŠÖŒW
+	//AudioŠÖŒW(g‚Á‚Ä‚È‚¢)
 	inline static ComPtr<IXAudio2> _xaudio2;
 	inline static IXAudio2MasteringVoice* _masteringVoice;
-
 	ComPtr<IMFMediaType> _audioType;
 	//CComHeapPtr<WAVEFORMATEX> _waveFormat;
 	std::vector<BYTE> _audioData;
 
 	//VideoŠÖŒW
-	ComPtr<IMFMediaType> _videoTypeNV12;
-	ComPtr<IMFMediaType> _videoTypeARGB;
-	ComPtr<IMFTransform> _transform;
+	//‹¤’Ê•”•ª
+	inline static ComPtr<ID3D11Buffer> _vertexBuffer;
+	inline static ComPtr<ID3D11VertexShader> _vertexShader;
+	inline static ComPtr<ID3D11InputLayout> _inputLayout;
+	inline static ComPtr<ID3D11PixelShader> _pixelShader;
 
+	ComPtr<IMFTransform> _transform;
 	ComPtr<ID3D11Texture2D> _texture;
 	ComPtr<ID3D11ShaderResourceView> _textureView;
-
-	ComPtr<ID3D11Buffer> _vertexBuffer;
-	ComPtr<ID3D11VertexShader> _vertexShader;
-	ComPtr<ID3D11InputLayout> _inputLayout;
-	ComPtr<ID3D11PixelShader> _pixelShader;
-
-	int _movePos = -1;
-
 	DirectX::XMFLOAT2 _videoSize;
-	LONGLONG _timeStamp;
+	int _moveUVPos = -1; //YUV‚ÌY‚©‚çUV‚Ü‚Å‚Ì—v‘f‚Ì‹——£‚ğ•Û‘¶(“®‰æ‚Ì•‚ğ‚©‚¯‚é)
 	float _framerate;
+
+	LONGLONG _timeStamp;
 
 	float _pauseTime = 0;
 	bool _isPlay = false;
