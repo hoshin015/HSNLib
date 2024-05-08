@@ -25,10 +25,10 @@ enum SPRITENAME {
 
 void SceneSTMainMenu::Initialize() {
 	player.SetPosition({ 14,0,0 });
-	S3DObject.emplace_back(std::make_shared<Sprite3DObject>(L"Data/Texture/Wave.png"));
-	S3DObject.emplace_back(std::make_shared<Sprite3DObject>(L"Data/Texture/Tutorial.png"));
-	S3DObject.emplace_back(std::make_shared<Sprite3DObject>(L"Data/Texture/Back.png"));
-	S3DObject.emplace_back(std::make_shared<Sprite3DObject>(L"Data/Texture/MainMenu.png"));
+	S3DObject.emplace_back(std::make_shared<Sprite3DObject>(L"Data/Texture/MainMenu/Wave.png"));
+	S3DObject.emplace_back(std::make_shared<Sprite3DObject>(L"Data/Texture/MainMenu/Tutorial.png"));
+	S3DObject.emplace_back(std::make_shared<Sprite3DObject>(L"Data/Texture/MainMenu/Back.png"));
+	S3DObject.emplace_back(std::make_shared<Sprite3DObject>(L"Data/Texture/MainMenu/MainMenu.png"));
 
 	S3DObject[WAVE]->SetPosition({ -7,.05f,0 });
 	S3DObject[WAVE]->SetScaleInAsp(11);
@@ -40,8 +40,8 @@ void SceneSTMainMenu::Initialize() {
 	S3DObject[MAINMANU]->SetPosition({ 13,.05f,-10.5f });
 	S3DObject[MAINMANU]->SetScaleInAsp(11);
 
-	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/決定移動.png"));
-	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/決定移動コントローラー.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Input/Input.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Input/InputController.png"));
 
 	StageManager& stageManager = StageManager::Instance();
 	stageMain = std::make_unique<StageContext>();

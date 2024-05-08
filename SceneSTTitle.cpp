@@ -17,11 +17,11 @@
 void SceneSTTitle::Initialize() {
 	VideoManager::Instance().LoadFile(0, nullptr);
 	VideoManager::Instance().Play(0, true);
-	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/ÉçÉSOÇ»Çµ.png"));
-	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/O1.png"));
-	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/O2.png"));
-	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/pushenter.png"));
-	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/ESC.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Title/ÉçÉSOÇ»Çµ.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Title/O1.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Title/O2.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Title/pushenter.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Title/ESC.png"));
 
 }
 

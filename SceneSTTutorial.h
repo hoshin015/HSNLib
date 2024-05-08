@@ -8,6 +8,7 @@
 #include "StageContext.h"
 #include "StMenuPlayer.h"
 #include "VideoUI.h"
+#include "Pause.h"
 
 #include <memory>
 #include <map>
@@ -52,6 +53,7 @@ private:
 
 	std::unique_ptr<SkyMap> skyMap;
 	std::unique_ptr<StageContext> stageMain;
+	std::unique_ptr<Pause> pause;
 	float gaussianPower = 16;
 
 	std::vector<std::unique_ptr<Sprite>> sprite;
@@ -61,6 +63,7 @@ private:
 	DirectX::XMFLOAT2 dSize = {};
 	
 	float time = 0;
+	float spawnTime = 0;
 	float ease = 0;
 	int Efunc = 0;
 	int tarm = -1;

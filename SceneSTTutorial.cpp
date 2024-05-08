@@ -28,15 +28,15 @@ void SceneSTTutorial::Initialize() {
 	VideoManager::Instance().LoadFile(ATTACK, L"Data/Video/Attack.mp4");
 	VideoManager::Instance().LoadFile(GAUGEATTACK, L"Data/Video/GaugeAttack.mp4");
 	VideoManager::Instance().LoadFile(GETOPTION, L"Data/Video/Option.mp4");
-	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Enter.png"));
-	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Parry.png"));
-	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/GaugeParry.png"));
-	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/BodyBlow.png"));
-	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/チュートリアル文字.png"));
-	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Back.png"));
-	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/BackToTutorial.png"));
-	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/決定移動.png"));
-	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/決定移動コントローラー.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/Enter.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/Parry.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/GaugeParry.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/BodyBlow.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/Tutorial.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/MainMenu/Back.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/BackToTutorial.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Input/Input.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Input/InputController.png"));
 	videoUI.SetVideo(&VideoManager::Instance().GetVideo(PARRY));
 	videoUI.SetTextSprite(sprite[PARRY].get());
 	VideoManager::Instance().Play(PARRY,true);
@@ -93,6 +93,8 @@ void SceneSTTutorial::Initialize() {
 	Camera::Instance().SetAngle({ DirectX::XMConvertToRadians(60), DirectX::XMConvertToRadians(180), 0 });
 
 	Camera::Instance().cameraType = Camera::CAMERA::TargetStPlayer;
+
+	pause = std::make_unique<Pause>();
 }
 
 void SceneSTTutorial::Finalize() {
@@ -112,8 +114,17 @@ void SceneSTTutorial::Finalize() {
 }
 
 void SceneSTTutorial::Update() {
-	Camera::Instance().Update();
 	VideoManager::Instance().Update();
+	pause->Update();
+	if (pause->isPause) {
+		videoUI.GetVideo()->Pause();
+		return;
+	}
+	else {
+		videoUI.GetVideo()->Play(true);
+	}
+
+	Camera::Instance().Update();
 
 	if(!stateMap["StopUpdate"]) {
 		// カメラコントローラー更新処理
@@ -212,11 +223,21 @@ void SceneSTTutorial::UpdateState() {
 	}
 
 	if (SpinningTopPlayerManager::Instance().GetPlayer(0)->isDead) {
-		SpinningTopPlayerManager::Instance().Clear();
-		StPlayer* player = new StPlayer();
-		player->SetPosition({ 0,0,0 });
-		SpinningTopPlayerManager::Instance().Register(player);
+		stateMap["DeadPlayer"] = true;
 	}
+
+	if (stateMap["DeadPlayer"]) {
+		spawnTime += Timer::Instance().DeltaTime();
+		if (spawnTime > 2) {
+			SpinningTopPlayerManager::Instance().Clear();
+			StPlayer* player = new StPlayer();
+			player->SetPosition({ 0,0,0 });
+			SpinningTopPlayerManager::Instance().Register(player);
+			stateMap["DeadPlayer"] = false;
+			spawnTime = 0;
+		}
+	}
+
 }
 
 void SceneSTTutorial::UpdateTutorial() {
@@ -264,7 +285,7 @@ void SceneSTTutorial::UpdateTutorial() {
 		if (stateMap["UpdateTarm"]) {
 			std::random_device rd;
 			std::mt19937 gen(rd());
-			std::uniform_real_distribution<float> dis(5, 10);
+			std::uniform_real_distribution<float> dis(10, 15);
 
 			StEnemy* enemy = new StEnemy(0);
 
@@ -359,7 +380,7 @@ void SceneSTTutorial::Render() {
 
 		StageManager::Instance().Render();
 
-		SpinningTopPlayerManager::Instance().Render();
+		if (!stateMap["DeadPlayer"])SpinningTopPlayerManager::Instance().Render();
 
 		SpinningTopEnemyManager::Instance().Render(true);
 
@@ -405,7 +426,7 @@ void SceneSTTutorial::Render() {
 
 	ObstacleManager::Instance().Render();
 
-	SpinningTopPlayerManager::Instance().Render();
+	if (!stateMap["DeadPlayer"])SpinningTopPlayerManager::Instance().Render();
 
 
 	//gfx.SetDepthStencil(DEPTHSTENCIL_STATE::ZT_OFF_ZW_OFF);
@@ -418,8 +439,6 @@ void SceneSTTutorial::Render() {
 	// --- デバッグ描画 ---
 	//DebugPrimitive::Instance().Render();
 	//LineRenderer::Instance().Render();
-
-
 
 	gfx.bloomBuffer->DeActivate();
 
@@ -520,7 +539,7 @@ void SceneSTTutorial::Render() {
 			1, 1, 1, 1, 0
 		);
 	}
-
+	pause->Render();
 	// --- デバッグ描画 ---
 	//DrawDebugGUI();
 }

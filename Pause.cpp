@@ -68,7 +68,27 @@ Pause::Pause()
 void Pause::Update()
 {
 	InputManager& input = InputManager::Instance();
-	if (input.GetKeyPressed(DirectX::Keyboard::F1))
+	bool up, down;
+	up = down = false;
+	XMVECTOR LSVec = XMVectorSet(
+		input.GetThumSticksLeftX()
+		- input.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::dpadLeft) + input.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::dpadRight),
+
+		input.GetThumSticksLeftY()
+		+ input.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::dpadUp) - input.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::dpadDown),
+		0, 0);
+
+	XMVECTOR upVec = XMVector2Normalize(XMVectorSet(1, 1, 0, 0));
+	float dot = XMVectorGetX(XMVector2Dot(LSVec, upVec));
+	float deadZone = 0.5f;
+
+	static bool before = false;
+	bool state = false;
+	if (XMVectorGetX(XMVector2Length(LSVec)) < deadZone)state = true;
+	(dot > 0 ? up : down) = (before ^ state) && before;
+	before = state;
+
+	if (input.GetKeyPressed(DirectX::Keyboard::Space) || input.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::start))
 	{
 		if (isPause)
 		{
@@ -116,17 +136,17 @@ void Pause::Update()
 
 	if (isPause)
 	{
-		if (input.GetKeyPressed(DirectX::Keyboard::W))
+		if (input.GetKeyPressed(DirectX::Keyboard::W) || up)
 		{
 			selectNum--;
 		}
-		if (input.GetKeyPressed(DirectX::Keyboard::S))
+		if (input.GetKeyPressed(DirectX::Keyboard::S) || down)
 		{
 			selectNum++;
 		}
 		selectNum = (selectNum + static_cast<int>(selectMenu::END)) % static_cast<int>(selectMenu::END);
 
-		if (input.GetKeyReleased(DirectX::Keyboard::Enter))
+		if (input.GetKeyReleased(DirectX::Keyboard::Enter) || input.GetGamePadButtonReleased(GAMEPADBUTTON_STATE::a))
 		{
 			switch (selectNum)
 			{
@@ -145,7 +165,10 @@ void Pause::Update()
 			}
 			case static_cast<int>(selectMenu::RETRY):
 			{
-				
+				if (dynamic_cast<SceneWave*>(SceneManager::Instance().GetCurrentScene()))
+					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneWave));
+				if (dynamic_cast<SceneSTTutorial*>(SceneManager::Instance().GetCurrentScene()))
+					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneSTTutorial));
 				break;
 			}
 			case static_cast<int>(selectMenu::GIVEUP):
