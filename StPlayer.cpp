@@ -17,6 +17,8 @@
 #include "Library/Graphics/Graphics.h"
 #include "DamageTextManager.h"
 #include "ObsParts.h"
+#include "Wave.h"
+#include <DirectXMath.h>
 
 using namespace DirectX;
 
@@ -52,6 +54,16 @@ void StPlayer::Update() {
 	if (isDead) return;
 
 	Input();
+
+	// 全ウェーブ終了なら入力を打ち消す
+	if (Wave::Instance().state == 3)
+	{
+		DirectX::XMFLOAT2 zero = { 0,0 };
+		inputMap["Move"] = zero;
+		debugValue["Move"] = zero;
+		inputMap["SubAttack"] = false;
+		inputMap["Attack"] = false;
+	}
 
 	Camera::Instance().SetTarget(position);
 
@@ -341,8 +353,16 @@ void StPlayer::UpdateDamaged() {
 			if (enemy->isDown)
 			{
 				enemy->createParts = true;
+				
+				int dmg = 300;
+
+				totalHitScore += dmg;
+
 				// 敵がダウン中なら敵を破壊
-				enemy->ApplyDamage(9999, 0);
+				enemy->ApplyDamage(dmg, 0);
+
+				DamageText* damageText = new DamageText({ enemy->GetPosition().x, 1.0f, enemy->GetPosition().z }, std::to_string(dmg), {1,0,0,1});
+				DamageTextManager::Instance().Register(damageText);
 
 				Effect::Instance().Play(EffectType::HitStDownEnemy, GetPosition(), { 0,0,0 }, 1.0f);
 			}

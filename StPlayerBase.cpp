@@ -6,6 +6,7 @@
 #include "SpinningTopPlayerManager.h"
 #include "DamageTextManager.h"
 #include "Library/Easing.h"
+#include "Wave.h"
 using namespace DirectX;
 
 //TODO::一番大きい判定の中にいるEnemyを取得する もっといい方法あるかもしれない
@@ -190,14 +191,25 @@ void StPlayerBase::UpdateAttack() {
 						XMStoreFloat3(&out2, (pPosVec - playerPosVec) * power);
 					}
 					enemy->SetVelocity(out2);
-					enemy->ApplyDamage(1, 0.0f);
+
+
+					float minDamage = 50;
+					float maxDamage = 200;
+
+					float damageAspect = 1.0f - (distance - player->radius - enemy->GetRadius()) / (player->data->parryRadius - player->radius - enemy->GetRadius());
+					debugValue["dmgAsp"] = damageAspect;
+					int dmg = (maxDamage - minDamage) * damageAspect + minDamage;
+
+					totalHitScore += dmg;
+
+					enemy->ApplyDamage(dmg, 0.0f);
 
 					// ダメージ表示
 					//int damage = 1;
 					//std::wstring damageString = std::to_wstring(damage);
 					//const TCHAR* damageTChar = damageString.c_str();
 					//DamageText* damageText = new DamageText({ enemy->GetPosition().x, 1.0f, enemy->GetPosition().z }, damageTChar, { 0.62,1,1,1});
-					DamageText* damageText = new DamageText({ enemy->GetPosition().x, 1.0f, enemy->GetPosition().z }, "1", { 1,0,0,1 });
+					DamageText* damageText = new DamageText({ enemy->GetPosition().x, 1.0f, enemy->GetPosition().z }, std::to_string(dmg), {1,0,0,1});
 					DamageTextManager::Instance().Register(damageText);
 
 #endif

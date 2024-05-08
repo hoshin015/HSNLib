@@ -42,7 +42,7 @@ private:
 
 public:
 	bool isDead = false;
-
+	float totalHitScore = 0;
 	
 
 protected:

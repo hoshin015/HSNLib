@@ -17,6 +17,7 @@ public:
 	void Render() override;
 	void DrawDebugGui() override;
 
+	void EraseOption();
 private:
 	void UpdateRotate();
 	void UpdateMove();
@@ -26,7 +27,7 @@ private:
 
 	void UpdateOption();
 	void AddOption();
-	void EraseOption();
+	
 protected:
 	void OnLanding() override;
 	void OnDamaged() override;
@@ -71,9 +72,11 @@ private:
 	//float damagedKnockback;
 
 	//子機
-	std::shared_ptr<SkinnedMesh> childModel;
+public:
 	std::vector<StPlayerOption*> option;
-
+	
+private:
+	std::shared_ptr<SkinnedMesh> childModel;
 	float optionAngle = 0;
 
 	float invicibleTime = 0.2f;

@@ -13,6 +13,9 @@ public:
 	// 描画
 	void Render();
 
+	// スコア計算
+	void CalcScore();
+
 	// --- リザルト画面 ---
 	bool isResult = false;
 	bool resultFinish = false;

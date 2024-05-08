@@ -14,8 +14,8 @@ UiSprite::UiSprite(const wchar_t* path)
 
 void UiSprite::UiUpdate()
 {
-	pos.x = hidePosition.x + (showPosition.x - hidePosition.x) * Easing(timer, easingTime, easeQuart, easeOut);
-	pos.y = hidePosition.y + (showPosition.y - hidePosition.y) * Easing(timer, easingTime, easeQuart, easeOut);
+	pos.x = hidePosition.x + (showPosition.x - hidePosition.x) * Easing(timer, easingTime, easeNormal, easeOut);
+	pos.y = hidePosition.y + (showPosition.y - hidePosition.y) * Easing(timer, easingTime, easeNormal, easeOut);
 
 	timer += (showUi) ? Timer::Instance().DeltaTime() : -Timer::Instance().DeltaTime();
 	
@@ -32,7 +32,7 @@ void UiSprite::UiTextUpdate()
 {
 
 #if ResultUiTextEasing
-	float score = targetScore * Easing(timer, easingTime, easeCirc, easeIn);
+	float score = targetScore * Easing(timer, easingTime, easeNormal, easeIn);
 #else
 	startScore++;
 	if (startScore > targetScore) startScore = targetScore;

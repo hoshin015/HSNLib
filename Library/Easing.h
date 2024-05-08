@@ -3,6 +3,7 @@
 
 enum EasingKind
 {
+	easeNormal,
 	easeSine,
 	easeQuad,
 	easeCubic,
@@ -23,6 +24,7 @@ enum EasingOption
 };
 
 
+float EaseNormal(float t, EasingOption option);
 float EaseSine(float t, EasingOption option);
 float EaseQuad(float t, EasingOption option);
 float EaseCubic(float t, EasingOption option);

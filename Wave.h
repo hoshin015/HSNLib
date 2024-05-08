@@ -205,9 +205,12 @@ public:
 	// 更新処理
 	void Update();
 
+	// 描画処理
+	void Render();
+
 public:
-	float timer = 0;
 	int state = 0;
+	float timer = 0;
 
 	WaveScript* pScript = nullptr;
 	WaveScript** ppScript = nullptr;
@@ -217,9 +220,29 @@ public:
 	float waveLimitTimer = 0.0f;	// ウェーブの残り時間タイマー
 
 	// ウェーブ表示用
+	enum WaveShowState
+	{
+		showWaveInit,
+		goCenter,
+		waitCenter,
+		goOutSide,
+		showWaveEnd,
+	};
+	int showWaveState;
+
 	float showWaveTextEaseTime = 0.3f;	// イージングに使用する時間
-	float showWaveTextWaitTime = 1.2f;	// 中央でゆっくり移動する時間
+	float showWaveTextWaitTime = 1.0f;	// 中央でゆっくり移動する時間
 	float showWaveTextTimer = 0.0f;		// ウェーブ表示の全体時間の管理用タイマー
 
+	std::unique_ptr<Sprite> sprWaveLine;
 	std::unique_ptr<Sprite> sprWaveCut1;
+	std::unique_ptr<Sprite> sprWaveCut2;
+	std::unique_ptr<Sprite> sprWaveCut3;
+	std::unique_ptr<Sprite> sprWaveCut4;
+
+	DirectX::XMFLOAT2 startPos = { -256, 296 };
+	DirectX::XMFLOAT2 centerStartPos = { 480, 296 };
+	DirectX::XMFLOAT2 centerEndPos = { 544, 296 };
+	DirectX::XMFLOAT2 endPos = { 1280, 296 };
+	DirectX::XMFLOAT2 cutCurrentPos = startPos;
 };

@@ -3,6 +3,7 @@
 #include "Library/Timer.h"
 #include "Library/Input/InputManager.h"
 #include "SceneManager.h"
+#include "Wave.h"
 
 
 
@@ -60,25 +61,48 @@ Result::Result()
 
 void Result::Update()
 {
-	// プレイヤー死亡チェック
-	if (SpinningTopPlayerManager::Instance().GetPlayerCount() <= 0) return;
-	if (SpinningTopPlayerManager::Instance().GetPlayer(0)->isDead)
+	if (!isResult)
 	{
-		isResult = true;
+		// 全ウェーブ終了してるか
+		if (Wave::Instance().state == 3)
+		{
+			isResult = true;
 
-		// 値設定
-		sprTotalScore->targetScore = 3000;
-		sprAliveTime->targetScore = SpinningTopPlayerManager::Instance().GetPlayer(0)->aliveTime;
+			// 値設定
+			sprAliveTime->targetScore = SpinningTopPlayerManager::Instance().GetPlayer(0)->aliveTime;
 
-		sprTotalDestoryEnemy->targetScore = SpinningTopPlayerManager::Instance().GetPlayer(0)->totalDestoryEnemy;
-		sprGetTotalOption->targetScore = SpinningTopPlayerManager::Instance().GetPlayer(0)->getTotalOption;
-		sprNowWave->targetScore = 10;
-		sprTotalHitDamage->targetScore = SpinningTopPlayerManager::Instance().GetPlayer(0)->totalHitDamage;
+			sprTotalDestoryEnemy->targetScore = SpinningTopPlayerManager::Instance().GetPlayer(0)->totalDestoryEnemy;
+			sprGetTotalOption->targetScore = SpinningTopPlayerManager::Instance().GetPlayer(0)->getTotalOption;
+			sprNowWave->targetScore = Wave::Instance().nowWave;
+			sprTotalHitDamage->targetScore = SpinningTopPlayerManager::Instance().GetPlayer(0)->totalHitDamage;
+
+			CalcScore();
+		}
+		else
+		{
+			// プレイヤー死亡チェック
+			if (SpinningTopPlayerManager::Instance().GetPlayerCount() <= 0) return;
+			if (SpinningTopPlayerManager::Instance().GetPlayer(0)->isDead)
+			{
+				isResult = true;
+
+				// 値設定
+				sprAliveTime->targetScore = SpinningTopPlayerManager::Instance().GetPlayer(0)->aliveTime;
+
+				sprTotalDestoryEnemy->targetScore = SpinningTopPlayerManager::Instance().GetPlayer(0)->totalDestoryEnemy;
+				sprGetTotalOption->targetScore = SpinningTopPlayerManager::Instance().GetPlayer(0)->getTotalOption;
+				sprNowWave->targetScore = Wave::Instance().nowWave;
+				sprTotalHitDamage->targetScore = SpinningTopPlayerManager::Instance().GetPlayer(0)->totalHitDamage;
+
+				CalcScore();
+			}
+			else
+			{
+				return;
+			}
+		}
 	}
-	else
-	{
-		return;
-	}
+	
 	
 	waitTimer += Timer::Instance().DeltaTime();
 	if (waitTimer < waitTime) return;
@@ -138,4 +162,22 @@ void Result::Render()
 	
 	
 	if (waitTimer > startRank) sprRankS->UiRender();
+}
+
+void Result::CalcScore()
+{
+	float timeScore = sprAliveTime->targetScore * 100;
+	float optionScore = sprGetTotalOption->targetScore * 500;
+	float nowWaveScore = sprNowWave->targetScore * 1000;
+	float hitDamageScore = -(sprTotalHitDamage->targetScore * 500);
+
+	float totalDamageScore = 0;
+
+	if (SpinningTopPlayerManager::Instance().GetPlayerCount() > 0)
+	{
+		StPlayer* pl = dynamic_cast<StPlayer*>(SpinningTopPlayerManager::Instance().GetPlayer(0));
+		totalDamageScore = pl->totalHitScore;
+	}
+
+	sprTotalScore->targetScore = timeScore + optionScore + nowWaveScore + hitDamageScore + totalDamageScore;
 }

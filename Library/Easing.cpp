@@ -5,6 +5,7 @@
 
 EasingFunction easingFunctions[easeEnd] =
 {
+    &EaseNormal,
     &EaseSine,
     &EaseQuad,
     &EaseCubic,
@@ -27,6 +28,11 @@ float Easing(float time, float totalTime, EasingKind kind, EasingOption option)
 }
 
 
+
+float EaseNormal(float t, EasingOption option)
+{
+    return t;
+}
 
 float EaseSine(float t, EasingOption option) {
     // In

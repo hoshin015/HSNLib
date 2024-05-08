@@ -121,15 +121,17 @@ void SceneWave::Update()
 	result->Update();
 	//if (result->isResult) return;
 
+	// リザルト画面中はポーズできない
 	if (!result->isResult)
 	{
-		// リザルト画面中はポーズできない
-		pause->Update();
+		// 全ウェーブ終了後はポーズできない
+		if (Wave::Instance().state != 3)
+		{
+			pause->Update();
 
-		if (pause->isPause) return;
+			if (pause->isPause) return;
+		}
 	}
-	
-
 
 	// カメラコントローラー更新処理
 	Camera::Instance().Update();
@@ -366,7 +368,8 @@ void SceneWave::Render()
 		}
 	}
 	
-	
+	// WaveUi描画
+	Wave::Instance().Render();
 
 	// --- pause 描画 ----
 	pause->Render();
