@@ -241,6 +241,27 @@ void SceneSTTutorial::UpdateState() {
 }
 
 void SceneSTTutorial::UpdateTutorial() {
+	auto enemySpawn = [](float a, float b) {
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_real_distribution<float> dis(a, b);
+
+		StEnemy* enemy = new StEnemy(0);
+
+		float xPos = SpinningTopPlayerManager::Instance().GetPlayer(0)->GetPosition().x;
+		float zPos = SpinningTopPlayerManager::Instance().GetPlayer(0)->GetPosition().x;
+
+		float rad = DirectX::XMConvertToRadians(rand() % 360);
+		float dist = dis(gen);
+
+		xPos += cosf(rad) * dist;
+		zPos += sinf(rad) * dist;
+
+		enemy->SetPosition({ xPos, 10, zPos });
+		SpinningTopEnemyManager::Instance().Register(enemy);
+
+	};
+
 	switch (tState) {
 	case SceneSTTutorial::PARRY:
 		if (stateMap["UpdateTarm"]) {
@@ -254,23 +275,7 @@ void SceneSTTutorial::UpdateTutorial() {
 	case SceneSTTutorial::ATTACK:
 		if (stateMap["UpdateTarm"]) {
 			for (size_t i = 0; i < 4; i++){
-				std::random_device rd;
-				std::mt19937 gen(rd());
-				std::uniform_real_distribution<float> dis(5, 10);
-
-				StEnemy* enemy = new StEnemy(0);
-
-				float xPos = SpinningTopPlayerManager::Instance().GetPlayer(0)->GetPosition().x;
-				float zPos = SpinningTopPlayerManager::Instance().GetPlayer(0)->GetPosition().x;
-
-				float rad = DirectX::XMConvertToRadians(rand() % 360);
-				float dist = dis(gen);
-
-				xPos += cosf(rad) * dist;
-				zPos += sinf(rad) * dist;
-
-				enemy->SetPosition({ xPos, 10, zPos });
-				SpinningTopEnemyManager::Instance().Register(enemy);
+				enemySpawn(4, 10);
 				tarm = SpinningTopEnemyManager::Instance().GetEnemyCount();
 				text = 4;
 			}
@@ -283,23 +288,7 @@ void SceneSTTutorial::UpdateTutorial() {
 
 	case SceneSTTutorial::GAUGEATTACK:
 		if (stateMap["UpdateTarm"]) {
-			std::random_device rd;
-			std::mt19937 gen(rd());
-			std::uniform_real_distribution<float> dis(10, 15);
-
-			StEnemy* enemy = new StEnemy(0);
-
-			float xPos = SpinningTopPlayerManager::Instance().GetPlayer(0)->GetPosition().x;
-			float zPos = SpinningTopPlayerManager::Instance().GetPlayer(0)->GetPosition().x;
-
-			float rad = DirectX::XMConvertToRadians(rand() % 360);
-			float dist = dis(gen);
-
-			xPos += cosf(rad) * dist;
-			zPos += sinf(rad) * dist;
-
-			enemy->SetPosition({ xPos, 10, zPos });
-			SpinningTopEnemyManager::Instance().Register(enemy);
+			enemySpawn(10, 15);
 			tarm = SpinningTopEnemyManager::Instance().GetEnemyCount();
 			auto* player = SpinningTopPlayerManager::Instance().GetPlayer(0);
 			player->SetRotateSpeed(player->GetData()->rotateMaxSpeed);
@@ -316,29 +305,19 @@ void SceneSTTutorial::UpdateTutorial() {
 			text = 5;
 		}
 		if (SpinningTopEnemyManager::Instance().GetEnemyCount() == 0) {
-			std::random_device rd;
-			std::mt19937 gen(rd());
-			std::uniform_real_distribution<float> dis(4, 8);
-
-			StEnemy* enemy = new StEnemy(0);
-
-			float xPos = SpinningTopPlayerManager::Instance().GetPlayer(0)->GetPosition().x;
-			float zPos = SpinningTopPlayerManager::Instance().GetPlayer(0)->GetPosition().x;
-
-			float rad = DirectX::XMConvertToRadians(rand() % 360);
-			float dist = dis(gen);
-
-			xPos += cosf(rad) * dist;
-			zPos += sinf(rad) * dist;
-
-			enemy->SetPosition({ xPos, 10, zPos });
-			SpinningTopEnemyManager::Instance().Register(enemy);
+			enemySpawn(4, 5);
 			tarm--;
 		}
 		break;
 
 	default:
-		break;
+		if (SpinningTopEnemyManager::Instance().GetEnemyCount() == 0) {
+			for (size_t i = 0; i < 4; i++) {
+				enemySpawn(5, 10);
+				tarm = SpinningTopEnemyManager::Instance().GetEnemyCount();
+				text = 4;
+			}
+		}
 	}
 	stateMap["UpdateTarm"] = false;
 }
@@ -541,7 +520,7 @@ void SceneSTTutorial::Render() {
 	}
 	pause->Render();
 	// --- デバッグ描画 ---
-	//DrawDebugGUI();
+	DrawDebugGUI();
 }
 
 void SceneSTTutorial::DrawDebugGUI() {
@@ -567,7 +546,6 @@ void SceneSTTutorial::DrawDebugGUI() {
 		};
 
 		ImGui::ListBox("EasingFunc", &Efunc, Estr, 11);
-		ImGui::End();
 
 		ImGui::Text("Tarm:%d", tarm);
 		if (ImGui::Button("tarmClear")) {
@@ -582,6 +560,15 @@ void SceneSTTutorial::DrawDebugGUI() {
 
 		ImGui::DragFloat2("size", &dSize.x);
 		ImGui::DragFloat2("pos", &dPos.x);
-	}
+		XMFLOAT3 playerPos;
+		try {
+			playerPos = SpinningTopPlayerManager::Instance().GetPlayer(0)->GetPosition();
 
+		}
+		catch (const std::out_of_range&) {
+			playerPos = {};
+		}
+		ImGui::DragFloat3("playerPos", &playerPos.x);
+		ImGui::End();
+	}
 }

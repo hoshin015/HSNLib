@@ -7,6 +7,7 @@
 #include "Library/Timer.h"
 #include "Library/Input/InputManager.h"
 #include "Library/Framework.h"
+#include "Library/Easing.h"
 
 #include "Video.h"
 #include "StageManager.h"
@@ -42,6 +43,7 @@ void SceneSTMainMenu::Initialize() {
 
 	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Input/Input.png"));
 	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Input/InputController.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/MainMenu/image0.png"));
 
 	StageManager& stageManager = StageManager::Instance();
 	stageMain = std::make_unique<StageContext>();
@@ -95,6 +97,33 @@ void SceneSTMainMenu::Update() {
 		if (im.GetKeyPressed(Keyboard::Enter) || im.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a))
 			SceneManager::Instance().ChangeScene(new SceneLoading(new SceneSTTitle));
 	}
+
+	if (S3DObject[MAINMANU]->RectHitToPoint(player.GetPosition())) {
+		if (im.GetKeyPress(Keyboard::Enter) || im.GetGamePadButtonPress(GAMEPADBUTTON_STATE::a)) {
+			S3DObject[MAINMANU]->SetColor(selectColor);
+		}
+		if (im.GetKeyPressed(Keyboard::Enter) || im.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a))
+			EasterEggCount++;
+	}
+
+#if 1
+	if (EasterEggCount > 51) {
+		EasterEggCount = 0;
+		EasterEgg = true;
+	}
+
+	if (EasterEgg) {
+		EasterEggTime += Timer::Instance().DeltaTime();
+		if (EasterEggTime < 1)EasterEggPosX = 402.5f * Easing(EasterEggTime, 1, easeQuad, easeOut);
+		else {
+			EasterEggPosX = 402.5f * (1 - Easing(EasterEggTime - 1, 1, easeQuad, easeIn));
+			if (EasterEggPosX == 0) {
+				EasterEgg = false;
+				EasterEggTime = 0;
+			}
+		}
+	}
+#endif
 
 	XMFLOAT3 position = player.GetPosition();
 	if (!isPlayerMove && (position.x != 14 || position.y != 0))
@@ -187,6 +216,12 @@ void SceneSTMainMenu::Render() {
 		cPos.x - cSize.x * .5f, cPos.y - cSize.y * .5f,
 		cSize.x, cSize.y,
 		1, 1, 1, 1, 0);
+
+	sprite[2]->Render(
+		(-402.5f + EasterEggPosX) * wRatio, 0,
+		402.5f * wRatio, 722.5f * hRatio,
+		1, 1, 1, 1, 0
+	);
 
 	// --- デバッグ描画 ---
 	DrawDebugGUI();
