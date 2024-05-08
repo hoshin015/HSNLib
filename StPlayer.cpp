@@ -453,9 +453,10 @@ void StPlayer::UpdateRotate() {
 	beforeState = parry;
 	beforeStateGauge = parryGauge;
 
-	if (isParrySuccessed) rotateSpeed++;
-	if (isParryGaugeSuccessed) rotateSpeed -= data->parryGaugeConsumed;
-	rotateSpeed = min(rotateSpeed, data->rotateMaxSpeed);
+	if (isParrySuccessed) rotateSpeed += (float(rand()) / RAND_MAX * 10) + 10;
+	if (GetInputMap<bool>("SubAttack"))
+		rotateSpeed -= data->parryGaugeConsumed;
+	rotateSpeed = std::clamp<float>(rotateSpeed, 1, data->rotateMaxSpeed);
 	angle.y += 360 * rotateSpeed * Timer::Instance().DeltaTime();
 	if (360 < angle.y || angle.y < -360)angle.y += angle.y > 0 ? -360 : 360;
 }
@@ -475,6 +476,7 @@ void StPlayer::UpdateOption() {
 }
 
 void StPlayer::AddOption() {
+	if (option.size() > 3)return;
 	getTotalOption++;
 	StPlayerOption* o = new StPlayerOption(childModel,optionData);
 	option.emplace_back(o);

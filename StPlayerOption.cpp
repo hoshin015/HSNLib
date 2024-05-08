@@ -14,7 +14,7 @@ StPlayerOption::StPlayerOption(std::shared_ptr<SkinnedMesh> model, std::shared_p
 	this->data = data;
 	isPlayer = false;
 	SetScale({ .5f,.5f,.5f });
-
+	SetRadius(0);
 	// parryEffect
 	parryEffect = std::make_unique<ParryEffect>(data->parryRadius);
 	// domeEffect

@@ -37,6 +37,15 @@ void SceneSTTutorial::Initialize() {
 	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/BackToTutorial.png"));
 	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Input/Input.png"));
 	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Input/InputController.png"));
+
+	spriteControl.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/EnterControl.png"));
+	spriteControl.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/ParryControl.png"));
+	spriteControl.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/GaugeParryControl.png"));
+	spriteControl.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/BodyBlowControl.png"));
+	spriteControl.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/BackToTutorialControl.png"));
+	spriteControl.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/BackToTutorialControl.png"));
+	spriteControl.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/BackToTutorialControl.png"));
+
 	videoUI.SetVideo(&VideoManager::Instance().GetVideo(PARRY));
 	videoUI.SetTextSprite(sprite[PARRY].get());
 	VideoManager::Instance().Play(PARRY,true);
@@ -82,7 +91,7 @@ void SceneSTTutorial::Initialize() {
 	LightManager::Instance().Register(directionLight);
 
 	// スカイマップ
-	skyMap = std::make_unique<SkyMap>(L"Data/Texture/kloppenheim_05_puresky_4k.hdr");
+	//skyMap = std::make_unique<SkyMap>(L"Data/Texture/kloppenheim_05_puresky_4k.hdr");
 
 	// カメラ初期設定
 	Camera::Instance().SetLookAt(
@@ -214,7 +223,7 @@ void SceneSTTutorial::UpdateState() {
 				stateMap["StopUpdate"] = true;
 
 				videoUI.SetVideo(&VideoManager::Instance().GetVideo(tState));
-				videoUI.SetTextSprite(sprite[tState].get());
+				videoUI.SetTextSprite((InputManager::Instance().IsGamePadConnected() ? spriteControl : sprite)[tState].get());
 				VideoManager::Instance().Play(tState, true);
 				VideoManager::Instance().Stop(tState - 1);
 			}
@@ -372,7 +381,7 @@ void SceneSTTutorial::Render() {
 
 	gfx.bloomBuffer->Activate();
 
-	skyMap->Render();
+	//skyMap->Render();
 
 	gfx.SetDepthStencil(DEPTHSTENCIL_STATE::ZT_ON_ZW_ON);
 	gfx.SetRasterizer(static_cast<RASTERIZER_STATE>(RASTERIZER_STATE::CLOCK_FALSE_SOLID));
@@ -486,6 +495,7 @@ void SceneSTTutorial::Render() {
 			1, 1, 1, 1, 0);
 		videoUI.Draw({ 0.25f,0.640625f,0.875f,1 }, stateMap["StopUpdate"]);
 	}
+
 	if (stateMap["TutorialStart"]) {
 		rect.Render(0, 0,
 			width, height,
@@ -512,7 +522,7 @@ void SceneSTTutorial::Render() {
 	if (stateMap["TutorialEnd"]) {
 		DirectX::XMFLOAT2 cPos = { 640 * wRatio,535 * hRatio };
 		DirectX::XMFLOAT2 cSize = { 488 * wRatio,91.2f * hRatio };
-		sprite[BACKTOTUTORIAL - 1]->Render(
+		(InputManager::Instance().IsGamePadConnected() ? spriteControl : sprite)[BACKTOTUTORIAL - 1]->Render(
 			cPos.x - cSize.x * .5f, cPos.y - cSize.y * .5f,
 			cSize.x, cSize.y,
 			1, 1, 1, 1, 0

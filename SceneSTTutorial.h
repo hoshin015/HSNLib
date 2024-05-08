@@ -57,11 +57,12 @@ private:
 	float gaussianPower = 16;
 
 	std::vector<std::unique_ptr<Sprite>> sprite;
+	std::vector<std::unique_ptr<Sprite>> spriteControl;
 	DirectX::XMFLOAT2 sPos = {};
 	DirectX::XMFLOAT2 dPos = {};
 	DirectX::XMFLOAT2 sSize = {};
 	DirectX::XMFLOAT2 dSize = {};
-	
+
 	float time = 0;
 	float spawnTime = 0;
 	float ease = 0;
