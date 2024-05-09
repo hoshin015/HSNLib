@@ -434,9 +434,14 @@ void Graphics::Begin()
 }
 
 // •`‰æI—¹
-void Graphics::End()
+void Graphics::End(bool isFullScreen)
 {
 	swapchain->Present(sync ? 1 : 0, NULL);
+
+	if (isFullScreen)
+	{
+		swapchain->SetFullscreenState(TRUE, 0);
+	}
 }
 
 

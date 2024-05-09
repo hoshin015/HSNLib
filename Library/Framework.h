@@ -26,7 +26,7 @@ public:
 private:
 	HWND hwnd;
 
-	const wchar_t* windowName = L"HSNLib";
+	const wchar_t* windowName = L"Shot Away";
 	const int screenWidth = 1280;
 	const int screenHeight = 720;
 

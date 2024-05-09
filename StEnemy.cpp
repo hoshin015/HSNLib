@@ -18,6 +18,7 @@ StEnemy::StEnemy(int enemyKind)
 
 
 	paryEffect = ResourceManager::Instance().LoadModelResource("Data/Fbx/paryEffectTest/paryEffectTest.fbx");
+	spawnEffect = std::make_unique<EnemySpawnEffect>(2.0f);
 
 	// 敵データの設定
 	EnemyData data = enemyData[enemyKind];
@@ -41,6 +42,8 @@ StEnemy::~StEnemy()
 
 void StEnemy::Update()
 {
+	spawnEffect->Update();
+
 	// 回転
 	DirectX::XMFLOAT3 ang = GetAngle();
 	ang.y += rotationSpeed * Timer::Instance().DeltaTime();
@@ -64,6 +67,7 @@ void StEnemy::Update()
 
 void StEnemy::Render(bool drawShadow)
 {
+	if(!isGenerateFinish) spawnEffect->Render();
 	model->Render(transform, { 1,1,1,1 }, &keyFrame);
 }
 

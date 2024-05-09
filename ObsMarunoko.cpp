@@ -1,6 +1,7 @@
 #include "ObsMarunoko.h"
 #include "Library/3D/ResourceManager.h"
 #include "Library/Timer.h"
+#include "Library/Graphics/Graphics.h"
 
 ObsMarunoko::ObsMarunoko(const char* filePath, int type, float speed)
 {
@@ -21,15 +22,21 @@ ObsMarunoko::ObsMarunoko(const char* filePath, int type, float speed)
 	}
 	case HORIZONTAL:
 	{
+		isSpawnFinish = true;
+		position = spawnPos;
 		velocity.x = (rand() % 2) ? moveSpeed : -moveSpeed;
 		break;
 	}
 	case VERTICAL:
 	{
+		isSpawnFinish = true;
+		position = spawnPos;
 		velocity.z = (rand() % 2) ? moveSpeed : -moveSpeed;
 		break;
 	}
 	}
+
+	spawnEffect = std::make_unique<EnemySpawnEffect>(7.0f);
 }
 
 ObsMarunoko::~ObsMarunoko()
@@ -38,6 +45,23 @@ ObsMarunoko::~ObsMarunoko()
 
 void ObsMarunoko::Update()
 {
+	if (!isSpawnFinish)
+	{
+		spawnWiatTimer += Timer::Instance().DeltaTime();
+		if (spawnWiatTimer > spawnWaitTime)
+		{
+			isSpawnFinish = true;
+			position = spawnPos;
+		}
+
+		spawnEffect->Update();
+		// 行列更新
+		UpdateTransform();
+		return;
+	}
+	
+
+
 	// 回転
 	DirectX::XMFLOAT3 ang = GetAngle();
 	ang.y += rotationSpeed * Timer::Instance().DeltaTime();
@@ -69,4 +93,17 @@ void ObsMarunoko::Update()
 
 	// 行列更新
 	UpdateTransform();
+}
+
+void ObsMarunoko::Render()
+{
+	// --- Graphics 取得 ---
+	Graphics& gfx = Graphics::Instance();
+
+	// rasterizer 設定
+	gfx.SetRasterizer(RASTERIZER_STATE::CLOCK_TRUE_SOLID);
+
+	if(!isSpawnFinish) spawnEffect->Render();
+	
+	model->Render(transform, color, NULL);
 }

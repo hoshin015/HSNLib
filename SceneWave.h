@@ -7,40 +7,40 @@
 #include "Pause.h"
 #include "Result.h"
 
-// ƒeƒXƒgƒV[ƒ“
+// ãƒ†ã‚¹ãƒˆã‚·ãƒ¼ãƒ³
 class SceneWave : public Scene
 {
 public:
 	SceneWave() {}
 	~SceneWave() override {};
 
-	// ‰Šú‰»
+	// åˆæœŸåŒ–
 	void Initialize() override;
 
-	// I—¹‰»
+	// çµ‚äº†åŒ–
 	void Finalize() override;
 
-	// XV
+	// æ›´æ–°
 	void Update() override;
 
-	// •`‰æ
+	// æç”»
 	void Render() override;
 
-	// ƒfƒoƒbƒO•`‰æ
+	// ãƒ‡ãƒãƒƒã‚°æç”»
 	void DrawDebugGUI();
 
 private:
-	std::unique_ptr<SkyMap> skyMap;
+	//std::unique_ptr<SkyMap> skyMap;
 
 	float gaussianPower = 16.0f;
 
-	// --- ƒ|[ƒY‰æ–Ê ---
+	// --- ãƒãƒ¼ã‚ºç”»é¢ ---
 	std::unique_ptr<Pause> pause;
 
-	// --- ƒŠƒUƒ‹ƒg‰æ–Ê ---
+	// --- ãƒªã‚¶ãƒ«ãƒˆç”»é¢ ---
 	std::unique_ptr<Result> result;
 
-	// ƒQ[ƒ€UI
+	// ã‚²ãƒ¼ãƒ UI
 	std::unique_ptr<Sprite> life3;
 	std::unique_ptr<Sprite> life2;
 	std::unique_ptr<Sprite> life1;
@@ -58,8 +58,22 @@ private:
 	std::unique_ptr<Sprite> sprWave3;
 	std::unique_ptr<Sprite> sprWave4;
 
+
 	// --- Music ---
 	float timer = 0;
 	float decrementVolume;
 	float resultplayer = 0;
+
+	// äº‹å‰ã«ãƒ¢ãƒ‡ãƒ«ã‚’èª­ã¿è¾¼ã‚“ã§ãŠã
+	std::shared_ptr<SkinnedMesh> plOptionModel;
+	std::shared_ptr<SkinnedMesh> enemySpawnModel;
+	std::shared_ptr<SkinnedMesh> enemyModel1;
+	std::shared_ptr<SkinnedMesh> enemyModel1Top;
+	std::shared_ptr<SkinnedMesh> enemyModel1Middle;
+	std::shared_ptr<SkinnedMesh> enemyModel1Bottom;
+	std::shared_ptr<SkinnedMesh> enemyModel2;
+	std::shared_ptr<SkinnedMesh> enemyModel2Top;
+	std::shared_ptr<SkinnedMesh> enemyModel2Middle;
+	std::shared_ptr<SkinnedMesh> enemyModel2Bottom;
+	std::shared_ptr<SkinnedMesh> obsMarunoko;
 };

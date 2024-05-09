@@ -3,6 +3,7 @@
 // Used by HSNLib.rc
 
 #define IDI_MYICON 101
+#define IDI_ICON1 102
 
 // 新しいオブジェクトの次の既定値
 // 

@@ -12,7 +12,7 @@ public:
 	virtual void Update() {}
 
 	// 描画処理
-	void Render();
+	virtual void Render();
 
 	// デバッグプリミティブ描画
 	void DrawDebugPrimitive();

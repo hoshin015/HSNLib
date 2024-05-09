@@ -5,7 +5,7 @@
 #include "SceneManager.h"
 #include "Wave.h"
 
-
+float Result::highScore = 0.0f;
 
 Result::Result()
 {
@@ -37,6 +37,36 @@ Result::Result()
 	sprRankS->hidePosition = { sprRankS->showPosition.x + deltaRightX, sprRankS->showPosition.y };
 	sprRankS->pos = sprRankS->hidePosition;
 	sprRankS->size = { 256 * 0.666, 256 * 0.666 };
+
+	sprRankA = std::make_unique<UiSprite>(L"Data/Texture/Result/rankA.png");
+	sprRankA->showPosition = { 1050, 150 };
+	sprRankA->hidePosition = { sprRankA->showPosition.x + deltaRightX, sprRankA->showPosition.y };
+	sprRankA->pos = sprRankA->hidePosition;
+	sprRankA->size = { 256 * 0.666, 256 * 0.666 };
+
+	sprRankB = std::make_unique<UiSprite>(L"Data/Texture/Result/rankB.png");
+	sprRankB->showPosition = { 1050, 150 };
+	sprRankB->hidePosition = { sprRankB->showPosition.x + deltaRightX, sprRankB->showPosition.y };
+	sprRankB->pos = sprRankB->hidePosition;
+	sprRankB->size = { 256 * 0.666, 256 * 0.666 };
+
+	sprRankC = std::make_unique<UiSprite>(L"Data/Texture/Result/rankC.png");
+	sprRankC->showPosition = { 1050, 150 };
+	sprRankC->hidePosition = { sprRankC->showPosition.x + deltaRightX, sprRankC->showPosition.y };
+	sprRankC->pos = sprRankC->hidePosition;
+	sprRankC->size = { 256 * 0.666, 256 * 0.666 };
+
+
+	sprHighScore = std::make_unique<UiSprite>(L"Data/Texture/Result/highScore.png");
+	sprHighScore->showPosition = { 600, 350 };
+	sprHighScore->hidePosition = { sprHighScore->showPosition.x + deltaRightX, sprHighScore->showPosition.y };
+	sprHighScore->pos = sprHighScore->hidePosition;
+	sprHighScore->size = { 302 * 0.666, 127 * 0.666 };
+
+
+
+
+
 
 	sprTotalScore = std::make_unique<UiSprite>(L"Data/Font/fontResult.png");
 	sprTotalScore->pos = { 940,375 };
@@ -77,6 +107,13 @@ void Result::Update()
 			sprTotalHitDamage->targetScore = SpinningTopPlayerManager::Instance().GetPlayer(0)->totalHitDamage;
 
 			CalcScore();
+
+			// ハイスコア更新
+			if (sprTotalScore->targetScore > highScore)
+			{
+				highScore = sprTotalScore->targetScore;
+				isHighScore = true;
+			}
 		}
 		else
 		{
@@ -95,6 +132,13 @@ void Result::Update()
 				sprTotalHitDamage->targetScore = SpinningTopPlayerManager::Instance().GetPlayer(0)->totalHitDamage;
 
 				CalcScore();
+
+				// ハイスコア更新
+				if (sprTotalScore->targetScore > highScore)
+				{
+					highScore = sprTotalScore->targetScore;
+					isHighScore = true;
+				}
 			}
 			else
 			{
@@ -126,9 +170,14 @@ void Result::Update()
 		sprSideBar2->showUi = true;
 
 		sprRankS->showUi = true;
+		sprRankA->showUi = true;
+		sprRankB->showUi = true;
+		sprRankC->showUi = true;
 
 		sprTotalScore->showUi = true;
 		sprAliveTime->showUi = true;
+
+		sprHighScore->showUi = true;
 
 		sprTotalDestoryEnemy->showUi = true;
 		sprGetTotalOption->showUi = true;
@@ -140,7 +189,30 @@ void Result::Update()
 	sprSideBar1->UiUpdate();
 	sprSideBar2->UiUpdate();
 
-	if (waitTimer > startRank) sprRankS->UiUpdate();
+	if (isHighScore)
+	{
+		if (waitTimer > startHightScore) sprHighScore->UiUpdate();
+	}
+
+	if (waitTimer > startRank)
+	{
+		if (sprTotalScore->targetScore > rankS)
+		{
+			sprRankS->UiUpdate();
+		}
+		else if (sprTotalScore->targetScore > rankA)
+		{
+			sprRankA->UiUpdate();
+		}
+		else if (sprTotalScore->targetScore > rankB)
+		{
+			sprRankB->UiUpdate();
+		}
+		else
+		{
+			sprRankC->UiUpdate();
+		}
+	}
 
 	if (waitTimer > startTotalScore) sprTotalScore->UiTextUpdate();
 	if (waitTimer > startAliveTime) sprAliveTime->UiTextTimeUpdate();
@@ -157,6 +229,7 @@ void Result::Render()
 	sprSideBar2->UiRender();
 
 
+
 	if (waitTimer > startTotalScore) sprTotalScore->UiTextRender();
 	if (waitTimer > startAliveTime) sprAliveTime->UiTextRender();
 	if (waitTimer > startTotalDestoryEnemy) sprTotalDestoryEnemy->UiTextRender();
@@ -165,7 +238,30 @@ void Result::Render()
 	if (waitTimer > startTotalHitDamage) sprTotalHitDamage->UiTextRender();
 	
 	
-	if (waitTimer > startRank) sprRankS->UiRender();
+	if (waitTimer > startRank)
+	{
+		if (sprTotalScore->targetScore > rankS)
+		{
+			sprRankS->UiRender();
+		}
+		else if (sprTotalScore->targetScore > rankA)
+		{
+			sprRankA->UiRender();
+		}
+		else if (sprTotalScore->targetScore > rankB)
+		{
+			sprRankB->UiRender();
+		}
+		else
+		{
+			sprRankC->UiRender();
+		}
+	}
+
+	if (isHighScore)
+	{
+		if (waitTimer > startHightScore) sprHighScore->UiRender();
+	}
 }
 
 void Result::CalcScore()

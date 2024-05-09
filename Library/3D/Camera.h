@@ -27,6 +27,9 @@ public:
 	void AnimationEditorCameraUpdate();
 	void LockCameraUpdate();
 	void TargetStPlayerCameraUpdate();
+	void Test1CameraUpdate();
+	void Test2CameraUpdate();
+	void Test3CameraUpdate();
 
 	// ターゲット位置設定
 	void SetTarget(const DirectX::XMFLOAT3& target) { this->target = target; }
@@ -73,6 +76,9 @@ public:
 		ANIMATION_EDITOR,
 		LOCK,
 		TargetStPlayer,
+		TEST1,
+		TEST2,
+		TEST3,
 	};
 	int cameraType;
 

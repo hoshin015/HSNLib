@@ -447,6 +447,9 @@
     <ClCompile Include="Result.cpp">
       <Filter>ソース ファイル\UI</Filter>
     </ClCompile>
+    <ClCompile Include="EnemySpawnEffect.cpp">
+      <Filter>ソース ファイル\MeshEffect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\Graphics\Graphics.h">
@@ -824,6 +827,12 @@
     <ClInclude Include="Result.h">
       <Filter>ヘッダー ファイル\Ui</Filter>
     </ClInclude>
+    <ClInclude Include="EnemySpawnEffect.h">
+      <Filter>ヘッダー ファイル\MeshEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Icon\resource1.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Library\Icon\Icon.rc">
@@ -939,6 +948,12 @@
     <FxCompile Include="MaskPrimitive_PS.hlsl">
       <Filter>シェーダーファイル</Filter>
     </FxCompile>
+    <FxCompile Include="Library\Shader\EnemySpawnEffect_VS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\EnemySpawnEffect_PS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Library\Shader\Primitive2D.hlsli">
@@ -998,5 +1013,16 @@
     <None Include="MaskPrimitive.hlsli">
       <Filter>シェーダーファイル</Filter>
     </None>
+    <None Include="Library\Shader\EnemySpawnEffect.hlsli">
+      <Filter>シェーダーファイル</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Data\Icon\Icon.ico">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="Data\Icon\Icon2.ico">
+      <Filter>リソース ファイル</Filter>
+    </Image>
   </ItemGroup>
 </Project>
