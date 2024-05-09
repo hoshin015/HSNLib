@@ -375,14 +375,12 @@ void SceneWave::Render()
 		//hAspect = 0.5f;
 		float height = (320-26) * rotSpeedBairitu * (1.0f- hAspect);
 
-
-
 		DirectX::XMFLOAT2 rotUiPos = { 30, 200 };
 
 
 		sprRotSpeedBottom->Render(rotUiPos.x, rotUiPos.y, 56 * rotSpeedBairitu, 320 * rotSpeedBairitu, 1, 1, 1, 1, 0);
-		sprRotSpeedMiddle->Render(rotUiPos.x, rotUiPos.y + 13, 56 * rotSpeedBairitu, 294 * rotSpeedBairitu, 1, 1, 1, 1, 0, 0, 0, 56, 294);
-		sprRotSpeedMiddleMask->Render(rotUiPos.x, rotUiPos.y + 13, 56 * rotSpeedBairitu, height, 1, 1, 1, 1, 0, 0, 0, 56, (320 - 26) * (1.0f - hAspect));
+		sprRotSpeedMiddle->Render(rotUiPos.x, rotUiPos.y + 13 * rotSpeedBairitu, 56 * rotSpeedBairitu, 294 * rotSpeedBairitu, 1, 1, 1, 1, 0);
+		sprRotSpeedMiddleMask->Render(rotUiPos.x, rotUiPos.y + 13 * rotSpeedBairitu, 56 * rotSpeedBairitu, height, 1, 1, 1, 1, 0, 0, 0, 56, (320 - 26) * (1.0f - hAspect));
 		sprRotSpeedTop->Render(rotUiPos.x, rotUiPos.y, 56 * rotSpeedBairitu, 320 * rotSpeedBairitu, 1, 1, 1, 1, 0);
 	}
 
@@ -427,7 +425,7 @@ void SceneWave::Render()
 	
 
 	// --- デバッグ描画 ---
-	DrawDebugGUI();
+	//DrawDebugGUI();
 
 }
 

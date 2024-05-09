@@ -556,8 +556,8 @@ void SceneSTTutorial::Render() {
 		float rotSpeedBairitu = 0.75f;
 
 		spriteUI[4]->Render(rotUiPos.x, rotUiPos.y, 56 * rotSpeedBairitu, 320 * rotSpeedBairitu, 1, 1, 1, 1, 0);
-		spriteUI[5]->Render(rotUiPos.x, rotUiPos.y + 13, 56 * rotSpeedBairitu, 294 * rotSpeedBairitu, 1, 1, 1, 1, 0);
-		spriteUI[6]->Render(rotUiPos.x, rotUiPos.y + 13, 56 * rotSpeedBairitu, height * rotSpeedBairitu, 1, 1, 1, 1, 0, 0, 0, 56, (320 - 13) * (1.0f - hAspect));
+		spriteUI[5]->Render(rotUiPos.x, rotUiPos.y + 13 * rotSpeedBairitu, 56 * rotSpeedBairitu, 294 * rotSpeedBairitu, 1, 1, 1, 1, 0);
+		spriteUI[6]->Render(rotUiPos.x, rotUiPos.y + 13 * rotSpeedBairitu, 56 * rotSpeedBairitu, height * rotSpeedBairitu, 1, 1, 1, 1, 0, 0, 0, 56, (320 - 26) * (1.0f - hAspect));
 		spriteUI[7]->Render(rotUiPos.x, rotUiPos.y, 56 * rotSpeedBairitu, 320 * rotSpeedBairitu, 1, 1, 1, 1, 0);
 	}
 

@@ -57,7 +57,7 @@ void ImGuiManager::Update()
 void ImGuiManager::Render()
 {
 	// --- Console•`‰æ ---
-	Console();
+	//Console();
 
 	// --- ImGui•`‰æ ---
 	ImGui::Render();	// •`‰æƒf[ƒ^‚Ì‘g‚İ—§‚Ä

@@ -1,4 +1,4 @@
-#include "StPlayer.h"
+﻿#include "StPlayer.h"
 #include "Library/3D/DebugPrimitive.h"
 #include "Library/3D/ResourceManager.h"
 #include "Library/Input/InputManager.h"
@@ -354,11 +354,11 @@ void StPlayer::UpdateDamaged() {
 			XMStoreFloat3(&out1, XMVector3Normalize(XMLoadFloat3(&out1)) * data->damagedKnockback);
 
 			velocity = out1;
-			
+
 			if (enemy->isDown)
 			{
 				enemy->createParts = true;
-				
+
 				int dmg = 300;
 
 				totalHitScore += dmg;
@@ -391,7 +391,7 @@ void StPlayer::UpdateDamaged() {
 				// 敵がダウン中でないならプレイヤーにダメージ
 				ApplyDamage(1, invicibleTime);
 			}
-			
+
 
 			break;
 		}
@@ -445,7 +445,7 @@ void StPlayer::UpdateObstacleCollision()
 
 					Effect::Instance().Play(EffectType::HitStVsSt, GetPosition(), { 0,0,0 }, 1.0f);
 				}
-				ApplyDamage(obs->hitDamae, invicibleTime);	
+				ApplyDamage(obs->hitDamae, invicibleTime);
 			}
 			break;
 		}

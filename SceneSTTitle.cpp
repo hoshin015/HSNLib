@@ -27,6 +27,7 @@ void SceneSTTitle::Initialize() {
 	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Title/O2.png"));
 	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Title/pushenter.png"));
 	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Title/ESC.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Title/pushA.png"));
 
 }
 
@@ -81,9 +82,10 @@ void SceneSTTitle::Render() {
 		);
 	}
 	{
+		DirectX::XMFLOAT2 texSize = sprite[InputManager::Instance().IsGamePadConnected() ? 5 : 3]->GetTexSize();
 		DirectX::XMFLOAT2 cPos = { 640 * wRatio ,573 * hRatio };
-		DirectX::XMFLOAT2 cSize = { 562 * wRatio ,54 * hRatio };
-		sprite[3]->Render(
+		DirectX::XMFLOAT2 cSize = { texSize.x * wRatio ,54 * hRatio };
+		sprite[InputManager::Instance().IsGamePadConnected() ? 5 : 3]->Render(
 			cPos.x - cSize.x * .5f, cPos.y - cSize.y * .5f,
 			cSize.x, cSize.y,
 			1, 1, 1, 1,
@@ -102,7 +104,7 @@ void SceneSTTitle::Render() {
 	}
 	fadeout.Render(0, 0, width, height, 0, 0, 0, fadeoutA, 0);
 
-	DrawDebugGUI();
+	//DrawDebugGUI();
 }
 
 void SceneSTTitle::DrawDebugGUI() {
