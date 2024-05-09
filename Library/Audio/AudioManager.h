@@ -2,11 +2,32 @@
 #include <Windows.h>
 #include <Audio.h>
 
+inline static float kMasterVolume = 0.5f;
+inline static float kSEVolume = 1.0f;
 
 enum class MUSIC_LABEL
 {
 	BGM_TEST = 0,
 	WEAPON,
+};
+
+enum BGM_TRACK {
+	BGM_1 = 0,
+	BGM_2,
+	BGM_END,//サイズ取得用 SEはBGM_END以降を使う
+};
+
+enum SE_TRACK {
+	PAUSE_CONFIRM = BGM_END,
+	PAUSE_SELECT,
+	PAUSE_SHOW,
+	MAIN_CONFIRM,
+	MAIN_SELECT,
+	PLAYER_BREAK,
+	PLAYER_HITPARRY,
+	PLAYER_INVAINPARRY,
+	PLAYER_BODYBLOW,
+	PLAYER_GETOP,
 };
 
 class AudioManager
@@ -87,7 +108,7 @@ public:
 	}
 
 	// 音楽ボリューム設定
-	void SetMusicVolume(int trackNo, int volume)
+	void SetMusicVolume(int trackNo, float volume)
 	{
 		if (!musicData[trackNo].musicInst) return;
 		musicData[trackNo].musicInst->SetVolume(volume);

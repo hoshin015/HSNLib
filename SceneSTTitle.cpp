@@ -7,6 +7,7 @@
 #include "Library/Timer.h"
 #include "Library/Input/InputManager.h"
 #include "Library/Framework.h"
+#include "Library/Audio/AudioManager.h"
 
 #include "Video.h"
 
@@ -15,6 +16,10 @@
 #include <filesystem>
 
 void SceneSTTitle::Initialize() {
+	AudioManager::Instance().LoadMusic(BGM_TRACK::BGM_1, L"Data/Audio/BGM/Title.wav");
+	AudioManager::Instance().PlayMusic(BGM_TRACK::BGM_1, true);
+	AudioManager::Instance().SetMusicVolume(BGM_TRACK::BGM_1, kMasterVolume);
+
 	VideoManager::Instance().LoadFile(0, nullptr);
 	VideoManager::Instance().Play(0, true);
 	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Title/ÉçÉSOÇ»Çµ.png"));
@@ -27,6 +32,7 @@ void SceneSTTitle::Initialize() {
 
 void SceneSTTitle::Finalize() {
 	VideoManager::Instance().Clear();
+	AudioManager::Instance().UnLoadMusic(BGM_TRACK::BGM_1);
 }
 
 void SceneSTTitle::Update() {

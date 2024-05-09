@@ -9,7 +9,7 @@ struct PlayerData {
 	float slow = 1;
 
 	//‰ñ“]
-	float rotateInitialSpeed = 2;
+	float rotateInitialSpeed = 30;
 	float rotateMaxSpeed = 100;
 
 	//ƒpƒŠƒB

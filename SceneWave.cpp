@@ -59,7 +59,7 @@ void SceneWave::Initialize()
 	LightManager::Instance().Register(directionLight);
 
 	// スカイマップ
-	skyMap = std::make_unique<SkyMap>(L"Data/Texture/kloppenheim_05_puresky_4k.hdr");
+	//skyMap = std::make_unique<SkyMap>(L"Data/Texture/kloppenheim_05_puresky_4k.hdr");
 
 
 	// カメラ初期設定
@@ -99,6 +99,11 @@ void SceneWave::Initialize()
 	sprWave2 = std::make_unique<Sprite>(L"Data/Texture/Wave/Wave2.png");
 	sprWave3 = std::make_unique<Sprite>(L"Data/Texture/Wave/Wave3.png");
 	sprWave4 = std::make_unique<Sprite>(L"Data/Texture/Wave/Wave4.png");
+
+	AudioManager::Instance().LoadMusic(BGM_TRACK::BGM_1, L"Data/Audio/BGM/Game.wav");
+	AudioManager::Instance().LoadMusic(BGM_TRACK::BGM_2, L"Data/Audio/BGM/Result.wav");
+	AudioManager::Instance().PlayMusic(BGM_TRACK::BGM_1, true);
+	AudioManager::Instance().SetMusicVolume(BGM_TRACK::BGM_1, kMasterVolume);
 }
 
 void SceneWave::Finalize()
@@ -114,12 +119,34 @@ void SceneWave::Finalize()
 	SpinningTopEnemyManager::Instance().Clear();
 
 	ObstacleManager::Instance().Clear();
+
+	AudioManager::Instance().UnLoadMusic(BGM_TRACK::BGM_1);
+	AudioManager::Instance().UnLoadMusic(BGM_TRACK::BGM_2);
 }
 
 void SceneWave::Update()
 {
 	result->Update();
-	//if (result->isResult) return;
+	if (result->isResult) {
+		if (SpinningTopPlayerManager::Instance().GetPlayerCount()) {
+			auto player = SpinningTopPlayerManager::Instance().GetPlayer(0);
+			if (player->IsPlayer() && !player->isDead) {
+				if (player->GetRotationSpeed()) {
+					player->SetRotateSpeed(1);
+				}
+			}
+		}
+		if (AudioManager::Instance().GetSoundState(BGM_TRACK::BGM_1) == PLAYING) {
+			timer += Timer::Instance().DeltaTime();
+			decrementVolume = 1 - timer / 2.5f;
+			AudioManager::Instance().SetMusicVolume(BGM_TRACK::BGM_1, kMasterVolume * decrementVolume);
+			if (decrementVolume < 0) {
+				AudioManager::Instance().StopMusic(BGM_TRACK::BGM_1);
+				AudioManager::Instance().PlayMusic(BGM_TRACK::BGM_2, true);
+				AudioManager::Instance().SetMusicVolume(BGM_TRACK::BGM_2, kMasterVolume);
+			}
+		}
+	}
 
 	// リザルト画面中はポーズできない
 	if (!result->isResult)
@@ -200,7 +227,7 @@ void SceneWave::Render()
 
 	gfx.bloomBuffer->Activate();
 
-	skyMap->Render();
+	//skyMap->Render();
 
 	gfx.SetDepthStencil(DEPTHSTENCIL_STATE::ZT_ON_ZW_ON);
 	gfx.SetRasterizer(static_cast<RASTERIZER_STATE>(RASTERIZER_STATE::CLOCK_FALSE_SOLID));

@@ -57,4 +57,9 @@ private:
 	std::unique_ptr<Sprite> sprWave2;
 	std::unique_ptr<Sprite> sprWave3;
 	std::unique_ptr<Sprite> sprWave4;
+
+	// --- Music ---
+	float timer = 0;
+	float decrementVolume;
+	float resultplayer = 0;
 };

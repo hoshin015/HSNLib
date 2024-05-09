@@ -5,6 +5,7 @@
 #include "Library/ImGui/Include/imgui.h"
 #include "Library/Timer.h"
 #include "Library/3D/Camera.h"
+#include "Library/Audio/AudioManager.h"
 
 #include "SpinningTopEnemyManager.h"
 #include "SpinningTopPlayerManager.h"
@@ -38,6 +39,7 @@ StPlayer::StPlayer() {
 
 	radius = data->radius;
 	rotateSpeed = data->rotateInitialSpeed;
+	beforeHelth = health;
 
 	isPlayer = true;
 
@@ -45,9 +47,12 @@ StPlayer::StPlayer() {
 	parryEffect = std::make_unique<ParryEffect>(data->parryRadius);
 	// domeEffect
 	domeEffect = std::make_unique<DomeEffect>(data->parryRadius);
+
+
 }
 
-StPlayer::~StPlayer() {}
+StPlayer::~StPlayer() {
+}
 
 void StPlayer::Update() {
 
@@ -365,6 +370,8 @@ void StPlayer::UpdateDamaged() {
 				DamageTextManager::Instance().Register(damageText);
 
 				Effect::Instance().Play(EffectType::HitStDownEnemy, GetPosition(), { 0,0,0 }, 1.0f);
+				AudioManager::Instance().PlayMusic(PLAYER_BODYBLOW);
+				AudioManager::Instance().SetMusicVolume(PLAYER_BODYBLOW, kMasterVolume * kSEVolume);
 			}
 			else
 			{
@@ -453,10 +460,32 @@ void StPlayer::UpdateRotate() {
 	beforeState = parry;
 	beforeStateGauge = parryGauge;
 
+	if (isParrySuccessed || isParryGaugeSuccessed) {
+		AudioManager::Instance().PlayMusic(PLAYER_HITPARRY);
+		AudioManager::Instance().SetMusicVolume(PLAYER_HITPARRY, kMasterVolume * kSEVolume);
+	}
+	else if (GetInputMap<bool>("Attack") || GetInputMap<bool>("SubAttack")) {
+		AudioManager::Instance().PlayMusic(PLAYER_INVAINPARRY);
+		AudioManager::Instance().SetMusicVolume(PLAYER_INVAINPARRY, kMasterVolume * kSEVolume);
+	}
+
 	if (isParrySuccessed) rotateSpeed += (float(rand()) / RAND_MAX * 10) + 10;
 	if (GetInputMap<bool>("SubAttack"))
-		rotateSpeed -= data->parryGaugeConsumed;
-	rotateSpeed = std::clamp<float>(rotateSpeed, 1, data->rotateMaxSpeed);
+		rotateSpeed *= .5f;
+
+	float rotAsp = rotateSpeed / data->rotateMaxSpeed;
+	rotateSpeed -= (rotAsp > 0.25f ? 3 : rotAsp > 0.15f ? 2 : 1) * Timer::Instance().DeltaTime();
+	if (beforeHelth > health) {
+		rotateSpeed -= rotAsp > 0.5f ? 20 : 10;
+		beforeHelth = health;
+		AudioManager::Instance().PlayMusic(PLAYER_BODYBLOW);
+		AudioManager::Instance().SetMusicVolume(PLAYER_BODYBLOW, kMasterVolume * kSEVolume);
+	}
+	rotateSpeed = std::clamp<float>(rotateSpeed, 0, data->rotateMaxSpeed);
+	if (rotateSpeed == 0) {
+		ApplyDamage(health, 0);
+	}
+
 	angle.y += 360 * rotateSpeed * Timer::Instance().DeltaTime();
 	if (360 < angle.y || angle.y < -360)angle.y += angle.y > 0 ? -360 : 360;
 }
@@ -476,11 +505,13 @@ void StPlayer::UpdateOption() {
 }
 
 void StPlayer::AddOption() {
-	if (option.size() > 3)return;
+	if (option.size() >= 3)return;
 	getTotalOption++;
 	StPlayerOption* o = new StPlayerOption(childModel,optionData);
 	option.emplace_back(o);
 	SpinningTopPlayerManager::Instance().Register(o);
+	AudioManager::Instance().PlayMusic(PLAYER_GETOP);
+	AudioManager::Instance().SetMusicVolume(PLAYER_GETOP, kMasterVolume * kSEVolume);
 }
 
 void StPlayer::EraseOption() {

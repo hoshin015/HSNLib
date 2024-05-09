@@ -8,6 +8,7 @@
 #include "Library/Input/InputManager.h"
 #include "Library/Easing.h"
 #include "Library/FrameWork.h"
+#include "Library/Audio/AudioManager.h"
 
 #include "StageManager.h"
 #include "LightManager.h"
@@ -19,6 +20,7 @@
 #include "ObsStaticObj.h"
 #include "ObsMarunoko.h"
 #include "DamageTextManager.h"
+#include "Wave.h"
 
 #include <random>
 #include <string>
@@ -29,25 +31,38 @@ void SceneSTTutorial::Initialize() {
 	VideoManager::Instance().LoadFile(GAUGEATTACK, L"Data/Video/GaugeAttack.mp4");
 	VideoManager::Instance().LoadFile(GETOPTION, L"Data/Video/Option.mp4");
 	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/Enter.png"));
-	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/Parry.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/Parry1.png"));
 	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/GaugeParry.png"));
 	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/BodyBlow.png"));
 	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/Tutorial.png"));
-	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/MainMenu/Back.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/Clear.png"));
 	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/BackToTutorial.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/Parry2.png"));
+	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/Parry.png"));
 	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Input/Input.png"));
 	sprite.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Input/InputController.png"));
 
 	spriteControl.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/EnterControl.png"));
-	spriteControl.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/ParryControl.png"));
+	spriteControl.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/Parry1Control.png"));
 	spriteControl.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/GaugeParryControl.png"));
 	spriteControl.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/BodyBlowControl.png"));
 	spriteControl.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/BackToTutorialControl.png"));
 	spriteControl.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/BackToTutorialControl.png"));
 	spriteControl.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/BackToTutorialControl.png"));
+	spriteControl.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/Parry2Control.png"));
+	spriteControl.emplace_back(std::make_unique<Sprite>(L"Data/Texture/Tutorial/Parry.png"));
+
+	spriteUI.emplace_back(std::make_unique<Sprite>(L"Data/Texture/HP0.png"));
+	spriteUI.emplace_back(std::make_unique<Sprite>(L"Data/Texture/HP1.png"));
+	spriteUI.emplace_back(std::make_unique<Sprite>(L"Data/Texture/HP2.png"));
+	spriteUI.emplace_back(std::make_unique<Sprite>(L"Data/Texture/HP3.png"));
+	spriteUI.emplace_back(std::make_unique<Sprite>(L"Data/Texture/rotSpeedBottom.png"));
+	spriteUI.emplace_back(std::make_unique<Sprite>(L"Data/Texture/rotSpeedMiddle.png"));
+	spriteUI.emplace_back(std::make_unique<Sprite>(L"Data/Texture/rotSpeedMiddleMask.png"));
+	spriteUI.emplace_back(std::make_unique<Sprite>(L"Data/Texture/rotSpeedTop.png"));
 
 	videoUI.SetVideo(&VideoManager::Instance().GetVideo(PARRY));
-	videoUI.SetTextSprite(sprite[PARRY].get());
+	videoUI.SetTextSprite((InputManager::Instance().IsGamePadConnected() ? spriteControl : sprite)[PARRY].get());
 	VideoManager::Instance().Play(PARRY,true);
 	stateMap["StopUpdate"] = true;
 	stateMap["DrawVideo"] = false;
@@ -104,6 +119,12 @@ void SceneSTTutorial::Initialize() {
 	Camera::Instance().cameraType = Camera::CAMERA::TargetStPlayer;
 
 	pause = std::make_unique<Pause>();
+
+	Wave::Instance().Init();
+
+	AudioManager::Instance().LoadMusic(BGM_TRACK::BGM_1, L"Data/Audio/BGM/Game.wav");
+	AudioManager::Instance().PlayMusic(BGM_TRACK::BGM_1, true);
+	AudioManager::Instance().SetMusicVolume(BGM_TRACK::BGM_1, kMasterVolume);
 }
 
 void SceneSTTutorial::Finalize() {
@@ -191,10 +212,23 @@ void SceneSTTutorial::UpdateState() {
 		videoUI.SetSize({ 640 * wRatio,400 * hRatio });
 		//videoUI.SetSize(sSize);
 		if (im.GetKeyPressed(Keyboard::Enter) || im.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a)) {
-			stateMap["StopUpdate"] = false;
-			stateMap["UpdateTarm"] = true;
-			stateMap["DrawText"] = true;
-			SpinningTopPlayerManager::Instance().GetPlayer(0)->SetPosition({ 0,0,0 });
+			if (tState != ATTACK) {
+				stateMap["StopUpdate"] = false;
+				stateMap["UpdateTarm"] = true;
+				stateMap["DrawText"] = true;
+				SpinningTopPlayerManager::Instance().GetPlayer(0)->SetPosition({ 0,0,0 });
+			}
+			else {
+				videoUI.SetTextSprite((InputManager::Instance().IsGamePadConnected() ? spriteControl : sprite)[PARRY2 - 1].get());
+				nextPage++;
+				if (nextPage >= 2) {
+					videoUI.SetTextSprite((InputManager::Instance().IsGamePadConnected() ? spriteControl : sprite)[PARRYALWAYS - 1].get());
+					stateMap["StopUpdate"] = false;
+					stateMap["UpdateTarm"] = true;
+					stateMap["DrawText"] = true;
+					SpinningTopPlayerManager::Instance().GetPlayer(0)->SetPosition({ 0,0,0 });
+				}
+			}
 		}
 	}
 	else {
@@ -279,6 +313,7 @@ void SceneSTTutorial::UpdateTutorial() {
 		}
 		if (StPlayerBase::GetInputMap<bool>("Attack"))
 			tarm--;
+		StPlayerBase::SetRotateSpeed(1);
 		break;
 
 	case SceneSTTutorial::ATTACK:
@@ -299,13 +334,15 @@ void SceneSTTutorial::UpdateTutorial() {
 		if (stateMap["UpdateTarm"]) {
 			enemySpawn(10, 15);
 			tarm = SpinningTopEnemyManager::Instance().GetEnemyCount();
-			auto* player = SpinningTopPlayerManager::Instance().GetPlayer(0);
-			player->SetRotateSpeed(player->GetData()->rotateMaxSpeed);
 			text = 1;
 		}
 		if (tarm > 0)
 			tarm = SpinningTopEnemyManager::Instance().GetEnemyCount();
-
+		try{
+			auto* player = SpinningTopPlayerManager::Instance().GetPlayer(0);
+			player->SetRotateSpeed(player->GetData()->rotateMaxSpeed);
+		}
+		catch(std::out_of_range&){}
 		break;
 
 	case SceneSTTutorial::GETOPTION:
@@ -317,6 +354,11 @@ void SceneSTTutorial::UpdateTutorial() {
 			enemySpawn(4, 5);
 			tarm--;
 		}
+		try{
+			auto* player = SpinningTopPlayerManager::Instance().GetPlayer(0);
+			player->SetRotateSpeed(player->GetData()->rotateMaxSpeed);
+		}
+		catch (std::out_of_range&) {}
 		break;
 
 	default:
@@ -485,6 +527,36 @@ void SceneSTTutorial::Render() {
 	float wRatio = width / 1280;
 	float hRatio = height / 720;
 	float sRatio = wRatio * hRatio;
+	float hpBairitu = 0.75;
+
+	if (SpinningTopPlayerManager::Instance().GetPlayerCount() > 0) {
+		int hp = SpinningTopPlayerManager::Instance().GetPlayer(0)->GetHealth();
+		switch (hp) {
+		case 0: spriteUI[0]->Render(25, 25, 256 * 0.666 * hpBairitu, 256 * 0.666 * hpBairitu, 1, 1, 1, 1, 0); break;
+		case 1: spriteUI[1]->Render(25, 25, 256 * 0.666 * hpBairitu, 256 * 0.666 * hpBairitu, 1, 1, 1, 1, 0); break;
+		case 2: spriteUI[2]->Render(25, 25, 256 * 0.666 * hpBairitu, 256 * 0.666 * hpBairitu, 1, 1, 1, 1, 0); break;
+		case 3: spriteUI[3]->Render(25, 25, 256 * 0.666 * hpBairitu, 256 * 0.666 * hpBairitu, 1, 1, 1, 1, 0); break;
+		}
+
+		StPlayerBase* player = SpinningTopPlayerManager::Instance().GetPlayer(0);
+		PlayerData* data = player->GetData();
+		float maxRotSpeed = data->rotateMaxSpeed;
+		float rotSpeed = player->GetRotationSpeed();
+
+		float hAspect = rotSpeed / maxRotSpeed;
+
+		//hAspect = 0.5f;
+		float height = (320 - 26) * (1.0f - hAspect);
+
+		DirectX::XMFLOAT2 rotUiPos = { 30, 200 };
+
+		float rotSpeedBairitu = 0.75f;
+
+		spriteUI[4]->Render(rotUiPos.x, rotUiPos.y, 56 * rotSpeedBairitu, 320 * rotSpeedBairitu, 1, 1, 1, 1, 0);
+		spriteUI[5]->Render(rotUiPos.x, rotUiPos.y + 13, 56 * rotSpeedBairitu, 294 * rotSpeedBairitu, 1, 1, 1, 1, 0);
+		spriteUI[6]->Render(rotUiPos.x, rotUiPos.y + 13, 56 * rotSpeedBairitu, height * rotSpeedBairitu, 1, 1, 1, 1, 0, 0, 0, 56, (320 - 13) * (1.0f - hAspect));
+		spriteUI[7]->Render(rotUiPos.x, rotUiPos.y, 56 * rotSpeedBairitu, 320 * rotSpeedBairitu, 1, 1, 1, 1, 0);
+	}
 
 	if (stateMap["DrawVideo"]) {
 		DirectX::XMFLOAT2 cPos = { 1170 * wRatio,650 * hRatio };
@@ -517,7 +589,7 @@ void SceneSTTutorial::Render() {
 	}
 	if (stateMap["DrawText"]) {
 		std::wstring str = std::to_wstring(text - tarm) + L"/" + std::to_wstring(text);
-		DispString::Instance().Draw(str.c_str(), { width * .5f ,height }, 32, TEXT_ALIGN::LOWER_MIDDLE, { 0,0,0,1 });
+		DispString::Instance().Draw(str.c_str(), { width * .5f ,0 }, 32, TEXT_ALIGN::UPPER_MIDDLE, { 1,1,1,1 });
 	}
 	if (stateMap["TutorialEnd"]) {
 		DirectX::XMFLOAT2 cPos = { 640 * wRatio,535 * hRatio };
@@ -530,7 +602,7 @@ void SceneSTTutorial::Render() {
 	}
 	pause->Render();
 	// --- デバッグ描画 ---
-	DrawDebugGUI();
+	//DrawDebugGUI();
 }
 
 void SceneSTTutorial::DrawDebugGUI() {

@@ -45,6 +45,8 @@ private:
 		START,
 		CLEAR,
 		BACKTOTUTORIAL,
+		PARRY2,
+		PARRYALWAYS,
 		KEYBORD,
 		CONTROLLER,
 		COUNT
@@ -58,6 +60,7 @@ private:
 
 	std::vector<std::unique_ptr<Sprite>> sprite;
 	std::vector<std::unique_ptr<Sprite>> spriteControl;
+	std::vector<std::unique_ptr<Sprite>> spriteUI;
 	DirectX::XMFLOAT2 sPos = {};
 	DirectX::XMFLOAT2 dPos = {};
 	DirectX::XMFLOAT2 sSize = {};
@@ -69,6 +72,7 @@ private:
 	int Efunc = 0;
 	int tarm = -1;
 	int text = 0;
+	int nextPage = 0;
 
 	VideoUI videoUI;
 
