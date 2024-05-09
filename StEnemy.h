@@ -3,6 +3,7 @@
 #include "StEnemyData.h"
 
 #include "ParryEffect.h"
+#include "EnemySpawnEffect.h"
 
 class StEnemy : public SpinningTopEnemy
 {
@@ -36,5 +37,10 @@ private:
 	float radius = 0.5f;
 	float height = 1.0f;
 
+public:
 	std::unique_ptr<ParryEffect> pF;
+	std::unique_ptr<EnemySpawnEffect> spawnEffect;
+
+public:
+	DirectX::XMFLOAT3 generatePos = { 0,0,0 };
 };

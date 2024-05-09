@@ -57,7 +57,7 @@ Pause::Pause()
 		sprSelect1->size = { 82, 81 };
 
 		sprSelect2 = std::make_unique<UiSprite>(L"Data/Texture/Pause/select.png");
-		sprSelect2->showPosition = { 300, 550 };
+		sprSelect2->showPosition = { 310, 550 };
 		sprSelect2->hidePosition = { sprSelect2->showPosition.x + deltaRightX, sprSelect2->showPosition.y };
 		sprSelect2->pos = sprSelect2->hidePosition;
 		sprSelect2->size = { 82, 81 };

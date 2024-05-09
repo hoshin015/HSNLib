@@ -92,7 +92,7 @@ void Framework::Update()
 			Graphics::Instance().Begin();
 			SceneManager::Instance().Render();
 			ImGuiManager::Instance().Render();
-			Graphics::Instance().End();
+			Graphics::Instance().End(isFullScreen);
 		}
 	}
 }
@@ -114,7 +114,7 @@ void Framework::Finalize()
 void Framework::CreateHSNWindow(HINSTANCE hInstance)
 {
 	// --- アイコンの登録 ---
-	HICON hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_MYICON));
+	HICON hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
 
 	// --- ウィンドウクラスの登録 ---
 	WNDCLASSEX wc;	//ウィンドウクラス情報の構造体

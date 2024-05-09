@@ -375,8 +375,8 @@ void StPlayer::UpdateDamaged() {
 					//std::wstring damageString = std::to_wstring(damage);
 					//const TCHAR* damageTChar = damageString.c_str();
 					//DamageText* damageText = new DamageText({ GetPosition().x, 1.0f, GetPosition().z }, damageTChar, { 1,0,0,1 });
-					DamageText* damageText = new DamageText({ GetPosition().x, 1.0f, GetPosition().z }, "1", {1,0,0,1});
-					DamageTextManager::Instance().Register(damageText);
+					//DamageText* damageText = new DamageText({ GetPosition().x, 1.0f, GetPosition().z }, "1", {1,0,0,1});
+					//DamageTextManager::Instance().Register(damageText);
 
 					Effect::Instance().Play(EffectType::HitStVsSt, GetPosition(), { 0,0,0 }, 1.0f);
 				}
@@ -453,7 +453,7 @@ void StPlayer::UpdateRotate() {
 	beforeState = parry;
 	beforeStateGauge = parryGauge;
 
-	if (isParrySuccessed) rotateSpeed++;
+	if (isParrySuccessed) rotateSpeed += ((rand() % 11) + 10);
 	if (isParryGaugeSuccessed) rotateSpeed -= data->parryGaugeConsumed;
 	rotateSpeed = min(rotateSpeed, data->rotateMaxSpeed);
 	angle.y += 360 * rotateSpeed * Timer::Instance().DeltaTime();

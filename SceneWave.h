@@ -30,7 +30,7 @@ public:
 	void DrawDebugGUI();
 
 private:
-	std::unique_ptr<SkyMap> skyMap;
+	//std::unique_ptr<SkyMap> skyMap;
 
 	float gaussianPower = 16.0f;
 
@@ -57,4 +57,17 @@ private:
 	std::unique_ptr<Sprite> sprWave2;
 	std::unique_ptr<Sprite> sprWave3;
 	std::unique_ptr<Sprite> sprWave4;
+
+	// –‘O‚Éƒ‚ƒfƒ‹‚ğ“Ç‚İ‚ñ‚Å‚¨‚­
+	std::shared_ptr<SkinnedMesh> plOptionModel;
+	std::shared_ptr<SkinnedMesh> enemySpawnModel;
+	std::shared_ptr<SkinnedMesh> enemyModel1;
+	std::shared_ptr<SkinnedMesh> enemyModel1Top;
+	std::shared_ptr<SkinnedMesh> enemyModel1Middle;
+	std::shared_ptr<SkinnedMesh> enemyModel1Bottom;
+	std::shared_ptr<SkinnedMesh> enemyModel2;
+	std::shared_ptr<SkinnedMesh> enemyModel2Top;
+	std::shared_ptr<SkinnedMesh> enemyModel2Middle;
+	std::shared_ptr<SkinnedMesh> enemyModel2Bottom;
+	std::shared_ptr<SkinnedMesh> obsMarunoko;
 };

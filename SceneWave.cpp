@@ -21,6 +21,7 @@
 #include "DamageTextManager.h"
 #include "Library/Text/DispString.h"
 #include "Library/Effekseer/EffectManager.h"
+#include "Library/3D/ResourceManager.h"
 
 void SceneWave::Initialize()
 {
@@ -57,9 +58,10 @@ void SceneWave::Initialize()
 	directionLight->SetDirection(DirectX::XMFLOAT3(0.5, -1, -1));
 	directionLight->SetColor(DirectX::XMFLOAT4(1, 1, 1, 1));
 	LightManager::Instance().Register(directionLight);
+	LightManager::Instance().SetAmbientColor({ 0.2f, 0.2f, 0.2f, 1.0f });
 
 	// スカイマップ
-	skyMap = std::make_unique<SkyMap>(L"Data/Texture/kloppenheim_05_puresky_4k.hdr");
+	//skyMap = std::make_unique<SkyMap>(L"Data/Texture/kloppenheim_05_puresky_4k.hdr");
 
 
 	// カメラ初期設定
@@ -70,7 +72,8 @@ void SceneWave::Initialize()
 	);
 	Camera::Instance().SetAngle({ DirectX::XMConvertToRadians(60), DirectX::XMConvertToRadians(180), 0 });
 
-	Camera::Instance().cameraType = Camera::CAMERA::TargetStPlayer;
+	//Camera::Instance().cameraType = Camera::CAMERA::TargetStPlayer;
+	Camera::Instance().cameraType = Camera::CAMERA::TEST1;
 
 
 	// Wave初期化
@@ -99,6 +102,19 @@ void SceneWave::Initialize()
 	sprWave2 = std::make_unique<Sprite>(L"Data/Texture/Wave/Wave2.png");
 	sprWave3 = std::make_unique<Sprite>(L"Data/Texture/Wave/Wave3.png");
 	sprWave4 = std::make_unique<Sprite>(L"Data/Texture/Wave/Wave4.png");
+
+	// 事前のモデル読込
+	plOptionModel = ResourceManager::Instance().LoadModelResource("Data/Fbx/StPlayer/Main/StPlayer.fbx");
+	enemySpawnModel = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemySpawnEffect/StEnemySpawnEffect.fbx");
+	enemyModel1 = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemy01/Main/StEnemy01Main.fbx");
+	enemyModel1Top = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemy01/Top/StEnemy01Top.fbx");
+	enemyModel1Middle = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemy01/Middle/StEnemy01Middle.fbx");
+	enemyModel1Bottom = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemy01/Bottom/StEnemy01Bottom.fbx");
+	enemyModel2 = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemy02/Main/StEnemy02Main.fbx");
+	enemyModel2Top = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemy02/Top/StEnemy02Top.fbx");
+	enemyModel2Middle = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemy02/Middle/StEnemy02Middle.fbx");
+	enemyModel2Bottom = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemy02/Bottom/StEnemy02Bottom.fbx");
+	obsMarunoko = ResourceManager::Instance().LoadModelResource("Data/Fbx/StMarunoko/StMarunoko.fbx");
 }
 
 void SceneWave::Finalize()
@@ -147,6 +163,9 @@ void SceneWave::Update()
 	ObstacleManager::Instance().Update();
 
 	DamageTextManager::Instance().Update();
+
+
+	SpinningTopEnemyManager::Instance().UpdateStatusValue(enemyData);
 }
 
 void SceneWave::Render()
@@ -200,7 +219,7 @@ void SceneWave::Render()
 
 	gfx.bloomBuffer->Activate();
 
-	skyMap->Render();
+	//skyMap->Render();
 
 	gfx.SetDepthStencil(DEPTHSTENCIL_STATE::ZT_ON_ZW_ON);
 	gfx.SetRasterizer(static_cast<RASTERIZER_STATE>(RASTERIZER_STATE::CLOCK_FALSE_SOLID));
@@ -325,16 +344,16 @@ void SceneWave::Render()
 
 		float hAspect = rotSpeed / maxRotSpeed;
 
-		hAspect = 0.5f;
-		float height = (320-26) * (1.0f- hAspect);
+		float rotSpeedBairitu = 0.75f;
+		//hAspect = 0.5f;
+		float height = (320-13) * rotSpeedBairitu * (1.0f- hAspect);
 
 		DirectX::XMFLOAT2 rotUiPos = { 30, 200 };
 
-		float rotSpeedBairitu = 0.75f;
 
 		sprRotSpeedBottom->Render(rotUiPos.x, rotUiPos.y, 56 * rotSpeedBairitu, 320 * rotSpeedBairitu, 1, 1, 1, 1, 0);
 		sprRotSpeedMiddle->Render(rotUiPos.x, rotUiPos.y + 13, 56 * rotSpeedBairitu, 294 * rotSpeedBairitu, 1, 1, 1, 1, 0);
-		sprRotSpeedMiddleMask->Render(rotUiPos.x, rotUiPos.y + 13, 56 * rotSpeedBairitu, height * rotSpeedBairitu, 1, 1, 1, 1, 0, 0, 0, 56, (320 - 13) * (1.0f - hAspect));
+		sprRotSpeedMiddleMask->Render(rotUiPos.x, rotUiPos.y + 13, 56 * rotSpeedBairitu, height, 1, 1, 1, 1, 0, 0, 0, 56, (320 - 13) * (1.0f - hAspect));
 		sprRotSpeedTop->Render(rotUiPos.x, rotUiPos.y, 56 * rotSpeedBairitu, 320 * rotSpeedBairitu, 1, 1, 1, 1, 0);
 	}
 

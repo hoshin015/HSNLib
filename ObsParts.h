@@ -42,7 +42,7 @@ private:
 	float canGoPlayerTimer = 0.0f;
 	float canGoPlayerTime = 1.0f;
 
-	float toPlayerDistance = 10.0f;	// プレイヤーに向かうと判断する距離
+	float toPlayerDistance = 100.0f;	// プレイヤーに向かうと判断する距離
 	float goPlayerSpeed = 20.0f;
 
 	bool playerParts = false;

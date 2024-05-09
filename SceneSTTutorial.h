@@ -51,7 +51,7 @@ private:
 	};
 	int tState = PARRY;
 
-	std::unique_ptr<SkyMap> skyMap;
+	//std::unique_ptr<SkyMap> skyMap;
 	std::unique_ptr<StageContext> stageMain;
 	std::unique_ptr<Pause> pause;
 	float gaussianPower = 16;

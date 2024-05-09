@@ -19,7 +19,7 @@
 // ‰Šú‰»
 void SceneAnimation::Initialize()
 {
-	skyMap = std::make_unique<SkyMap>(L"Data/Texture/kloppenheim_05_puresky_4k.hdr");
+	//skyMap = std::make_unique<SkyMap>(L"Data/Texture/kloppenheim_05_puresky_4k.hdr");
 
 	// --- ƒJƒƒ‰‰Šúİ’è ---
 	Camera::Instance().SetLookAt(
@@ -228,7 +228,7 @@ void SceneAnimation::Render()
 		gfx.shadowBuffer->DeActivate();
 	}
 
-	skyMap->Render();
+	//skyMap->Render();
 
 	gfx.SetDepthStencil(DEPTHSTENCIL_STATE::ZT_ON_ZW_ON);
 

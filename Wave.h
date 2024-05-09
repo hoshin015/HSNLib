@@ -2,6 +2,7 @@
 #include <memory>
 #include <random>
 #include "SpinningTopEnemyManager.h"
+#include "SpinningTopPlayerManager.h"
 #include "StEnemy.h"
 #include "StEnemyData.h"
 #include "LightManager.h"
@@ -84,7 +85,9 @@ struct ScriptEnemy : public ScriptData
 			if (!noObstacleHit) break;
 		}
 		
-		enemy->SetPosition({ xPos, 10, zPos });
+		enemy->SetPosition({ xPos, 100, zPos });
+		enemy->generatePos = { xPos, 0.1f, zPos };
+		enemy->spawnEffect->SetPosition(enemy->generatePos);
 
 		// スポーン座標設定
 		enemy->spawnPosition = { enemy->GetPosition().x, 0, enemy->GetPosition().z };
@@ -102,7 +105,10 @@ struct ScriptMarunoko : public ScriptData
 	void Execute() override
 	{
 		ObsMarunoko* obstacle = new ObsMarunoko("Data/FBX/StMarunoko/StMarunoko.fbx", type, moveSpeed);
-		obstacle->SetPosition(position);
+		obstacle->SetPosition({ position.x, 100, position.z });
+		obstacle->spawnPos = position;
+
+		obstacle->spawnEffect->SetPosition({ position.x, 0.1f, position.z });
 		ObstacleManager::Instance().Register(obstacle);
 	}
 };
@@ -155,7 +161,6 @@ struct ScriptOffLight : public ScriptData
 				}
 			}
 		}
-
 		LightManager::Instance().SetAmbientColor({ 0,0,0,1.0f });
 	}
 };

@@ -113,7 +113,7 @@ public:
 	// •`‰æŠJn
 	void Begin();
 	// •`‰æI—¹
-	void End();
+	void End(bool isFullScreen);
 
 	// depthStencil‚Ìİ’è
 	void SetDepthStencil(DEPTHSTENCIL_STATE state);

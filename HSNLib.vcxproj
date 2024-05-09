@@ -176,6 +176,7 @@
     <ClCompile Include="BehaviorTreeNode.cpp" />
     <ClCompile Include="DataManager.cpp" />
     <ClCompile Include="DomeEffect.cpp" />
+    <ClCompile Include="EnemySpawnEffect.cpp" />
     <ClCompile Include="Library\Easing.cpp" />
     <ClCompile Include="Library\Graphics\BloomBuffer.cpp" />
     <ClCompile Include="Character.cpp" />
@@ -295,6 +296,7 @@
     <ClInclude Include="BehaviorTreeNode.h" />
     <ClInclude Include="DataManager.h" />
     <ClInclude Include="DomeEffect.h" />
+    <ClInclude Include="EnemySpawnEffect.h" />
     <ClInclude Include="Library\Easing.h" />
     <ClInclude Include="Library\Graphics\BloomBuffer.h" />
     <ClInclude Include="Character.h" />
@@ -309,6 +311,7 @@
     <ClInclude Include="Library\2D\GaussianBlurSprite.h" />
     <ClInclude Include="Library\Graphics\FullScreenQuad.h" />
     <ClInclude Include="Library\Graphics\FrameBuffer.h" />
+    <ClInclude Include="Library\Icon\resource1.h" />
     <ClInclude Include="Library\Text\DispString.h" />
     <ClInclude Include="Library\Text\FontEnum.h" />
     <ClInclude Include="Library\Text\FontTexture.h" />
@@ -420,6 +423,7 @@
     <ResourceCompile Include="Library\Icon\Icon.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Library\Shader\EnemySpawnEffect.hlsli" />
     <None Include="Library\Shader\FilterFunctions.hlsli" />
     <None Include="Library\Shader\GaussianBlur.hlsli" />
     <None Include="Library\Shader\FullScreenQuad.hlsli" />
@@ -441,6 +445,18 @@
     <None Include="MaskPrimitive.hlsli" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="Library\Shader\EnemySpawnEffect_PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\EnemySpawnEffect_VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
     <FxCompile Include="Library\Shader\BloomFinalPass_PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
@@ -685,6 +701,10 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Data\Icon\Icon.ico" />
+    <Image Include="Data\Icon\Icon2.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

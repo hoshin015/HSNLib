@@ -27,6 +27,11 @@ public:
 	std::unique_ptr<UiSprite> sprSideBar2;
 
 	std::unique_ptr<UiSprite> sprRankS;
+	std::unique_ptr<UiSprite> sprRankA;
+	std::unique_ptr<UiSprite> sprRankB;
+	std::unique_ptr<UiSprite> sprRankC;
+
+	std::unique_ptr<UiSprite> sprHighScore;
 
 	// テキスト
 	std::unique_ptr<UiSprite> sprTotalScore;
@@ -37,15 +42,24 @@ public:
 	std::unique_ptr<UiSprite> sprNowWave;
 	std::unique_ptr<UiSprite> sprTotalHitDamage;
 
+	static float highScore;
+	bool isHighScore = false;
 
 	// それぞれの表示の開始時間
-	float startRank = 5.0f;
+	float startHightScore = 5.8f;
 
-	float startTotalScore = 4.0f;
-	float startAliveTime = 4.0f;
+	float startRank = 6.0f;
 
-	float startTotalDestoryEnemy = 2.0f;
-	float startTotalGetOption = 2.3f;
-	float startNowWave = 2.6f;
-	float startTotalHitDamage = 2.9f;
+	float startTotalScore = 4.8f;
+	float startAliveTime = 3.5f;
+
+	float startTotalDestoryEnemy = 2.4f;
+	float startTotalGetOption = 2.6f;
+	float startNowWave = 2.8f;
+	float startTotalHitDamage = 3.0f;
+
+	// ランク対応スコア
+	float rankB = 3000;
+	float rankA = 6000;
+	float rankS = 12000;
 };
