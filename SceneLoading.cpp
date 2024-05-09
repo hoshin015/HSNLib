@@ -5,7 +5,7 @@
 
 void SceneLoading::Initialize()
 {
-	sprite = new Sprite(L"Data/Texture/LoadingIcon.png");
+	sprite = new Sprite(L"Data/Texture/Pause/select.png");
 
 	// スレッド開始
 	thread = new std::thread(LoadingThread, this);
@@ -34,7 +34,7 @@ void SceneLoading::Update()
 
 void SceneLoading::Render()
 {
-	sprite->Render(0, 0, 256, 256, 1, 1, 1, 1, angle);
+	sprite->Render(1144, 585, 86, 85, 1, 1, 1, 1, angle);
 }
 
 // ローディングスレッド
