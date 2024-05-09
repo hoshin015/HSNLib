@@ -118,7 +118,7 @@ void SceneSTTutorial::Initialize() {
 	);
 	Camera::Instance().SetAngle({ DirectX::XMConvertToRadians(60), DirectX::XMConvertToRadians(180), 0 });
 
-	Camera::Instance().cameraType = Camera::CAMERA::TargetStPlayer;
+	Camera::Instance().cameraType = Camera::CAMERA::TEST1;
 
 	pause = std::make_unique<Pause>();
 
@@ -294,7 +294,7 @@ void SceneSTTutorial::UpdateTutorial() {
 		StEnemy* enemy = new StEnemy(0);
 
 		float xPos = SpinningTopPlayerManager::Instance().GetPlayer(0)->GetPosition().x;
-		float zPos = SpinningTopPlayerManager::Instance().GetPlayer(0)->GetPosition().x;
+		float zPos = SpinningTopPlayerManager::Instance().GetPlayer(0)->GetPosition().z;
 
 		float rad = DirectX::XMConvertToRadians(rand() % 360);
 		float dist = dis(gen);
@@ -302,7 +302,8 @@ void SceneSTTutorial::UpdateTutorial() {
 		xPos += cosf(rad) * dist;
 		zPos += sinf(rad) * dist;
 
-		enemy->SetPosition({ xPos, 10, zPos });
+		enemy->SetPosition({ xPos, 100, zPos });
+		enemy->spawnEffect->SetPosition({ xPos, 0.1f, zPos });
 		SpinningTopEnemyManager::Instance().Register(enemy);
 
 	};
