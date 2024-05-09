@@ -26,6 +26,7 @@ void AudioManager::Initialize()
 	LoadMusic(PAUSE_SHOW,         L"Data/Audio/SE/Pause/Show.wav");
 	LoadMusic(MAIN_CONFIRM,       L"Data/Audio/SE/MainMenu/Confirm.wav");
 	LoadMusic(MAIN_SELECT,        L"Data/Audio/SE/MainMenu/Select.wav");
+	LoadMusic(MAIN_SE,            L"Data/Audio/SE/MainMenu/SE.wav");
 	LoadMusic(PLAYER_BREAK,       L"Data/Audio/SE/Player/Break.wav");
 	LoadMusic(PLAYER_HITPARRY,    L"Data/Audio/SE/Player/HitParry.wav");
 	LoadMusic(PLAYER_INVAINPARRY, L"Data/Audio/SE/Player/InVainParry.wav");

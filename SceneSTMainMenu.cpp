@@ -133,8 +133,8 @@ void SceneSTMainMenu::Update() {
 
 	if (EasterEggCount > 51) {
 		EasterEggCount = 0;
-		AudioManager::Instance().PlayMusic(MAIN_CONFIRM);
-		AudioManager::Instance().SetMusicVolume(MAIN_CONFIRM, kMasterVolume * kSEVolume);
+		AudioManager::Instance().PlayMusic(MAIN_SE);
+		AudioManager::Instance().SetMusicVolume(MAIN_SE, kMasterVolume * kSEVolume + 17);
 		EasterEgg = true;
 	}
 
@@ -158,7 +158,7 @@ void SceneSTMainMenu::Update() {
 	sound = selectSound;
 
 	XMFLOAT3 position = player.GetPosition();
-	if (!isPlayerMove && (position.x != 14 || position.y != 0))
+	if (!isPlayerMove && (position.x != 14 || position.z != 0))
 		isPlayerMove = true;
 }
 
