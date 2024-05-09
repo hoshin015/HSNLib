@@ -351,8 +351,8 @@ void Camera::Test1CameraUpdate()
 	// 注視点から後ろベクトル方向に一定距離離れたカメラ視点を求める
 	DirectX::XMFLOAT3 eye;
 	eye.x = target.x;
-	eye.y = target.y + 25;
-	eye.z = target.z + 40;
+	eye.y = target.y + 20;
+	eye.z = target.z + 30;
 
 	// カメラの視点と注視点を設定
 	SetLookAt(eye, target, DirectX::XMFLOAT3(0, 1, 0));
