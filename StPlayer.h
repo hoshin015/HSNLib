@@ -36,6 +36,7 @@ protected:
 
 
 private:
+	int beforeHelth;
 	//パラメータは上に,プロパティは下に書いてる
 	//std::vector<SpinningTopEnemy*> nearEnemy;
 
@@ -110,4 +111,3 @@ private:
 public:
 	int partsCount = 0;
 };
-

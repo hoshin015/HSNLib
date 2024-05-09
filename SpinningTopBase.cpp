@@ -2,6 +2,7 @@
 #include "Library/Timer.h"
 #include "Library/ImGui/ConsoleData.h"
 #include "Library/3D/DebugPrimitive.h"
+#include "Library/Audio/AudioManager.h"
 #include "StageManager.h"
 #include "SpinningTopPlayerManager.h"
 
@@ -50,6 +51,8 @@ bool SpinningTopBase::ApplyDamage(int damage, float invincibleTime)
 		}
 			
 			
+		AudioManager::Instance().PlayMusic(PLAYER_BREAK);
+		AudioManager::Instance().SetMusicVolume(PLAYER_BREAK, kMasterVolume * kSEVolume);
 		OnDead();
 	}
 	// ダメージ通知

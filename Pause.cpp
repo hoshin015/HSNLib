@@ -116,6 +116,8 @@ void Pause::Update()
 
 			selectNum = 0;
 		}
+		AudioManager::Instance().PlayMusic(PAUSE_SHOW);
+		AudioManager::Instance().SetMusicVolume(PAUSE_SHOW, kMasterVolume * kSEVolume);
 	}
 
 	// puaseUiçXêV
@@ -139,10 +141,14 @@ void Pause::Update()
 		if (input.GetKeyPressed(DirectX::Keyboard::W) || up)
 		{
 			selectNum--;
+			AudioManager::Instance().PlayMusic(PAUSE_SELECT);
+			AudioManager::Instance().SetMusicVolume(PAUSE_SELECT, kMasterVolume * kSEVolume);
 		}
 		if (input.GetKeyPressed(DirectX::Keyboard::S) || down)
 		{
 			selectNum++;
+			AudioManager::Instance().PlayMusic(PAUSE_SELECT);
+			AudioManager::Instance().SetMusicVolume(PAUSE_SELECT, kMasterVolume * kSEVolume);
 		}
 		selectNum = (selectNum + static_cast<int>(selectMenu::END)) % static_cast<int>(selectMenu::END);
 
@@ -161,6 +167,8 @@ void Pause::Update()
 				sprSelect0->showUi = false;
 				sprSelect1->showUi = false;
 				sprSelect2->showUi = false;
+				AudioManager::Instance().PlayMusic(PAUSE_SHOW);
+				AudioManager::Instance().SetMusicVolume(PAUSE_SHOW, kMasterVolume * kSEVolume);
 				break;
 			}
 			case static_cast<int>(selectMenu::RETRY):
@@ -169,11 +177,15 @@ void Pause::Update()
 					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneWave));
 				if (dynamic_cast<SceneSTTutorial*>(SceneManager::Instance().GetCurrentScene()))
 					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneSTTutorial));
+				AudioManager::Instance().PlayMusic(PAUSE_CONFIRM);
+				AudioManager::Instance().SetMusicVolume(PAUSE_CONFIRM, kMasterVolume * kSEVolume);
 				break;
 			}
 			case static_cast<int>(selectMenu::GIVEUP):
 			{
 				SceneManager::Instance().ChangeScene(new SceneSTTitle);
+				AudioManager::Instance().PlayMusic(PAUSE_CONFIRM);
+				AudioManager::Instance().SetMusicVolume(PAUSE_CONFIRM, kMasterVolume * kSEVolume);
 				break;
 			}
 			}

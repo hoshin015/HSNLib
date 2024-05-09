@@ -153,10 +153,14 @@ void Result::Update()
 
 	// ‰æ–Ê‘JˆÚ
 	if (waitTimer > resultFinishTime) resultFinish = true;
-	if (InputManager::Instance().GetKeyReleased(Keyboard::Enter))
+	if (InputManager::Instance().GetKeyReleased(Keyboard::Enter) || InputManager::Instance().GetGamePadButtonReleased(GAMEPADBUTTON_STATE::a))
 	{
-		if(resultFinish)
+		if (resultFinish) {
+			AudioManager::Instance().PlayMusic(PAUSE_CONFIRM);
+			AudioManager::Instance().SetMusicVolume(PAUSE_CONFIRM, kMasterVolume * kSEVolume);
+
 			SceneManager::Instance().ChangeScene(new SceneSTMainMenu);
+		}
 	}
 
 	if (isResult)

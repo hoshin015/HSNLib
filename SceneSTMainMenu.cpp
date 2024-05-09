@@ -8,6 +8,7 @@
 #include "Library/Input/InputManager.h"
 #include "Library/Framework.h"
 #include "Library/Easing.h"
+#include "Library/Audio/AudioManager.h"
 
 #include "Video.h"
 #include "StageManager.h"
@@ -64,12 +65,17 @@ void SceneSTMainMenu::Initialize() {
 	);
 	Camera::Instance().SetAngle({ DirectX::XMConvertToRadians(50), DirectX::XMConvertToRadians(180), 0 });
 	Camera::Instance().cameraType = Camera::CAMERA::LOCK;
+
+	AudioManager::Instance().LoadMusic(BGM_TRACK::BGM_1, L"Data/Audio/BGM/Main.wav");
+	AudioManager::Instance().PlayMusic(BGM_TRACK::BGM_1, true);
+	AudioManager::Instance().SetMusicVolume(BGM_TRACK::BGM_1, kMasterVolume);
 }
 
 void SceneSTMainMenu::Finalize() {
 	StageManager::Instance().Clear();
 
 	LightManager::Instance().Clear();
+	AudioManager::Instance().UnLoadMusic(BGM_TRACK::BGM_1);
 }
 
 void SceneSTMainMenu::Update() {
@@ -79,39 +85,57 @@ void SceneSTMainMenu::Update() {
 	player.Update();
 	DirectX::XMFLOAT4 defaultColor = { 0,0,0,0 };
 	DirectX::XMFLOAT4 selectColor = { 0,0,-.8f,0 };
+	selectSound = false;
 
 	for (auto& obj : S3DObject)
 		obj->SetColor(defaultColor);
 
 	if (S3DObject[WAVE]->CircleHitToPoint(player.GetPosition())) {
+		selectSound = true;
 		S3DObject[WAVE]->SetColor(selectColor);
-		if (im.GetKeyPressed(Keyboard::Enter))
+		if (im.GetKeyPressed(Keyboard::Enter) || im.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a)) {
 			SceneManager::Instance().ChangeScene(new SceneLoading(new SceneWave));
+			AudioManager::Instance().PlayMusic(MAIN_CONFIRM);
+			AudioManager::Instance().SetMusicVolume(MAIN_CONFIRM, kMasterVolume * kSEVolume);
+		}
 	}
 
 	if (S3DObject[TUTORIAL]->CircleHitToPoint(player.GetPosition())) {
+		selectSound = true;
 		S3DObject[TUTORIAL]->SetColor(selectColor);
-		if (im.GetKeyPressed(Keyboard::Enter) || im.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a))
+		if (im.GetKeyPressed(Keyboard::Enter) || im.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a)) {
 			SceneManager::Instance().ChangeScene(new SceneLoading(new SceneSTTutorial));
+			AudioManager::Instance().PlayMusic(MAIN_CONFIRM);
+			AudioManager::Instance().SetMusicVolume(MAIN_CONFIRM, kMasterVolume * kSEVolume);
+		}
 	}
 
 	if (S3DObject[BACK]->RectHitToPoint(player.GetPosition())) {
+		selectSound = true;
 		S3DObject[BACK]->SetColor(selectColor);
-		if (im.GetKeyPressed(Keyboard::Enter) || im.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a))
+		if (im.GetKeyPressed(Keyboard::Enter) || im.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a)) {
 			SceneManager::Instance().ChangeScene(new SceneLoading(new SceneSTTitle));
+			AudioManager::Instance().PlayMusic(MAIN_CONFIRM);
+			AudioManager::Instance().SetMusicVolume(MAIN_CONFIRM, kMasterVolume * kSEVolume);
+		}
 	}
 
+#if 1
 	if (S3DObject[MAINMANU]->RectHitToPoint(player.GetPosition())) {
 		if (im.GetKeyPress(Keyboard::Enter) || im.GetGamePadButtonPress(GAMEPADBUTTON_STATE::a)) {
 			S3DObject[MAINMANU]->SetColor(selectColor);
 		}
-		if (im.GetKeyPressed(Keyboard::Enter) || im.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a))
+		if (im.GetKeyPressed(Keyboard::Enter) || im.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a)) {
+			AudioManager::Instance().PlayMusic(MAIN_CONFIRM);
+			AudioManager::Instance().SetMusicVolume(MAIN_CONFIRM, kMasterVolume * kSEVolume);
 			EasterEggCount++;
+		}
 	}
 
-#if 1
 	if (EasterEggCount > 51) {
 		EasterEggCount = 0;
+		AudioManager::Instance().PlayMusic(MAIN_SE);
+		AudioManager::Instance().SetMusicVolume(MAIN_SE, kMasterVolume * kSEVolume + 17);
 		EasterEgg = true;
 	}
 
@@ -127,9 +151,15 @@ void SceneSTMainMenu::Update() {
 		}
 	}
 #endif
+	static bool sound = false;
+	if ((selectSound ^ sound) && selectSound) {
+		AudioManager::Instance().PlayMusic(MAIN_SELECT);
+		AudioManager::Instance().SetMusicVolume(MAIN_SELECT, kMasterVolume * kSEVolume);
+	}
+	sound = selectSound;
 
 	XMFLOAT3 position = player.GetPosition();
-	if (!isPlayerMove && (position.x != 14 || position.y != 0))
+	if (!isPlayerMove && (position.x != 14 || position.z != 0))
 		isPlayerMove = true;
 }
 

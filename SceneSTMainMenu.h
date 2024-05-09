@@ -113,6 +113,8 @@ private:
 	MaskPrimitive mask;
 
 	inline static bool isPlayerMove = false;
+	bool selectSound;
+
 	int EasterEggCount = 0;
 	float EasterEggTime = 0;
 	float EasterEggPosX = 0;

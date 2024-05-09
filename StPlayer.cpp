@@ -5,6 +5,7 @@
 #include "Library/ImGui/Include/imgui.h"
 #include "Library/Timer.h"
 #include "Library/3D/Camera.h"
+#include "Library/Audio/AudioManager.h"
 
 #include "SpinningTopEnemyManager.h"
 #include "SpinningTopPlayerManager.h"
@@ -38,6 +39,7 @@ StPlayer::StPlayer() {
 
 	radius = data->radius;
 	rotateSpeed = data->rotateInitialSpeed;
+	beforeHelth = health;
 
 	isPlayer = true;
 
@@ -45,9 +47,12 @@ StPlayer::StPlayer() {
 	parryEffect = std::make_unique<ParryEffect>(data->parryRadius);
 	// domeEffect
 	domeEffect = std::make_unique<DomeEffect>(data->parryRadius);
+
+
 }
 
-StPlayer::~StPlayer() {}
+StPlayer::~StPlayer() {
+}
 
 void StPlayer::Update() {
 
@@ -55,7 +60,7 @@ void StPlayer::Update() {
 
 	Input();
 
-	// ‘SƒEƒF[ƒuI—¹‚È‚ç“ü—Í‚ğ‘Å‚¿Á‚·
+	// å…¨ã‚¦ã‚§ãƒ¼ãƒ–çµ‚äº†ãªã‚‰å…¥åŠ›ã‚’æ‰“ã¡æ¶ˆã™
 	if (Wave::Instance().state == 3)
 	{
 		DirectX::XMFLOAT2 zero = { 0,0 };
@@ -74,20 +79,20 @@ void StPlayer::Update() {
 	UpdateDamaged();
 	UpdateOption();
 
-	// ‘¬—ÍXVˆ—
+	// é€ŸåŠ›æ›´æ–°å‡¦ç†
 	UpdateVelocity();
-	// –³“GŠÔXV
+	// ç„¡æ•µæ™‚é–“æ›´æ–°
 	UpdateInvincibleTimer();
 
 	//UpdateAnimation();
 
-	// ƒIƒuƒWƒFƒNƒgs—ñXV
+	// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆè¡Œåˆ—æ›´æ–°
 	UpdateTransform();
 
-	// parryEffectXV
+	// parryEffectæ›´æ–°
 	parryEffect->SetPosition({ position.x, 0.2f, position.z });
 	parryEffect->Update();
-	// domeEffectXV
+	// domeEffectæ›´æ–°
 	domeEffect->SetPosition({ position.x, 0.2f, position.z });
 	domeEffect->Update();
 }
@@ -111,83 +116,83 @@ void StPlayer::DrawDebugGui() {
 		ImGui::GetWindowDrawList()->AddLine(center, arrowEnd, IM_COL32(0, 255, 0, 255), 2.f);
 	};
 
-	if (ImGui::Begin(u8cast(u8"ƒvƒŒƒCƒ„["))) {
-		if (ImGui::CollapsingHeader(u8cast(u8"ƒvƒƒpƒeƒB"), ImGuiTreeNodeFlags_DefaultOpen)) {
-			if (ImGui::Button(u8cast(u8"•Û‘¶"))) {
+	if (ImGui::Begin(u8cast(u8"ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼"))) {
+		if (ImGui::CollapsingHeader(u8cast(u8"ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£"), ImGuiTreeNodeFlags_DefaultOpen)) {
+			if (ImGui::Button(u8cast(u8"ä¿å­˜"))) {
 				data->radius = radius;
 				optionData->radius;
 				PlayerData array[] = {*data.get(),*optionData.get()};
 				DataManager::Instance().SavePlayerData(array,ARRAYSIZE(array));
 			}
 
-			if (ImGui::CollapsingHeader(u8cast(u8"ˆÚ“®"), ImGuiTreeNodeFlags_DefaultOpen)) {
-				ImGui::DragFloat(u8cast(u8"‹@“®«"), &data->mobility, 0.01f);
-				ImGui::DragFloat(u8cast(u8"‰Á‘¬“x"), &data->accel, 0.1f);
+			if (ImGui::CollapsingHeader(u8cast(u8"ç§»å‹•"), ImGuiTreeNodeFlags_DefaultOpen)) {
+				ImGui::DragFloat(u8cast(u8"æ©Ÿå‹•æ€§"), &data->mobility, 0.01f);
+				ImGui::DragFloat(u8cast(u8"åŠ é€Ÿåº¦"), &data->accel, 0.1f);
 				if (data->accel < 0)data->accel = 0;
-				ImGui::DragFloat(u8cast(u8"Œ¸‘¬“x"), &data->slow, 0.1f);
-				ImGui::DragFloat(u8cast(u8"©‹@‚Ì”¼Œa"), &radius, 0.1f);
+				ImGui::DragFloat(u8cast(u8"æ¸›é€Ÿåº¦"), &data->slow, 0.1f);
+				ImGui::DragFloat(u8cast(u8"è‡ªæ©Ÿã®åŠå¾„"), &radius, 0.1f);
 			}
 
-			if (ImGui::CollapsingHeader(u8cast(u8"‰ñ“]"), ImGuiTreeNodeFlags_DefaultOpen)) {
+			if (ImGui::CollapsingHeader(u8cast(u8"å›è»¢"), ImGuiTreeNodeFlags_DefaultOpen)) {
 				XMFLOAT2 angleF2;
 				XMStoreFloat2(&angleF2, XMVector2Transform(XMVectorSet(0, 1, 0, 0), XMMatrixRotationZ(XMConvertToRadians(angle.y))));
 				ImguiVectorDirDraw(20, 10, 20, angleF2);
-				ImGui::DragFloat(u8cast(u8"‰Šú‰ñ“]‘¬“x(ƒQ[ƒWUŒ‚‚É‚àg‚¤)"), &data->rotateInitialSpeed, 0.01f);
-				ImGui::DragFloat(u8cast(u8"Å‘å‰ñ“]‘¬“x"), &data->rotateMaxSpeed, 0.1f);
-				ImGui::DragFloat(u8cast(u8"‰ñ“]•ûŒü(ƒfƒoƒbƒO—p)"), &angle.y);
+				ImGui::DragFloat(u8cast(u8"åˆæœŸå›è»¢é€Ÿåº¦(ã‚²ãƒ¼ã‚¸æ”»æ’ƒã«ã‚‚ä½¿ã†)"), &data->rotateInitialSpeed, 0.01f);
+				ImGui::DragFloat(u8cast(u8"æœ€å¤§å›è»¢é€Ÿåº¦"), &data->rotateMaxSpeed, 0.1f);
+				ImGui::DragFloat(u8cast(u8"å›è»¢æ–¹å‘(ãƒ‡ãƒãƒƒã‚°ç”¨)"), &angle.y);
 			}
 
-			if (ImGui::CollapsingHeader(u8cast(u8"ƒpƒŠƒB"), ImGuiTreeNodeFlags_DefaultOpen)) {
-				ImGui::DragFloat(u8cast(u8"ƒmƒbƒNƒoƒbƒN"), &data->parryKnockback, 0.1f);
-				ImGui::DragFloat(u8cast(u8"”¼Œa"), &data->parryRadius, 0.1f);
-				ImGui::DragFloat(u8cast(u8"Å‘å”¼Œa"), &data->parryDamageMaxRadius, 0.1f);
-				ImGui::DragFloat(u8cast(u8"‘å‚«‚­‚È‚é‘¬“x(Š„‡)"), &data->parryDamageIncrementSpeed, 0.001f, 0, 1, "%.4f");
-				ImGui::DragFloat(u8cast(u8"ƒN[ƒ‹ƒ_ƒEƒ“"), &data->parryCooldown, 0.1f);
+			if (ImGui::CollapsingHeader(u8cast(u8"ãƒ‘ãƒªã‚£"), ImGuiTreeNodeFlags_DefaultOpen)) {
+				ImGui::DragFloat(u8cast(u8"ãƒãƒƒã‚¯ãƒãƒƒã‚¯"), &data->parryKnockback, 0.1f);
+				ImGui::DragFloat(u8cast(u8"åŠå¾„"), &data->parryRadius, 0.1f);
+				ImGui::DragFloat(u8cast(u8"æœ€å¤§åŠå¾„"), &data->parryDamageMaxRadius, 0.1f);
+				ImGui::DragFloat(u8cast(u8"å¤§ãããªã‚‹é€Ÿåº¦(å‰²åˆ)"), &data->parryDamageIncrementSpeed, 0.001f, 0, 1, "%.4f");
+				ImGui::DragFloat(u8cast(u8"ã‚¯ãƒ¼ãƒ«ãƒ€ã‚¦ãƒ³"), &data->parryCooldown, 0.1f);
 
-				ImGui::DragFloat(u8cast(u8"ƒQ[ƒW”¼Œa"), &data->parryGaugeRadius, 0.1f);
-				ImGui::DragFloat(u8cast(u8"ƒQ[ƒWÅ‘å”¼Œa"), &data->parryGaugeDamageMaxRadius, 0.1f);
-				ImGui::DragFloat(u8cast(u8"ƒQ[ƒWÁ”ï"), &data->parryGaugeConsumed, 0.1f);
+				ImGui::DragFloat(u8cast(u8"ã‚²ãƒ¼ã‚¸åŠå¾„"), &data->parryGaugeRadius, 0.1f);
+				ImGui::DragFloat(u8cast(u8"ã‚²ãƒ¼ã‚¸æœ€å¤§åŠå¾„"), &data->parryGaugeDamageMaxRadius, 0.1f);
+				ImGui::DragFloat(u8cast(u8"ã‚²ãƒ¼ã‚¸æ¶ˆè²»"), &data->parryGaugeConsumed, 0.1f);
 			}
 
-			if (ImGui::CollapsingHeader(u8cast(u8"ƒ_ƒ[ƒWó‚¯"), ImGuiTreeNodeFlags_DefaultOpen)) {
-				ImGui::DragFloat(u8cast(u8"ƒmƒbƒNƒoƒbƒN"), &data->damagedKnockback, 0.1f);
+			if (ImGui::CollapsingHeader(u8cast(u8"ãƒ€ãƒ¡ãƒ¼ã‚¸å—ã‘"), ImGuiTreeNodeFlags_DefaultOpen)) {
+				ImGui::DragFloat(u8cast(u8"ãƒãƒƒã‚¯ãƒãƒƒã‚¯"), &data->damagedKnockback, 0.1f);
 			}
 		}
 
-		if (ImGui::CollapsingHeader(u8cast(u8"q‹@"), ImGuiTreeNodeFlags_DefaultOpen)) {
-			if (ImGui::Button(u8cast(u8"’Ç‰Á"))) AddOption();
-			if (ImGui::Button(u8cast(u8"íœ"))) EraseOption();
+		if (ImGui::CollapsingHeader(u8cast(u8"å­æ©Ÿ"), ImGuiTreeNodeFlags_DefaultOpen)) {
+			if (ImGui::Button(u8cast(u8"è¿½åŠ "))) AddOption();
+			if (ImGui::Button(u8cast(u8"å‰Šé™¤"))) EraseOption();
 
-			ImGui::DragFloat(u8cast(u8"‹——£"), &data->optionRange, 0.1f);
+			ImGui::DragFloat(u8cast(u8"è·é›¢"), &data->optionRange, 0.1f);
 
-			if (ImGui::CollapsingHeader(u8cast(u8"ƒvƒƒpƒeƒBq‹@"), ImGuiTreeNodeFlags_DefaultOpen)) {
-				if (ImGui::CollapsingHeader(u8cast(u8"ˆÚ“®q‹@"), ImGuiTreeNodeFlags_DefaultOpen)) {
-					ImGui::DragFloat(u8cast(u8"q‹@‚Ì”¼Œaq‹@"), &radius, 0.1f);
+			if (ImGui::CollapsingHeader(u8cast(u8"ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£å­æ©Ÿ"), ImGuiTreeNodeFlags_DefaultOpen)) {
+				if (ImGui::CollapsingHeader(u8cast(u8"ç§»å‹•å­æ©Ÿ"), ImGuiTreeNodeFlags_DefaultOpen)) {
+					ImGui::DragFloat(u8cast(u8"å­æ©Ÿã®åŠå¾„å­æ©Ÿ"), &radius, 0.1f);
 				}
 
-				if (ImGui::CollapsingHeader(u8cast(u8"‰ñ“]q‹@"), ImGuiTreeNodeFlags_DefaultOpen)) {
+				if (ImGui::CollapsingHeader(u8cast(u8"å›è»¢å­æ©Ÿ"), ImGuiTreeNodeFlags_DefaultOpen)) {
 					XMFLOAT2 angleF2;
 					XMStoreFloat2(&angleF2, XMVector2Transform(XMVectorSet(0, 1, 0, 0), XMMatrixRotationZ(XMConvertToRadians(angle.y))));
 					ImguiVectorDirDraw(20, 10, 20, angleF2);
-					ImGui::DragFloat(u8cast(u8"‰Šú‰ñ“]‘¬“xq‹@"), &optionData->rotateInitialSpeed, 0.01f);
+					ImGui::DragFloat(u8cast(u8"åˆæœŸå›è»¢é€Ÿåº¦å­æ©Ÿ"), &optionData->rotateInitialSpeed, 0.01f);
 				}
 
-				if (ImGui::CollapsingHeader(u8cast(u8"ƒpƒŠƒBq‹@"), ImGuiTreeNodeFlags_DefaultOpen)) {
-					ImGui::DragFloat(u8cast(u8"ƒmƒbƒNƒoƒbƒNq‹@"), &optionData->parryKnockback, 0.1f);
-					ImGui::DragFloat(u8cast(u8"”¼Œaq‹@"), &optionData->parryRadius, 0.1f);
-					ImGui::DragFloat(u8cast(u8"Å‘å”¼Œaq‹@"), &optionData->parryDamageMaxRadius, 0.1f);
-					ImGui::DragFloat(u8cast(u8"ƒN[ƒ‹ƒ_ƒEƒ“q‹@"), &optionData->parryCooldown, 0.1f);
+				if (ImGui::CollapsingHeader(u8cast(u8"ãƒ‘ãƒªã‚£å­æ©Ÿ"), ImGuiTreeNodeFlags_DefaultOpen)) {
+					ImGui::DragFloat(u8cast(u8"ãƒãƒƒã‚¯ãƒãƒƒã‚¯å­æ©Ÿ"), &optionData->parryKnockback, 0.1f);
+					ImGui::DragFloat(u8cast(u8"åŠå¾„å­æ©Ÿ"), &optionData->parryRadius, 0.1f);
+					ImGui::DragFloat(u8cast(u8"æœ€å¤§åŠå¾„å­æ©Ÿ"), &optionData->parryDamageMaxRadius, 0.1f);
+					ImGui::DragFloat(u8cast(u8"ã‚¯ãƒ¼ãƒ«ãƒ€ã‚¦ãƒ³å­æ©Ÿ"), &optionData->parryCooldown, 0.1f);
 
-					ImGui::DragFloat(u8cast(u8"ƒQ[ƒW”¼Œaq‹@"), &optionData->parryGaugeRadius, 0.1f);
-					ImGui::DragFloat(u8cast(u8"ƒQ[ƒWÅ‘å”¼Œaq‹@"), &optionData->parryGaugeDamageMaxRadius, 0.1f);
-					ImGui::DragFloat(u8cast(u8"ƒQ[ƒWÁ”ïq‹@"), &optionData->parryGaugeConsumed, 0.1f);
+					ImGui::DragFloat(u8cast(u8"ã‚²ãƒ¼ã‚¸åŠå¾„å­æ©Ÿ"), &optionData->parryGaugeRadius, 0.1f);
+					ImGui::DragFloat(u8cast(u8"ã‚²ãƒ¼ã‚¸æœ€å¤§åŠå¾„å­æ©Ÿ"), &optionData->parryGaugeDamageMaxRadius, 0.1f);
+					ImGui::DragFloat(u8cast(u8"ã‚²ãƒ¼ã‚¸æ¶ˆè²»å­æ©Ÿ"), &optionData->parryGaugeConsumed, 0.1f);
 				}
 			}
 		}
 
-		if (ImGui::CollapsingHeader(u8cast(u8"ƒfƒoƒbƒN"), ImGuiTreeNodeFlags_DefaultOpen)) {
+		if (ImGui::CollapsingHeader(u8cast(u8"ãƒ‡ãƒãƒƒã‚¯"), ImGuiTreeNodeFlags_DefaultOpen)) {
 			ImGui::DragFloat("speed", &rotateSpeed, .1f);
-			if (ImGui::CollapsingHeader(u8cast(u8"“ü—Í"), ImGuiTreeNodeFlags_DefaultOpen)) {
+			if (ImGui::CollapsingHeader(u8cast(u8"å…¥åŠ›"), ImGuiTreeNodeFlags_DefaultOpen)) {
 				XMFLOAT2 outDebugFloat2;
 				float outDebugFloat;
 				int outDebugInt;
@@ -223,7 +228,7 @@ void StPlayer::DrawDebugGui() {
 
 			}
 
-			if (ImGui::CollapsingHeader(u8cast(u8"ˆÚ“®"), ImGuiTreeNodeFlags_DefaultOpen)) {
+			if (ImGui::CollapsingHeader(u8cast(u8"ç§»å‹•"), ImGuiTreeNodeFlags_DefaultOpen)) {
 				XMFLOAT2 outDebugFloat2;
 				float outDebugFloat;
 				int outDebugInt;
@@ -263,19 +268,19 @@ void StPlayer::DrawDebugGui() {
 				float ave = 0;
 				for (float& fps : averageFPS) ave += fps;
 				ave = ave / averageFPS.size();
-				ImGui::Text(u8cast(u8"•½‹ÏFPS:%f"), ave);
-				ImGui::Text(u8cast(u8"Å¬FPS:%f"), *std::min_element(averageFPS.begin(), averageFPS.end()));
-				ImGui::Text(u8cast(u8"Å‘åFPS:%f"), *std::max_element(averageFPS.begin(), averageFPS.end()));
+				ImGui::Text(u8cast(u8"å¹³å‡FPS:%f"), ave);
+				ImGui::Text(u8cast(u8"æœ€å°FPS:%f"), *std::min_element(averageFPS.begin(), averageFPS.end()));
+				ImGui::Text(u8cast(u8"æœ€å¤§FPS:%f"), *std::max_element(averageFPS.begin(), averageFPS.end()));
 
 				static bool lowfps = false;
 				static int loopcount = 10000000;
-				ImGui::Checkbox(u8cast(u8"FPS‚ğ’á‚­‚·‚é"), &lowfps);
-				ImGui::DragInt(u8cast(u8"ƒ‹[ƒv‰ñ”"), &loopcount, 1000000);
+				ImGui::Checkbox(u8cast(u8"FPSã‚’ä½ãã™ã‚‹"), &lowfps);
+				ImGui::DragInt(u8cast(u8"ãƒ«ãƒ¼ãƒ—å›æ•°"), &loopcount, 1000000);
 				if (loopcount < 1) loopcount = 1;
 				if (lowfps) for (size_t i = 0; i < loopcount; i++);
 
 				static bool drawPrimitive = false;
-				ImGui::Checkbox(u8cast(u8"ƒfƒoƒbƒN—p“–‚½‚è”»’è‚ğ•\¦"), &drawPrimitive);
+				ImGui::Checkbox(u8cast(u8"ãƒ‡ãƒãƒƒã‚¯ç”¨å½“ãŸã‚Šåˆ¤å®šã‚’è¡¨ç¤º"), &drawPrimitive);
 				if (drawPrimitive) RenderDebugPrimitive();
 
 			}
@@ -295,13 +300,13 @@ void StPlayer::UpdateMove() {
 	float speed = XMVectorGetX(XMVector2Length(direction));
 	direction = XMVector2Normalize(direction);
 
-	//ƒRƒ“ƒgƒ[ƒ‰[—p
+	//ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ç”¨
 	if (XMVectorGetX(XMVector2Length(inputVec)) > 1) {
 		inputVec = XMVector2Normalize(inputVec);
 	}
 	debugValue["inputVec"] = input;
 
-	//‘¬“xŒvZ
+	//é€Ÿåº¦è¨ˆç®—
 	if (fabsf(input.x) > 0.00001f || fabsf(input.y) > 0.00001f) {
 		float dot = XMVectorGetX(XMVector2Dot(direction, inputVec));
 		if (speed == 0) dot = 1;
@@ -314,14 +319,14 @@ void StPlayer::UpdateMove() {
 	maxMoveSpeed = (data->accel + (data->accel * 0.002f));
 	speed = min(speed, maxMoveSpeed);
 
-	//‹@“®«‚ÌŒvZ
+	//æ©Ÿå‹•æ€§ã®è¨ˆç®—
 	if (speed < 0.0000001) direction = {};
 	float lerp = min(max(0, (speed / maxMoveSpeed * data->mobility) + (1 - data->mobility)), 0.95f);
 	direction = XMVectorLerp(direction, XMVectorLerp(inputVec, direction, lerp), 30 * deltaTime);
 	direction = XMVector2Normalize(direction);
 	XMStoreFloat2(&moveDirection, direction);
 
-	//ƒfƒoƒbƒO—p
+	//ãƒ‡ãƒãƒƒã‚°ç”¨
 	debugValue["speed"] = speed;
 	debugValue["direction"] = moveDirection;
 	debugValue["directionLength"] = XMVectorGetX(XMVector2Length(XMLoadFloat2(&moveDirection)));
@@ -358,17 +363,19 @@ void StPlayer::UpdateDamaged() {
 
 				totalHitScore += dmg;
 
-				// “G‚ªƒ_ƒEƒ“’†‚È‚ç“G‚ğ”j‰ó
+				// æ•µãŒãƒ€ã‚¦ãƒ³ä¸­ãªã‚‰æ•µã‚’ç ´å£Š
 				enemy->ApplyDamage(dmg, 0);
 
 				DamageText* damageText = new DamageText({ enemy->GetPosition().x, 1.0f, enemy->GetPosition().z }, std::to_string(dmg), {1,0,0,1});
 				DamageTextManager::Instance().Register(damageText);
 
 				Effect::Instance().Play(EffectType::HitStDownEnemy, GetPosition(), { 0,0,0 }, 1.0f);
+				AudioManager::Instance().PlayMusic(PLAYER_BODYBLOW);
+				AudioManager::Instance().SetMusicVolume(PLAYER_BODYBLOW, kMasterVolume * kSEVolume);
 			}
 			else
 			{
-				// ƒ_ƒ[ƒW•\¦
+				// ãƒ€ãƒ¡ãƒ¼ã‚¸è¡¨ç¤º
 				if (invincibleTimer <= 0.0f)
 				{
 					//int damage = 1;
@@ -381,7 +388,7 @@ void StPlayer::UpdateDamaged() {
 					Effect::Instance().Play(EffectType::HitStVsSt, GetPosition(), { 0,0,0 }, 1.0f);
 				}
 
-				// “G‚ªƒ_ƒEƒ“’†‚Å‚È‚¢‚È‚çƒvƒŒƒCƒ„[‚Éƒ_ƒ[ƒW
+				// æ•µãŒãƒ€ã‚¦ãƒ³ä¸­ã§ãªã„ãªã‚‰ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã«ãƒ€ãƒ¡ãƒ¼ã‚¸
 				ApplyDamage(1, invicibleTime);
 			}
 			
@@ -403,7 +410,7 @@ void StPlayer::UpdateObstacleCollision()
 
 		if (!obs->isCollision) continue;
 
-		// Õ“Ëˆ—
+		// è¡çªå‡¦ç†
 		DirectX::XMFLOAT3 velocityA;
 		if (Collision::StaticRepulsionSphereVsSphere(
 			GetPosition(),
@@ -414,7 +421,7 @@ void StPlayer::UpdateObstacleCollision()
 			120
 		))
 		{
-			// ‰Ÿ‚µo‚µŒã‚ÌˆÊ’uİ’è
+			// æŠ¼ã—å‡ºã—å¾Œã®ä½ç½®è¨­å®š
 			DirectX::XMFLOAT3 playerAVel = GetVelocity();
 			DirectX::XMVECTOR V_A = DirectX::XMLoadFloat3(&playerAVel);
 
@@ -429,7 +436,7 @@ void StPlayer::UpdateObstacleCollision()
 			{
 				if (invincibleTimer <= 0.0f)
 				{
-					// ƒ_ƒ[ƒW•\¦
+					// ãƒ€ãƒ¡ãƒ¼ã‚¸è¡¨ç¤º
 					//std::wstring damageString = std::to_wstring(obs->hitDamae);
 					//const TCHAR* damageTChar = damageString.c_str();
 					//DamageText* damageText = new DamageText({ GetPosition().x, 1.0f, GetPosition().z }, damageTChar, { 1,0,0,1 });
@@ -453,9 +460,32 @@ void StPlayer::UpdateRotate() {
 	beforeState = parry;
 	beforeStateGauge = parryGauge;
 
-	if (isParrySuccessed) rotateSpeed += ((rand() % 11) + 10);
-	if (isParryGaugeSuccessed) rotateSpeed -= data->parryGaugeConsumed;
-	rotateSpeed = min(rotateSpeed, data->rotateMaxSpeed);
+	if (isParrySuccessed || isParryGaugeSuccessed) {
+		AudioManager::Instance().PlayMusic(PLAYER_HITPARRY);
+		AudioManager::Instance().SetMusicVolume(PLAYER_HITPARRY, kMasterVolume * kSEVolume);
+	}
+	else if (GetInputMap<bool>("Attack") || GetInputMap<bool>("SubAttack")) {
+		AudioManager::Instance().PlayMusic(PLAYER_INVAINPARRY);
+		AudioManager::Instance().SetMusicVolume(PLAYER_INVAINPARRY, kMasterVolume * kSEVolume);
+	}
+
+	if (isParrySuccessed) rotateSpeed += (float(rand()) / RAND_MAX * 10) + 10;
+	if (GetInputMap<bool>("SubAttack"))
+		rotateSpeed *= .5f;
+
+	float rotAsp = rotateSpeed / data->rotateMaxSpeed;
+	rotateSpeed -= (rotAsp > 0.25f ? 3 : rotAsp > 0.15f ? 2 : 1) * Timer::Instance().DeltaTime();
+	if (beforeHelth > health) {
+		rotateSpeed -= rotAsp > 0.5f ? 20 : 10;
+		beforeHelth = health;
+		AudioManager::Instance().PlayMusic(PLAYER_BODYBLOW);
+		AudioManager::Instance().SetMusicVolume(PLAYER_BODYBLOW, kMasterVolume * kSEVolume);
+	}
+	rotateSpeed = std::clamp<float>(rotateSpeed, 0, data->rotateMaxSpeed);
+	if (rotateSpeed == 0) {
+		ApplyDamage(health, 0);
+	}
+
 	angle.y += 360 * rotateSpeed * Timer::Instance().DeltaTime();
 	if (360 < angle.y || angle.y < -360)angle.y += angle.y > 0 ? -360 : 360;
 }
@@ -475,10 +505,13 @@ void StPlayer::UpdateOption() {
 }
 
 void StPlayer::AddOption() {
+	if (option.size() >= 3)return;
 	getTotalOption++;
 	StPlayerOption* o = new StPlayerOption(childModel,optionData);
 	option.emplace_back(o);
 	SpinningTopPlayerManager::Instance().Register(o);
+	AudioManager::Instance().PlayMusic(PLAYER_GETOP);
+	AudioManager::Instance().SetMusicVolume(PLAYER_GETOP, kMasterVolume * kSEVolume);
 }
 
 void StPlayer::EraseOption() {
@@ -494,7 +527,7 @@ void StPlayer::OnDamaged() {
 }
 
 void StPlayer::OnDead() {
-	// Šeƒp[ƒc‚Ì¶¬
+	// å„ãƒ‘ãƒ¼ãƒ„ã®ç”Ÿæˆ
 	ObsParts* top;
 	ObsParts* middle;
 	ObsParts* bottom;
@@ -512,12 +545,12 @@ void StPlayer::OnDead() {
 	bottom->SetAngle({ 90,0,0 });
 	ObstacleManager::Instance().Register(bottom);
 
-	// q‹@‚ğ‘S‚Äíœ
+	// å­æ©Ÿã‚’å…¨ã¦å‰Šé™¤
 	while (!option.empty())
 	{
 		EraseOption();
 	}
 
-	// €–Sƒtƒ‰ƒO‚ğON
+	// æ­»äº¡ãƒ•ãƒ©ã‚°ã‚’ON
 	isDead = true;
 }

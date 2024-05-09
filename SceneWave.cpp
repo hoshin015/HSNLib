@@ -29,7 +29,7 @@ void SceneWave::Initialize()
 	DataManager::Instance().LoadSpawnEreaData();
 
 
-	// ƒvƒŒƒCƒ„[‰Šú‰»
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼åˆæœŸåŒ–
 	StPlayerBase* player = new StPlayer();
 	SpinningTopPlayerManager::Instance().Register(player);
 
@@ -48,27 +48,27 @@ void SceneWave::Initialize()
 	}
 
 
-	// ƒXƒe[ƒW‰Šú‰»
+	// ã‚¹ãƒ†ãƒ¼ã‚¸åˆæœŸåŒ–
 	StageManager& stageManager = StageManager::Instance();
 	StageContext* stageMain = new_ StageContext();
 	stageManager.Register(stageMain);
 
-	// ƒ‰ƒCƒg‰Šú‰»
+	// ãƒ©ã‚¤ãƒˆåˆæœŸåŒ–
 	Light* directionLight = new Light(LightType::Directional);
 	directionLight->SetDirection(DirectX::XMFLOAT3(0.5, -1, -1));
 	directionLight->SetColor(DirectX::XMFLOAT4(1, 1, 1, 1));
 	LightManager::Instance().Register(directionLight);
 	LightManager::Instance().SetAmbientColor({ 0.2f, 0.2f, 0.2f, 1.0f });
 
-	// ƒXƒJƒCƒ}ƒbƒv
+	// ã‚¹ã‚«ã‚¤ãƒãƒƒãƒ—
 	//skyMap = std::make_unique<SkyMap>(L"Data/Texture/kloppenheim_05_puresky_4k.hdr");
 
 
-	// ƒJƒƒ‰‰Šúİ’è
+	// ã‚«ãƒ¡ãƒ©åˆæœŸè¨­å®š
 	Camera::Instance().SetLookAt(
-		DirectX::XMFLOAT3(0, 90, 60),		// ƒJƒƒ‰À•W
-		DirectX::XMFLOAT3(-90, 0, -30),		// ƒ^[ƒQƒbƒg(İ’è‚µ‚Ä‚àˆÓ–¡‚È‚¢)
-		DirectX::XMFLOAT3(0, 1, 0)			// ã•ûŒüƒxƒNƒgƒ‹
+		DirectX::XMFLOAT3(0, 90, 60),		// ã‚«ãƒ¡ãƒ©åº§æ¨™
+		DirectX::XMFLOAT3(-90, 0, -30),		// ã‚¿ãƒ¼ã‚²ãƒƒãƒˆ(è¨­å®šã—ã¦ã‚‚æ„å‘³ãªã„)
+		DirectX::XMFLOAT3(0, 1, 0)			// ä¸Šæ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
 	);
 	Camera::Instance().SetAngle({ DirectX::XMConvertToRadians(60), DirectX::XMConvertToRadians(180), 0 });
 
@@ -76,16 +76,16 @@ void SceneWave::Initialize()
 	Camera::Instance().cameraType = Camera::CAMERA::TEST1;
 
 
-	// Wave‰Šú‰»
+	// WaveåˆæœŸåŒ–
 	Wave::Instance().Init();
 
-	// ƒ|[ƒY‰æ–Ê
+	// ãƒãƒ¼ã‚ºç”»é¢
 	pause = std::make_unique<Pause>();
 
-	// ƒŠƒUƒ‹ƒg‰æ–Ê
+	// ãƒªã‚¶ãƒ«ãƒˆç”»é¢
 	result = std::make_unique<Result>();
 
-	// ƒQ[ƒ€UI
+	// ã‚²ãƒ¼ãƒ UI
 	life3 = std::make_unique<Sprite>(L"Data/Texture/HP3.png");
 	life2 = std::make_unique<Sprite>(L"Data/Texture/HP2.png");
 	life1 = std::make_unique<Sprite>(L"Data/Texture/HP1.png");
@@ -103,7 +103,7 @@ void SceneWave::Initialize()
 	sprWave3 = std::make_unique<Sprite>(L"Data/Texture/Wave/Wave3.png");
 	sprWave4 = std::make_unique<Sprite>(L"Data/Texture/Wave/Wave4.png");
 
-	// –‘O‚Ìƒ‚ƒfƒ‹“Ç
+	// äº‹å‰ã®ãƒ¢ãƒ‡ãƒ«èª­è¾¼
 	plOptionModel = ResourceManager::Instance().LoadModelResource("Data/Fbx/StPlayer/Main/StPlayer.fbx");
 	enemySpawnModel = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemySpawnEffect/StEnemySpawnEffect.fbx");
 	enemyModel1 = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemy01/Main/StEnemy01Main.fbx");
@@ -115,6 +115,11 @@ void SceneWave::Initialize()
 	enemyModel2Middle = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemy02/Middle/StEnemy02Middle.fbx");
 	enemyModel2Bottom = ResourceManager::Instance().LoadModelResource("Data/Fbx/StEnemy02/Bottom/StEnemy02Bottom.fbx");
 	obsMarunoko = ResourceManager::Instance().LoadModelResource("Data/Fbx/StMarunoko/StMarunoko.fbx");
+
+  AudioManager::Instance().LoadMusic(BGM_TRACK::BGM_1, L"Data/Audio/BGM/Game.wav");
+	AudioManager::Instance().LoadMusic(BGM_TRACK::BGM_2, L"Data/Audio/BGM/Result.wav");
+	AudioManager::Instance().PlayMusic(BGM_TRACK::BGM_1, true);
+	AudioManager::Instance().SetMusicVolume(BGM_TRACK::BGM_1, kMasterVolume);
 }
 
 void SceneWave::Finalize()
@@ -130,17 +135,39 @@ void SceneWave::Finalize()
 	SpinningTopEnemyManager::Instance().Clear();
 
 	ObstacleManager::Instance().Clear();
+
+	AudioManager::Instance().UnLoadMusic(BGM_TRACK::BGM_1);
+	AudioManager::Instance().UnLoadMusic(BGM_TRACK::BGM_2);
 }
 
 void SceneWave::Update()
 {
 	result->Update();
-	//if (result->isResult) return;
+	if (result->isResult) {
+		if (SpinningTopPlayerManager::Instance().GetPlayerCount()) {
+			auto player = SpinningTopPlayerManager::Instance().GetPlayer(0);
+			if (player->IsPlayer() && !player->isDead) {
+				if (player->GetRotationSpeed()) {
+					player->SetRotateSpeed(1);
+				}
+			}
+		}
+		if (AudioManager::Instance().GetSoundState(BGM_TRACK::BGM_1) == PLAYING) {
+			timer += Timer::Instance().DeltaTime();
+			decrementVolume = 1 - timer / 2.5f;
+			AudioManager::Instance().SetMusicVolume(BGM_TRACK::BGM_1, kMasterVolume * decrementVolume);
+			if (decrementVolume < 0) {
+				AudioManager::Instance().StopMusic(BGM_TRACK::BGM_1);
+				AudioManager::Instance().PlayMusic(BGM_TRACK::BGM_2, true);
+				AudioManager::Instance().SetMusicVolume(BGM_TRACK::BGM_2, kMasterVolume);
+			}
+		}
+	}
 
-	// ƒŠƒUƒ‹ƒg‰æ–Ê’†‚Íƒ|[ƒY‚Å‚«‚È‚¢
+	// ãƒªã‚¶ãƒ«ãƒˆç”»é¢ä¸­ã¯ãƒãƒ¼ã‚ºã§ããªã„
 	if (!result->isResult)
 	{
-		// ‘SƒEƒF[ƒuI—¹Œã‚Íƒ|[ƒY‚Å‚«‚È‚¢
+		// å…¨ã‚¦ã‚§ãƒ¼ãƒ–çµ‚äº†å¾Œã¯ãƒãƒ¼ã‚ºã§ããªã„
 		if (Wave::Instance().state != 3)
 		{
 			pause->Update();
@@ -149,7 +176,7 @@ void SceneWave::Update()
 		}
 	}
 
-	// ƒJƒƒ‰ƒRƒ“ƒgƒ[ƒ‰[XVˆ—
+	// ã‚«ãƒ¡ãƒ©ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼æ›´æ–°å‡¦ç†
 	Camera::Instance().Update();
 
 	Wave::Instance().Update();
@@ -170,7 +197,7 @@ void SceneWave::Update()
 
 void SceneWave::Render()
 {
-	// --- Graphics æ“¾ ---
+	// --- Graphics å–å¾— ---
 	Graphics& gfx = Graphics::Instance();
 
 	// shadowMap
@@ -181,9 +208,9 @@ void SceneWave::Render()
 		gfx.shadowBuffer->Activate();
 
 
-		// ƒJƒƒ‰ƒpƒ‰ƒ[ƒ^İ’è
+		// ã‚«ãƒ¡ãƒ©ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿è¨­å®š
 		{
-			// •½sŒõŒ¹‚©‚çƒJƒƒ‰ˆÊ’u‚ğì¬‚µA‚»‚±‚©‚çŒ´“_‚ÌˆÊ’u‚ğŒ©‚é‚æ‚¤‚É‹üs—ñ‚ğ¶¬
+			// å¹³è¡Œå…‰æºã‹ã‚‰ã‚«ãƒ¡ãƒ©ä½ç½®ã‚’ä½œæˆã—ã€ãã“ã‹ã‚‰åŸç‚¹ã®ä½ç½®ã‚’è¦‹ã‚‹ã‚ˆã†ã«è¦–ç·šè¡Œåˆ—ã‚’ç”Ÿæˆ
 			DirectX::XMFLOAT3 dir = LightManager::Instance().GetLight(0)->GetDirection();
 			DirectX::XMVECTOR LightPosition = DirectX::XMLoadFloat3(&dir);
 			LightPosition = DirectX::XMVectorScale(LightPosition, -250.0f);
@@ -191,10 +218,10 @@ void SceneWave::Render()
 				DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f),
 				DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
 
-			// ƒVƒƒƒhƒEƒ}ƒbƒv‚É•`‰æ‚µ‚½‚¢”ÍˆÍ‚ÌË‰es—ñ‚ğ¶¬
+			// ã‚·ãƒ£ãƒ‰ã‚¦ãƒãƒƒãƒ—ã«æç”»ã—ãŸã„ç¯„å›²ã®å°„å½±è¡Œåˆ—ã‚’ç”Ÿæˆ
 			DirectX::XMMATRIX P = DirectX::XMMatrixOrthographicLH(gfx.shadowDrawRect, gfx.shadowDrawRect, 0.1f, 1000.0f);
 			XMMATRIX viewProjection = V * P;
-			DirectX::XMStoreFloat4x4(&gfx.shadowMapData.lightViewProjection, viewProjection);	// ƒrƒ…[@ƒvƒƒWƒFƒNƒVƒ‡ƒ“@•ÏŠ·s—ñ‚ğ‚Ü‚Æ‚ß‚é
+			DirectX::XMStoreFloat4x4(&gfx.shadowMapData.lightViewProjection, viewProjection);	// ãƒ“ãƒ¥ãƒ¼ã€€ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ã‚·ãƒ§ãƒ³ã€€å¤‰æ›è¡Œåˆ—ã‚’ã¾ã¨ã‚ã‚‹
 		}
 
 
@@ -226,7 +253,7 @@ void SceneWave::Render()
 
 	Graphics::SceneConstants data{};
 	XMMATRIX viewProjection = XMLoadFloat4x4(&Camera::Instance().GetView()) * XMLoadFloat4x4(&Camera::Instance().GetProjection());
-	DirectX::XMStoreFloat4x4(&data.viewProjection, viewProjection);	// ƒrƒ…[@ƒvƒƒWƒFƒNƒVƒ‡ƒ“@•ÏŠ·s—ñ‚ğ‚Ü‚Æ‚ß‚é
+	DirectX::XMStoreFloat4x4(&data.viewProjection, viewProjection);	// ãƒ“ãƒ¥ãƒ¼ã€€ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ã‚·ãƒ§ãƒ³ã€€å¤‰æ›è¡Œåˆ—ã‚’ã¾ã¨ã‚ã‚‹
 
 	LightManager::Instance().PushLightData(data);
 
@@ -235,7 +262,7 @@ void SceneWave::Render()
 	gfx.deviceContext->VSSetConstantBuffers(1, 1, gfx.constantBuffer.GetAddressOf());
 	gfx.deviceContext->PSSetConstantBuffers(1, 1, gfx.constantBuffer.GetAddressOf());
 
-	// shadowMap ‚ÌƒoƒCƒ“ƒh
+	// shadowMap ã®ãƒã‚¤ãƒ³ãƒ‰
 	gfx.deviceContext->PSSetShaderResources(4, 1, gfx.shadowBuffer->shaderResourceView.GetAddressOf());
 	gfx.deviceContext->PSSetSamplers(3, 1, gfx.samplerStates[static_cast<size_t>(SAMPLER_STATE::SHADOWMAP)].GetAddressOf());
 
@@ -261,9 +288,9 @@ void SceneWave::Render()
 
 	DamageTextManager::Instance().Render();
 
-	//DispString::Instance().Draw(L"HOŠ´SH‚gIN Li‚¤B", { 800, 60 }, 32, TEXT_ALIGN::MIDDLE, { 0, 0, 0, 1 });
+	//DispString::Instance().Draw(L"HOæ„ŸSHï¼¨IN Liã†B", { 800, 60 }, 32, TEXT_ALIGN::MIDDLE, { 0, 0, 0, 1 });
 
-	// --- ƒfƒoƒbƒO•`‰æ ---
+	// --- ãƒ‡ãƒãƒƒã‚°æç”» ---
 	DebugPrimitive::Instance().Render();
 	LineRenderer::Instance().Render();
 
@@ -274,7 +301,7 @@ void SceneWave::Render()
 	gfx.SetDepthStencil(DEPTHSTENCIL_STATE::ZT_OFF_ZW_OFF);
 
 #if 1
-	// --- ‚‹P“x’Šo ---
+	// --- é«˜è¼åº¦æŠ½å‡º ---
 	gfx.frameBuffers[1]->Clear();
 
 	gfx.deviceContext->UpdateSubresource(gfx.constantBuffers[4].Get(), 0, 0, &gfx.luminanceExtractionConstant, 0, 0);
@@ -284,7 +311,7 @@ void SceneWave::Render()
 	gfx.frameBuffers[1]->DeActivate();
 	gfx.bitBlockTransfer->blit(gfx.frameBuffers[0]->shaderResourceViews[0].GetAddressOf(), 0, 1);
 
-	// --- ƒKƒEƒVƒAƒ“ƒtƒBƒ‹ƒ^ ---
+	// --- ã‚¬ã‚¦ã‚·ã‚¢ãƒ³ãƒ•ã‚£ãƒ«ã‚¿ ---
 	gfx.CalcWeightsTableFromGaussian(gaussianPower);
 	gfx.deviceContext->UpdateSubresource(gfx.constantBuffers[3].Get(), 0, 0, &gfx.gaussianConstant, 0, 0);
 	gfx.deviceContext->PSSetConstantBuffers(0, 1, gfx.constantBuffers[3].GetAddressOf());
@@ -297,7 +324,7 @@ void SceneWave::Render()
 	gfx.bitBlockTransfer->blit(gfx.frameBuffers[2]->shaderResourceViews[0].GetAddressOf(), 0, 1, gfx.pixelShaders[static_cast<size_t>(PS_TYPE::GaussianBlur_PS)].Get(), gfx.vertexShaders[static_cast<size_t>(VS_TYPE::GaussianBlurY_VS)].Get());
 	gfx.frameBuffers[3]->DeActivate();
 
-	// --- ƒuƒ‹[ƒ€‰ÁZ ---
+	// --- ãƒ–ãƒ«ãƒ¼ãƒ åŠ ç®— ---
 	ID3D11ShaderResourceView* shvs[2] =
 	{
 		gfx.bloomBuffer->shaderResourceViews[0].Get(),
@@ -307,7 +334,7 @@ void SceneWave::Render()
 	gfx.bitBlockTransfer->blit(shvs, 0, 2, gfx.pixelShaders[static_cast<size_t>(PS_TYPE::BloomFinalPass_PS)].Get());
 	gfx.frameBuffers[4]->DeActivate();
 
-	// --- ƒJƒ‰[ƒtƒBƒ‹ƒ^[ ---
+	// --- ã‚«ãƒ©ãƒ¼ãƒ•ã‚£ãƒ«ã‚¿ãƒ¼ ---
 	//gfx.deviceContext->UpdateSubresource(gfx.constantBuffers[2].Get(), 0, 0, &gfx.colorFilterConstant, 0, 0);
 	//gfx.deviceContext->PSSetConstantBuffers(3, 1, gfx.constantBuffers[2].GetAddressOf());
 	//
@@ -357,7 +384,7 @@ void SceneWave::Render()
 		sprRotSpeedTop->Render(rotUiPos.x, rotUiPos.y, 56 * rotSpeedBairitu, 320 * rotSpeedBairitu, 1, 1, 1, 1, 0);
 	}
 
-	// ƒEƒF[ƒu•\‹L
+	// ã‚¦ã‚§ãƒ¼ãƒ–è¡¨è¨˜
 	{
 		float waveTimeBairitu = 0.75f;
 
@@ -387,22 +414,22 @@ void SceneWave::Render()
 		}
 	}
 	
-	// WaveUi•`‰æ
+	// WaveUiæç”»
 	Wave::Instance().Render();
 
-	// --- pause •`‰æ ----
+	// --- pause æç”» ----
 	pause->Render();
 
-	// --- result •`‰æ ---
+	// --- result æç”» ---
 	result->Render();
 	
 
-	// --- ƒfƒoƒbƒO•`‰æ ---
+	// --- ãƒ‡ãƒãƒƒã‚°æç”» ---
 	DrawDebugGUI();
 
 }
 
-// ƒfƒoƒbƒO•`‰æ
+// ãƒ‡ãƒãƒƒã‚°æç”»
 void SceneWave::DrawDebugGUI()
 {
 	//if (ImGui::BeginMainMenuBar()) {
@@ -449,13 +476,13 @@ void SceneWave::DrawDebugGUI()
 	{
 		if (ImGui::CollapsingHeader("WaveLight", ImGuiTreeNodeFlags_DefaultOpen))
 		{
-			if (ImGui::Button(u8"ƒ‰ƒCƒgON"))
+			if (ImGui::Button(u8"ãƒ©ã‚¤ãƒˆON"))
 			{
 				ScriptOnLight* onLight = new ScriptOnLight();
 				onLight->Execute();
 				delete onLight;
 			}
-			if (ImGui::Button(u8"ƒ‰ƒCƒgOFF"))
+			if (ImGui::Button(u8"ãƒ©ã‚¤ãƒˆOFF"))
 			{
 				ScriptOffLight* offLight = new ScriptOffLight();
 				offLight->Execute();
