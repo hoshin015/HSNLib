@@ -105,10 +105,16 @@ struct ScriptMarunoko : public ScriptData
 	void Execute() override
 	{
 		ObsMarunoko* obstacle = new ObsMarunoko("Data/FBX/StMarunoko/StMarunoko.fbx", type, moveSpeed);
-		obstacle->SetPosition({ position.x, 100, position.z });
 		obstacle->spawnPos = position;
-
+		obstacle->SetPosition({ position.x, 100, position.z });
 		obstacle->spawnEffect->SetPosition({ position.x, 0.1f, position.z });
+
+		if (type != 0)
+		{
+			obstacle->isSpawnFinish = true;
+			obstacle->position = position;
+		}
+
 		ObstacleManager::Instance().Register(obstacle);
 	}
 };

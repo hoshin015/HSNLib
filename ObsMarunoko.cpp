@@ -22,15 +22,11 @@ ObsMarunoko::ObsMarunoko(const char* filePath, int type, float speed)
 	}
 	case HORIZONTAL:
 	{
-		isSpawnFinish = true;
-		position = spawnPos;
 		velocity.x = (rand() % 2) ? moveSpeed : -moveSpeed;
 		break;
 	}
 	case VERTICAL:
 	{
-		isSpawnFinish = true;
-		position = spawnPos;
 		velocity.z = (rand() % 2) ? moveSpeed : -moveSpeed;
 		break;
 	}

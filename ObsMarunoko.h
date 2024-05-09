@@ -29,6 +29,7 @@ private:
 	float moveSpeed = 3.0f;
 
 	
+public:
 	bool isSpawnFinish = false;
 	float spawnWaitTime = 3.0f;
 	float spawnWiatTimer = 0.0f;
