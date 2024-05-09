@@ -36,7 +36,7 @@ void Graphics::Initialize(HWND hwnd, int windowWidth, int windowHeight)
 
 	scd.BufferDesc.Width = windowWidth;		// 解像度の幅
 	scd.BufferDesc.Height = windowHeight;		// 解像度の高さ
-	scd.BufferDesc.RefreshRate.Numerator = 60;	// リフレッシュレートの分子(違うかも)
+	scd.BufferDesc.RefreshRate.Numerator = 0;	// リフレッシュレートの分子(違うかも)
 	scd.BufferDesc.RefreshRate.Denominator = 1;	// リフレッシュレートの分母(違うかも)
 	scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	scd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;

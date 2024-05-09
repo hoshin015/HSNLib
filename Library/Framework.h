@@ -30,7 +30,7 @@ private:
 	const int screenWidth = 1280;
 	const int screenHeight = 720;
 
-	BOOL isFullScreen = FALSE;
+	BOOL isFullScreen = TRUE;
 public:
 	// ‰Šú‰»
 	bool Initialize(HINSTANCE hInstance);
