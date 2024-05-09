@@ -11,11 +11,11 @@ Pause::Pause()
 		float deltaRightX = 1300;
 		float deltaLeftX = -1300;
 
-		sprGiveUp = std::make_unique<UiSprite>(L"Data/Texture/Pause/giveUp.png");
+		sprGiveUp = std::make_unique<UiSprite>(L"Data/Texture/Pause/mainMenu.png");
 		sprGiveUp->showPosition = { 100, 550 };
 		sprGiveUp->hidePosition = { sprGiveUp->showPosition.x + deltaRightX, sprGiveUp->showPosition.y };
 		sprGiveUp->pos = sprGiveUp->hidePosition;
-		sprGiveUp->size = { 365 * 0.666, 133 * 0.666 };
+		sprGiveUp->size = { 435 * 0.666, 133 * 0.666 };
 
 
 		sprGameRestart = std::make_unique<UiSprite>(L"Data/Texture/Pause/gameRestart.png");
@@ -57,7 +57,7 @@ Pause::Pause()
 		sprSelect1->size = { 82, 81 };
 
 		sprSelect2 = std::make_unique<UiSprite>(L"Data/Texture/Pause/select.png");
-		sprSelect2->showPosition = { 310, 550 };
+		sprSelect2->showPosition = { 361, 550 };
 		sprSelect2->hidePosition = { sprSelect2->showPosition.x + deltaRightX, sprSelect2->showPosition.y };
 		sprSelect2->pos = sprSelect2->hidePosition;
 		sprSelect2->size = { 82, 81 };
@@ -173,19 +173,19 @@ void Pause::Update()
 			}
 			case static_cast<int>(selectMenu::RETRY):
 			{
+				AudioManager::Instance().PlayMusic(PAUSE_CONFIRM);
+				AudioManager::Instance().SetMusicVolume(PAUSE_CONFIRM, kMasterVolume * kSEVolume);
 				if (dynamic_cast<SceneWave*>(SceneManager::Instance().GetCurrentScene()))
 					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneWave));
 				if (dynamic_cast<SceneSTTutorial*>(SceneManager::Instance().GetCurrentScene()))
 					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneSTTutorial));
-				AudioManager::Instance().PlayMusic(PAUSE_CONFIRM);
-				AudioManager::Instance().SetMusicVolume(PAUSE_CONFIRM, kMasterVolume * kSEVolume);
 				break;
 			}
 			case static_cast<int>(selectMenu::GIVEUP):
 			{
-				SceneManager::Instance().ChangeScene(new SceneSTTitle);
 				AudioManager::Instance().PlayMusic(PAUSE_CONFIRM);
 				AudioManager::Instance().SetMusicVolume(PAUSE_CONFIRM, kMasterVolume * kSEVolume);
+				SceneManager::Instance().ChangeScene(new SceneSTMainMenu);
 				break;
 			}
 			}
